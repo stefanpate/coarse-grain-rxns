@@ -1,5 +1,8 @@
-from omegaconf import OmegaConf
 from pathlib import Path
+from omegaconf import OmegaConf
 
-CONFIGS = Path(__file__).parents[1] / "configs"
-filepaths = OmegaConf.load(CONFIGS / "filepaths.yaml")
+project_dir = Path(__file__).parents[1]
+filepaths = OmegaConf.load(project_dir / "configs" / "filepaths" / "base.yaml")
+
+for k in filepaths.keys():
+    filepaths[k] = Path(filepaths[k])
