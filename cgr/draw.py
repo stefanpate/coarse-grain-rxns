@@ -19,16 +19,14 @@ def draw_reaction(rxn: str, sub_img_size: tuple = (300, 200), use_smiles: bool =
     rxn = Chem.rdChemReactions.ReactionFromSmarts(rxn, useSmiles=use_smiles)
     return Draw.ReactionToImage(rxn, useSVG=True, subImgSize=sub_img_size)
 
-def draw_molecule(smiles: str, size: tuple = (200, 200), hilite_atoms: tuple = tuple(), draw_options: dict = {}) -> str:
+def draw_molecule(molecule: str | Chem.Mol, size: tuple = (200, 200), hilite_atoms: tuple = tuple(), draw_options: dict = {}) -> str:
     '''
     Draw molecule to svg string
 
     Args
     ----
-    mol:str
-        Molecule SMILES
-    stoich:int
-        Stoichiometric coefficient
+    mol:str | Chem.Mol
+        Molecule
     size:tuple
         (width, height)
     hilite_atoms:tuple
@@ -37,11 +35,14 @@ def draw_molecule(smiles: str, size: tuple = (200, 200), hilite_atoms: tuple = t
         Key-value pairs to set fields of 
         rdkit.Chem.Draw.drawOptions object
     '''
-    mol = Chem.MolFromSmiles(smiles)
-    
-    # Catch failed MolFromSmiles
-    if mol is None: 
-        mol = Chem.MolFromSmiles(smiles, sanitize=False)
+    if type(molecule) is str:
+        mol = Chem.MolFromSmiles(molecule)
+
+        # Catch failed MolFromSmiles
+        if mol is None: 
+            mol = Chem.MolFromSmiles(molecule, sanitize=False)
+    elif type(molecule) is Chem.Mol:
+        mol = molecule
 
     drawer = Draw.MolDraw2DSVG(*size)
     _draw_options = drawer.drawOptions()
