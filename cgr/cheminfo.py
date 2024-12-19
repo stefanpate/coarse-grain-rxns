@@ -73,7 +73,14 @@ def rc_neighborhood(molecule: Chem.Mol, radius: int, reaction_center: list[int])
 
 if __name__ == '__main__':
     substrate_smiles = 'NC(CC(=O)O)C(=O)O'
-    r = 10
-    rc = [1, 6, 8]
+    # r = 10
+    # rc = [1, 6, 8]
     substrate_mol = Chem.MolFromSmiles(substrate_smiles)
-    rc_neighborhood(substrate_mol, radius=r, reaction_center=rc)
+    # rc_neighborhood(substrate_mol, radius=r, reaction_center=rc)
+
+    from rdkit.Chem import rdFingerprintGenerator
+    from rdkit.Chem import AllChem
+
+    mfpgen = rdFingerprintGenerator.GetMorganGenerator()
+    atom = substrate_mol.GetAtomWithIdx(1)
+    print()
