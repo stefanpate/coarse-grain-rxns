@@ -4,8 +4,28 @@ from rdkit.Chem import rdFingerprintGenerator
 import re
 from itertools import combinations
 import numpy as np
+import pandas as pd
 from typing import Iterable
 from functools import partial
+
+organic_elements = {
+    (0, False): '*',
+    (1, False): 'H',
+    (6, False): 'C',
+    (6, True): 'c',
+    (7, False): 'N',
+    (7, True): 'n',
+    (8, False): 'O',
+    (8, True): 'o',
+    (9, False): 'F',
+    (11, False): 'Na',
+    (12, False): 'Mg',
+    (16, False): 'S',   
+    (17, False): 'Cl',  
+    (35, False): 'Br',  
+    (53, False): 'I',
+    (15, False): 'P',
+}
 
 def get_patts_from_operator_side(smarts: str, side: int) -> list:
     '''
@@ -95,28 +115,13 @@ def extract_subgraph(mol: Chem.Mol, aidx: int, radius: int):
     subgraph_smiles: str
         SMILES of subgraph
     '''
-    organic_elements = {
-        0: '*',
-        1: 'H',
-        6: 'C',
-        7: 'N',
-        8: 'O',
-        9: 'F',
-        11: 'Na',
-        12: 'Mg',
-        16: 'S',   
-        17: 'Cl',  
-        35: 'Br',  
-        53: 'I',
-        15: 'P',
-    }
-
     subgraph_aidxs = set()
 
     if radius == 0:
         subgraph_aidxs.add(aidx)
-        subgraph_smiles = organic_elements[mol.GetAtomWithIdx(aidx).GetAtomicNum()]
-        subgraph_mol = Chem.MolFromSmiles(subgraph_smiles)
+        atom = mol.GetAtomWithIdx(aidx)
+        subgraph_smiles = organic_elements[(atom.GetAtomicNum(), atom.GetIsAromatic())]
+        subgraph_mol = Chem.MolFromSmiles(subgraph_smiles, sanitize=False)
 
     else:
 
@@ -138,6 +143,31 @@ def extract_subgraph(mol: Chem.Mol, aidx: int, radius: int):
         subgraph_smiles = Chem.MolToSmiles(subgraph_mol)
 
     return tuple(subgraph_aidxs), subgraph_mol, subgraph_smiles
+
+def is_subgraph_saturated(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
+    '''
+    Returns True if no bonds in non-rc subgraph greater than single
+    '''
+    idxs_sans_rc = [i for i in sub_idxs if i not in rc]
+    for (i, j) in combinations(idxs_sans_rc, 2):
+        bond = mol.GetBondBetweenAtoms(i, j)
+        if bond and bond.GetBondTypeAsDouble() > 1.0:
+            return False
+        
+    return True
+
+def has_subgraph_only_carbons(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
+    '''
+    Returns true if only element is carbon
+    '''
+    for idx in sub_idxs:
+        if idx in rc:
+            continue
+
+        if mol.GetAtomWithIdx(idx).GetAtomicNum() != 6:
+            return False
+        
+    return True
 
 class MorganFingerprinter:
     def __init__(self, radius: int, length: int, allocate_ao: bool = False, **kwargs):
@@ -413,23 +443,102 @@ def check_ring_infor(mol_rc1, mol_rc2):
         
     return True
 
+
+def resolve_bit_collisions(unresolved: pd.DataFrame, n_features: int):
+    '''
+    Resolved bit collisions occuring over an ensemble of binary
+    feature matrices
+
+    Args
+    ----
+    unresolved:pd.DataFrame
+        feature_id | sample_id | sub_smi
+
+    Returns
+    -------
+    resolved:pd.DataFrame
+        Resolved feature df (same cols as input)
+    embeddings:pd.DataFrame
+        sample_id | embedding:ndarray
+    '''
+
+    resolved = []
+    unique_ftids = sorted(set(unresolved['feature_id'].to_list()), reverse=False)
+    unoccupied = sorted([i for i in range(n_features) if i not in unique_ftids], reverse=True)
+    for id in unique_ftids:
+        unique_structures = set(unresolved.loc[unresolved['feature_id'] == id, 'sub_smi'])
+
+        if len(unique_structures) == 1:
+            resolved.append(unresolved.loc[unresolved['feature_id'] == id, :])
+        else:
+            unique_structures = sorted(unique_structures)
+            for i, us in enumerate(unique_structures):
+                sel = (unresolved['feature_id'] == id) & (unresolved['sub_smi'] == us)
+                if i == 0:
+                    resolved.append(unresolved.loc[sel, :])
+                else:
+                    to_append = unresolved.loc[sel, :].copy()
+                    to_append['feature_id'] = unoccupied.pop()
+                    resolved.append(to_append)
+
+    resolved = pd.concat(resolved, ignore_index=True)
+
+    data = []
+    unique_samples = sorted(set(resolved['sample_id'].to_list()))
+    for usamp in unique_samples:
+        embed = np.zeros(shape=(n_features, ))
+        arg_nz = resolved.loc[resolved['sample_id'] == usamp, 'feature_id'].to_numpy()
+        embed[arg_nz] = 1
+        data.append((usamp, embed))
+
+    embeddings = pd.DataFrame(data=data, columns=['sample_id', 'embedding'])
+
+    return resolved, embeddings            
+
 if __name__ == '__main__':
-    substrate_smiles = 'NC(CC(=O)O)C(=O)O'
-    rc = [1, 6, 8]
-    substrate_mol = Chem.MolFromSmiles(substrate_smiles)
-    rc_neighborhood(substrate_mol, radius=2, reaction_center=rc)
+    import json
+    from cgr.filepaths import filepaths
+    from collections import defaultdict
+    import pandas as pd
 
-    mfper = MorganFingerprinter(radius=2, length=2**10)
-    mfp = mfper.fingerprint(substrate_mol, rc)
-    mfp = mfper.fingerprint(substrate_mol, rc, rc_dist_ub=None)
+    krs = filepaths.data / "raw" / "sprhea_240310_v3_mapped_no_subunits.json"
+    with open(krs, 'r') as f:
+        krs = json.load(f)
 
-    mfper = MorganFingerprinter(radius=2, length=2**10, allocate_ao=True)
-    mfp = mfper.fingerprint(substrate_mol, rc)
-    ac = mfper.atom_counts
-    bim = mfper.bit_info_map
-    a2b = mfper.atom_to_bits
-    mfp = mfper.fingerprint(substrate_mol, rc, rc_dist_ub=0)
-    ac = mfper.atom_counts
-    bim = mfper.bit_info_map
-    a2b = mfper.atom_to_bits
+    decarb = {k: v for k,v  in krs.items() if v['min_rule'] == 'rule0024'}
+    print(len(decarb))
+
+    max_hops = 3
+    vec_len = 2**12
+    mfper = MorganFingerprinter(radius=max_hops, length=vec_len, allocate_ao=True)
+    rc_dist_ub = None
+    n_samples = len(decarb)
+    data = defaultdict(list)
+    for rid, rxn in decarb.items():
+        rc = rxn['reaction_center'][0]
+        smiles = rxn['smarts'].split('>>')[0]
+        mol = Chem.MolFromSmiles(smiles)
+        _ = mfper.fingerprint(mol, reaction_center=rc, rc_dist_ub=rc_dist_ub)
+        bim = mfper.bit_info_map
+
+
+        for bit_idx, examples in bim.items():
+            for (central_aidx, radius) in examples:
+                data['feature_id'].append(bit_idx)
+                data['sample_id'].append(rid)
+
+                sub_idxs, sub_mol, sub_smi = extract_subgraph(mol, central_aidx, radius)
+
+                data['sub_idxs'].append(sub_idxs)
+                data['sub_smi'].append(sub_smi)
+                data['saturated'].append(is_subgraph_saturated(mol, rc, sub_idxs))
+                data['only_carbon'].append(has_subgraph_only_carbons(mol, rc, sub_idxs))
+
+    raw_subgraphs = pd.DataFrame(data)
+
+    resolved, embeddings = resolve_bit_collisions(raw_subgraphs, vec_len)
     print()
+
+    for elt in resolved['feature_id'].unique():
+        smiles = set(resolved.loc[resolved['feature_id'] == elt, 'sub_smi'].to_list())
+        assert len(smiles) == 1
