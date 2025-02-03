@@ -158,16 +158,29 @@ def is_subgraph_saturated(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
 
 def has_subgraph_only_carbons(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
     '''
-    Returns true if only element is carbon
+    Returns true if only element is carbon, and not aromatic carbon
     '''
     for idx in sub_idxs:
         if idx in rc:
             continue
+        
+        atom = mol.GetAtomWithIdx(idx)
 
-        if mol.GetAtomWithIdx(idx).GetAtomicNum() != 6:
+        if atom.GetAtomicNum() != 6 and not atom.GetIsAromatic():
             return False
         
     return True
+
+def subgraph_contains_rc_atoms(rc: tuple[int], sub_idxs: tuple[int]):
+    '''
+    Returns true if subgraph contains any rc atoms.
+    TODO: Delete when you find a more elegant solution
+    '''
+    for idx in sub_idxs:
+        if idx in rc:
+            return True
+        
+    return False
 
 class MorganFingerprinter:
     def __init__(self, radius: int, length: int, allocate_ao: bool = False, **kwargs):
