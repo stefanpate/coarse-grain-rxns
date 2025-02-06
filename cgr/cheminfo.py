@@ -230,7 +230,8 @@ class MorganFingerprinter:
             atom.GetAtomicNum(),
             atom.GetMass(),
             atom.GetFormalCharge(),
-            int(atom.IsInRing())
+            int(atom.IsInRing()),
+            int(atom.GetIsAromatic())
         ]
 
         return dai
@@ -295,6 +296,45 @@ def tanimoto_similarity(bitvec1: np.ndarray, bitvec2: np.ndarray):
     dot = np.dot(bitvec1, bitvec2)
     return dot / (bitvec1.sum() + bitvec2.sum() - dot)
 
+def calc_lhs_rcmcs(
+        rcts_rc1:Iterable,
+        rcts_rc2:Iterable,
+        patts:Iterable[str],
+        norm:str='max'
+    ):
+    '''
+    Calculates atom-weighted reaction rcmcs score of aligned reactions
+    using only reactants, NOT the products of the reaction.
+
+    Args
+    -------
+    rxn_rc:Iterable of len = 2
+        rxn_rc[0]:Iterable[str] - Reactant SMILES, aligned to operator
+        rxn_rc[1]:Iterable[Iterable[int]] - innermost iterables have reaction
+            center atom indices for a reactant
+    patts:Iterable[str]
+        SMARTS patterns of reaction center fragments organized
+        the same way as rxn_rc[1] except here, one SMARTS string per reactant
+    '''
+    smiles = [rcts_rc1[0], rcts_rc2[0]]
+    rc_idxs = [rcts_rc1[1], rcts_rc2[1]]
+    molecules= [[Chem.MolFromSmiles(smi) for smi in elt] for elt in smiles]
+    mol_rcs1, mol_rcs2 = [list(zip(molecules[i], rc_idxs[i])) for i in range(2)]
+    
+    n_atoms = 0
+    rcmcs = 0
+    for mol_rc1, mol_rc2, patt in zip(mol_rcs1, mol_rcs2, patts):
+        rcmcs_i = calc_molecule_rcmcs(mol_rc1, mol_rc2, patt, norm=norm)
+
+        if norm == 'max':
+            atoms_i = max(mol_rc1[0].GetNumAtoms(), mol_rc2[0].GetNumAtoms())
+        elif norm == 'min':
+            atoms_i = min(mol_rc1[0].GetNumAtoms(), mol_rc2[0].GetNumAtoms())
+        
+        rcmcs += rcmcs_i * atoms_i
+        n_atoms += atoms_i
+
+    return rcmcs / n_atoms
 
 def calc_molecule_rcmcs(
         mol_rc1,
@@ -365,46 +405,6 @@ def calc_molecule_rcmcs(
         return res.numAtoms / min(m.GetNumAtoms() for m in molecules)
     elif norm == 'max':
         return res.numAtoms / max(m.GetNumAtoms() for m in molecules)
-
-def calc_lhs_rcmcs(
-        rcts_rc1:Iterable,
-        rcts_rc2:Iterable,
-        patts:Iterable[str],
-        norm:str='max'
-    ):
-    '''
-    Calculates atom-weighted reaction rcmcs score of aligned reactions
-    using only reactants, NOT the products of the reaction.
-
-    Args
-    -------
-    rxn_rc:Iterable of len = 2
-        rxn_rc[0]:Iterable[str] - Reactant SMILES, aligned to operator
-        rxn_rc[1]:Iterable[Iterable[int]] - innermost iterables have reaction
-            center atom indices for a reactant
-    patts:Iterable[str]
-        SMARTS patterns of reaction center fragments organized
-        the same way as rxn_rc[1] except here, one SMARTS string per reactant
-    '''
-    smiles = [rcts_rc1[0], rcts_rc2[0]]
-    rc_idxs = [rcts_rc1[1], rcts_rc2[1]]
-    molecules= [[Chem.MolFromSmiles(smi) for smi in elt] for elt in smiles]
-    mol_rcs1, mol_rcs2 = [list(zip(molecules[i], rc_idxs[i])) for i in range(2)]
-    
-    n_atoms = 0
-    rcmcs = 0
-    for mol_rc1, mol_rc2, patt in zip(mol_rcs1, mol_rcs2, patts):
-        rcmcs_i = calc_molecule_rcmcs(mol_rc1, mol_rc2, patt, norm=norm)
-
-        if norm == 'max':
-            atoms_i = max(mol_rc1[0].GetNumAtoms(), mol_rc2[0].GetNumAtoms())
-        elif norm == 'min':
-            atoms_i = min(mol_rc1[0].GetNumAtoms(), mol_rc2[0].GetNumAtoms())
-        
-        rcmcs += rcmcs_i * atoms_i
-        n_atoms += atoms_i
-
-    return rcmcs / n_atoms
 
 def mcs_precheck(mol_rc1, mol_rc2, patt):
     '''
