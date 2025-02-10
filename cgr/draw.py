@@ -19,7 +19,7 @@ def draw_reaction(rxn: str, sub_img_size: tuple = (300, 200), use_smiles: bool =
     rxn = Chem.rdChemReactions.ReactionFromSmarts(rxn, useSmiles=use_smiles)
     return Draw.ReactionToImage(rxn, useSVG=True, subImgSize=sub_img_size)
 
-def draw_molecule(molecule: str | Chem.Mol, size: tuple = (200, 200), hilite_atoms: tuple = tuple(), draw_options: dict = {}) -> str:
+def draw_molecule(molecule: str | Chem.Mol, size: tuple = (200, 200), highlight_atoms: tuple = tuple(), draw_options: dict = {}) -> str:
     '''
     Draw molecule to svg string
 
@@ -29,7 +29,7 @@ def draw_molecule(molecule: str | Chem.Mol, size: tuple = (200, 200), hilite_ato
         Molecule
     size:tuple
         (width, height)
-    hilite_atoms:tuple
+    highlight_atoms:tuple
         Atom indices to highlight
     draw_options:dict
         Key-value pairs to set fields of 
@@ -47,12 +47,14 @@ def draw_molecule(molecule: str | Chem.Mol, size: tuple = (200, 200), hilite_ato
     drawer = Draw.MolDraw2DSVG(*size)
     _draw_options = drawer.drawOptions()
     for k, v in draw_options.items():
-        try:
+        if not hasattr(_draw_options, k):
+            raise ValueError(f"Select from {dir(_draw_options)}")
+        elif callable(getattr(_draw_options, k)):
+            getattr(_draw_options, k)(v)
+        else:
             setattr(_draw_options, k, v)
-        except Exception as e:
-            print(e)
 
-    drawer.DrawMolecule(mol, highlightAtoms=hilite_atoms)
+    drawer.DrawMolecule(mol, highlightAtoms=highlight_atoms)
     
     drawer.FinishDrawing()
     img = drawer.GetDrawingText()
