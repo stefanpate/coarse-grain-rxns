@@ -1,7 +1,7 @@
 from rdkit import Chem
 from rdkit.Chem import rdFMCS, rdFingerprintGenerator
 import re
-from itertools import combinations
+from itertools import combinations, product, chain
 import numpy as np
 import pandas as pd
 from typing import Iterable
@@ -149,7 +149,9 @@ def is_subgraph_saturated(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
     Returns True if no bonds in non-rc subgraph greater than single
     '''
     idxs_sans_rc = [i for i in sub_idxs if i not in rc]
-    for (i, j) in combinations(idxs_sans_rc, 2):
+    bonds_outside_rc = combinations(idxs_sans_rc, 2)
+    bonds_crossing_into_rc = product(idxs_sans_rc, rc)
+    for (i, j) in chain(bonds_outside_rc, bonds_crossing_into_rc):
         bond = mol.GetBondBetweenAtoms(i, j)
         if bond and bond.GetBondTypeAsDouble() > 1.0:
             return False
@@ -158,15 +160,15 @@ def is_subgraph_saturated(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
 
 def has_subgraph_only_carbons(mol: Chem.Mol, rc: tuple[int], sub_idxs: tuple[int]):
     '''
-    Returns true if only element is carbon, and not aromatic carbon
+    Returns true if only peri-rc element is non-aromatic carbon
     '''
     for idx in sub_idxs:
-        if idx in rc:
-            continue
-        
         atom = mol.GetAtomWithIdx(idx)
-
-        if atom.GetAtomicNum() != 6 and not atom.GetIsAromatic():
+        
+        if idx in rc:
+            if atom.GetIsAromatic():
+                return False
+        elif atom.GetAtomicNum() != 6 and not atom.GetIsAromatic():
             return False
         
     return True
@@ -218,6 +220,16 @@ class MorganFingerprinter:
             feats = [self.hash_features(ft) for ft in feats]
             return self._fingerprint[output_type](mol, customAtomInvariants=feats)
 
+    def _get_non_aromatic_c_ox_state(self, atom: Chem.Atom):
+        if atom.GetAtomicNum() != 6 or atom.GetIsAromatic(): # Non-aromatic-C get constant outside range
+            return -1.0
+        else: # Count heteroatom neighbors, scl by bond degree, sum
+            d_oxes = [
+                bond.GetBondTypeAsDouble() for bond in atom.GetBonds()
+                if bond.GetOtherAtom(atom).GetAtomicNum() != 6
+            ]
+            return sum(d_oxes)
+
     def get_dai(self, atom: Chem.Atom):
         '''
         Returns Daylight atomic invariants for atom
@@ -231,7 +243,8 @@ class MorganFingerprinter:
             atom.GetMass(),
             atom.GetFormalCharge(),
             int(atom.IsInRing()),
-            int(atom.GetIsAromatic())
+            int(atom.GetIsAromatic()),
+            self._get_non_aromatic_c_ox_state(atom)
         ]
 
         return dai
