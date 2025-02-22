@@ -91,7 +91,7 @@ def rc_neighborhood(molecule: Chem.Mol, radius: int, reaction_center: Iterable[i
 
     submol = Chem.PathToSubmol(
         mol=molecule,
-        path=bidxs    
+        path=bidxs
     )
 
     return submol
