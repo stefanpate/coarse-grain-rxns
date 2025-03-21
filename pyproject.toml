@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cgr"
 version = "0.1.0"
-description = ""
+description = "Coarse-graining reactions"
 authors = [
     "Yash Chainani <yash.chainani@northwestern.edu>",
     "Stefan Pate <stefanpate94@gmail.com>"
@@ -23,6 +23,8 @@ scipy = "^1.14.1"
 scikit-learn = "^1.6.0"
 requests = "^2.32.3"
 click = "^8.1.8"
+ergochemics = {git = "git@github.com:stefanpate/ergochemics.git"}
+pyarrow = "^19.0.1"
 
 
 [tool.poetry.group.test.dependencies]
