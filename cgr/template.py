@@ -5,10 +5,11 @@ from itertools import combinations, product
 import re
 
 def extract_rule_template(rxn: str, atoms_to_include: Iterable[Iterable[int]]) -> str:
-    lhs, rhs = [[Chem.MolFromSmiles(s) for s in side.split('>>')] for side in rxn.split('>>')]
+    lhs, rhs = [[Chem.MolFromSmiles(s) for s in side.split('.')] for side in rxn.split('>>')]
+    rhs = [[rmol, set(), set()] for rmol in rhs] # Initialize rhs
 
-    ltemplate, rtemplate = [], []
-    for lmol, rmol, l_incl_aidxs in zip(lhs, rhs, atoms_to_include):
+    ltemplate = []
+    for lmol, l_incl_aidxs in zip(lhs, atoms_to_include):
         l_incl_aidxs = set(l_incl_aidxs)
         A = Chem.GetAdjacencyMatrix(lmol)
         A_incl = A[tuple(l_incl_aidxs), :][:, tuple(l_incl_aidxs)]
@@ -25,52 +26,94 @@ def extract_rule_template(rxn: str, atoms_to_include: Iterable[Iterable[int]]) -
             connecting_amns = []
         
         incl_amns = [lmol.GetAtomWithIdx(idx).GetAtomMapNum() for idx in l_incl_aidxs]
-        r_incl_aidxs = set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in incl_amns])
-        r_connecting_aidxs = set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in connecting_amns])
 
+        # Collect rhs aidxs corresponding to lhs aidxs
+        for i, elt in enumerate(rhs):
+            rmol = elt[0]
+            elt[1] = elt[1].union(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in incl_amns]))
+            elt[2] = elt[2].union(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in connecting_amns]))
 
+        # Construct lhs template
         lsma = get_mol_template(lmol, l_incl_aidxs, l_connecting_aidxs)
-        rsma = get_mol_template(rmol, r_incl_aidxs, r_connecting_aidxs)
         ltemplate.append(lsma)
+
+    # Construct rhs template
+    rtemplate = []
+    for rmol, r_incl_aidxs, r_connecting_aidxs in rhs:
+        rsma = get_mol_template(rmol, r_incl_aidxs, r_connecting_aidxs)
         rtemplate.append(rsma)
-
-    template = ".".join(ltemplate) + ">>" + ".".join(rtemplate)
-
-
-    canonical_template = canonicalize_template(template)
+    
+    canonical_template = canonicalize_template(ltemplate, rtemplate)
 
     return canonical_template
 
 
-def canonicalize_template(template: str) -> str:
-    lsma, rsma = [side.split(".") for side in template.split(">>")]
-    lmols = [Chem.MolFromSmarts(s) for s in lsma]
-    rmols = [Chem.MolFromSmarts(s) for s in rsma]
+def canonicalize_template(ltemplate: list[str], rtemplate :list[str]) -> str:
+    lmols = [Chem.MolFromSmarts(s) for s in ltemplate]
+    rmols = [Chem.MolFromSmarts(s) for s in rtemplate]
 
     # Remove atom map numbers
     for mol in lmols + rmols:
         for atom in mol.GetAtoms():
             atom.SetAtomMapNum(0)
     
-    de_am_lsma = [Chem.MolToSmarts(mol) for mol in lmols]
-    de_am_rsma = [Chem.MolToSmarts(mol) for mol in rmols]
-    lsrt = sorted(range(len(lsma)), key=lambda x: de_am_lsma[x]) # Sort by de-atom-mapped SMARTS
-    rsrt = sorted(range(len(rsma)), key=lambda x: de_am_rsma[x])
-    lsma = ".".join([lsma[i] for i in lsrt])
-    rsma = ".".join([rsma[i] for i in rsrt])
-    lmol = Chem.MolFromSmarts(lsma)
-    rmol = Chem.MolFromSmarts(rsma)
+    de_am_ltemplate = [Chem.MolToSmarts(mol) for mol in lmols]
+    de_am_rtemplate = [Chem.MolToSmarts(mol) for mol in rmols]
+
+    # Sort by de-atom-mapped SMARTS
+    lsrt = sorted(range(len(ltemplate)), key=lambda x: de_am_ltemplate[x])
+    rsrt = sorted(range(len(rtemplate)), key=lambda x: de_am_rtemplate[x])
+    ltemplate = [ltemplate[i] for i in lsrt]
+    rtemplate = [rtemplate[i] for i in rsrt]
+    de_am_ltemplate = [de_am_ltemplate[i] for i in lsrt]
+    de_am_rtemplate = [de_am_rtemplate[i] for i in rsrt]
+
+    # Sort disjoint intramolecular subgraphs canonically
+    for i, elt in enumerate(ltemplate):
+        if '.' in elt:
+            elt = elt.split('.')
+            intra_srt = sorted(range(len(elt)), key=lambda x: de_am_ltemplate[i].split('.')[x])
+            ltemplate[i] = ".".join([elt[j] for j in intra_srt])
+    
+    for i, elt in enumerate(rtemplate):
+        if '.' in elt:
+            elt = elt.split('.')
+            intra_srt = sorted(range(len(elt)), key=lambda x: de_am_rtemplate[i].split('.')[x])
+            rtemplate[i] = ".".join([elt[j] for j in intra_srt])
+
     
     # Reassign atom map numbers in canonical order
-    rhs_am_to_idx = {atom.GetAtomMapNum(): atom.GetIdx() for atom in rmol.GetAtoms()}
+    lmols = [Chem.MolFromSmarts(s) for s in ltemplate]
+    rmols = [Chem.MolFromSmarts(s) for s in rtemplate]
+    rhs_am_to_midx_aidx = {
+        atom.GetAtomMapNum(): (i, atom.GetIdx())
+        for i, mol in enumerate(rmols)
+        for atom in mol.GetAtoms()
+    }
     new_am = 1
-    for atom in lmol.GetAtoms():
-        old_am = atom.GetAtomMapNum()
-        rmol.GetAtomWithIdx(rhs_am_to_idx[old_am]).SetAtomMapNum(new_am)
-        atom.SetAtomMapNum(new_am)
-        new_am += 1
+    for lmol in lmols:
+        for atom in lmol.GetAtoms():
+            old_am = atom.GetAtomMapNum()
+            midx, aidx = rhs_am_to_midx_aidx[old_am]
+            rmols[midx].GetAtomWithIdx(aidx).SetAtomMapNum(new_am)
+            atom.SetAtomMapNum(new_am)
+            new_am += 1
 
-    canonicalized_template = Chem.MolToSmarts(lmol) + ">>" + Chem.MolToSmarts(rmol)
+    canonicalized_l_template = []
+    for lmol in lmols:
+        sma = Chem.MolToSmarts(lmol)
+        if '.' in sma:
+            sma = '(' + sma + ')' # Encapsulate disjoint molecules
+        canonicalized_l_template.append(sma)
+
+    canonicalized_r_template = []
+    for rmol in rmols:
+        sma = Chem.MolToSmarts(rmol)
+        if '.' in sma:
+            sma = '(' + sma + ')'
+        canonicalized_r_template.append(sma)
+
+    canonicalized_template = ".".join(canonicalized_l_template) + ">>" + ".".join(canonicalized_r_template)
     
     return canonicalized_template
 
@@ -118,12 +161,13 @@ if __name__ == '__main__':
     mm = pd.read_parquet(
     Path("/home/stef/cgr/data/raw") / "mapped_mech_labeled_reactions.parquet"
     )
-    test = mm.loc[mm['entry_id'] == 49]
-    rc = to_nested_lists(test['reaction_center'].iloc[0])
-    mech_atoms = to_nested_lists(test['mech_atoms'].iloc[0])
-    atoms_to_include = [chain(*elt) for elt in zip(rc[0], mech_atoms)]
-    am_smarts = test['am_smarts'].iloc[0]
-    template = extract_rule_template(am_smarts, atoms_to_include)
-    print(template)
+    # test = mm.loc[mm['entry_id'] == 49]
+    for _, test in mm.iterrows():
+        rc = to_nested_lists(test['reaction_center'])
+        mech_atoms = to_nested_lists(test['mech_atoms'])
+        atoms_to_include = [chain(*elt) for elt in zip(rc[0], mech_atoms)]
+        am_smarts = test['am_smarts']
+        template = extract_rule_template(am_smarts, atoms_to_include)
+        print(template)
     
     print()
