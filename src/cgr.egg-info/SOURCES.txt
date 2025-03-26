@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+src/cgr/__init__.py
+src/cgr/cheminfo.py
+src/cgr/inference.py
+src/cgr/template.py
+src/cgr.egg-info/PKG-INFO
+src/cgr.egg-info/SOURCES.txt
+src/cgr.egg-info/dependency_links.txt
+src/cgr.egg-info/requires.txt
+src/cgr.egg-info/top_level.txt
+tests/test_cheminfo.py

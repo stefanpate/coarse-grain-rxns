@@ -85,11 +85,6 @@ dependencies = [
     { name = "rdkit" },
 ]
 
-[package.dev-dependencies]
-dev = [
-    { name = "cgr" },
-]
-
 [package.metadata]
 requires-dist = [
     { name = "ergochemics", git = "https://github.com/stefanpate/ergochemics.git" },
@@ -106,7 +101,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "cgr", virtual = "." }]
+dev = []
 
 [[package]]
 name = "colorama"
