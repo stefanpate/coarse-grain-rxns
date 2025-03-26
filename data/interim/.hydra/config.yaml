@@ -6,3 +6,4 @@ filepaths:
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
 k: 3
+max_n: 50

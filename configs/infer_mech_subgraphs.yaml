@@ -1,7 +1,9 @@
 defaults:
   - filepaths: filepaths
+  - _self_
 
 k: 3
+max_n: 50
 
 hydra:
   run:
