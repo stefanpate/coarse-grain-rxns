@@ -2,7 +2,7 @@ import networkx as nx
 from rdkit import Chem
 from pydantic import BaseModel, BeforeValidator, PlainSerializer, ConfigDict
 import numpy as np
-from typing import Iterable, Callable, Annotated
+from typing import Iterable, Callable, Annotated, Any
 from itertools import accumulate, chain, permutations, product
 from functools import reduce
 
@@ -17,9 +17,21 @@ def ndarray_serializer(v):
 NumpyArray = Annotated[np.ndarray, BeforeValidator(ndarray_before_validator), PlainSerializer(ndarray_serializer, return_type=list)]
 
 class ReactantGraph(BaseModel):
-    V: NumpyArray # nodes x features
-    A: NumpyArray # nodes x nodes
-    aidxs: NumpyArray # atom indices, argsorted by features
+    '''
+    Encodes a set of reactants as a graph
+
+    Attributes
+    ----------
+    V: NumpyArray
+        Node (atom) feature matrix (# nodes x # features)
+    A: NumpyArray
+        Adjacency matrix (weighted w/ bond order)
+    aidxs: NumpyArray
+        Atom indices, sorted by node feature vectors
+    '''
+    V: NumpyArray
+    A: NumpyArray
+    aidxs: NumpyArray
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
@@ -45,9 +57,7 @@ class ReactantGraph(BaseModel):
         Returns
         -------
         ReactantGraph
-            A ReactantGraph object containing the adjacency matrix and feature vector.
-        
-        
+            A ReactantGraph object containing the adjacency matrix and feature vector.       
         '''
         sep_mols = [Chem.MolFromSmiles(s) for s in rcts.split('.')]
         aidx_offset = accumulate([mol.GetNumAtoms() for mol in sep_mols])
@@ -67,14 +77,31 @@ class ReactantGraph(BaseModel):
         A = Chem.GetAdjacencyMatrix(rcts, useBO=True)
         V = featurizer(rcts, rc)
 
-        # Sort everything by feature nodes
-        aidxs = np.lexsort(V.T)
-        V = V[aidxs]
-        A = A[aidxs, :][:, aidxs]
+        return cls(V=V, A=A, aidxs=np.arange(V.shape[0]))
 
-        return cls(V=V, A=A, aidxs=aidxs)
+    def model_post_init(self, __context: Any) -> None:
+        # Sort everything by feature nodes
+        srt_aidxs = np.lexsort(self.V.T)
+        self.V = self.V[srt_aidxs]
+        self.A = self.A[srt_aidxs, :][:, srt_aidxs]
+        self.aidxs = srt_aidxs
 
     def subgraph(self, node_idxs: Iterable[int]) -> 'ReactantGraph':
+        '''
+        Returns subgraph of the reactant graph specified by the node indices provided.
+
+        Args
+        ----
+        node_idxs: Iterable[int]
+            Indices of nodes to include in the subgraph
+        Returns
+        -------
+        : ReactantGraph
+            The subgraph
+        '''
+        if type(node_idxs) is tuple:
+            node_idxs = list(node_idxs)
+        
         V = self.V[node_idxs]
         A = self.A[node_idxs, :][:, node_idxs]
         aidxs = self.aidxs[node_idxs]
@@ -107,24 +134,28 @@ class ReactantGraph(BaseModel):
         this_n = self.V.shape[0]
         other_n = other.V.shape[0]
         
-        if this_n != other_n:
+        if this_n != other_n: # Check node cardinality
             return False
-        elif not np.array_equal(self.V, other.V):
+        elif not np.array_equal(self.V, other.V): # Check equivalence of sorted nodes
             return False
-        elif np.array_equal(self.A, other.A):
+        elif np.array_equal(self.A, other.A): # Sorted nodes equivalent, check topology
             return True
-        else:
-            unique, idx = np.unique(self.V, axis=0, return_index=True)
-            idx = list(idx) + [len(idx) - 1]
+        else: # Check all permutations of degenerate nodes
+            _, idx = np.unique(self.V, axis=0, return_index=True)
+            idx = sorted(idx.tolist())
+
+            if idx[-1] != this_n - 1:
+                idx += [this_n]
 
             to_prod = []
             unique_streak = []
             for i in range(len(idx) - 1):
                 if idx[i] + 1 == idx[i + 1]:
                     unique_streak.append(idx[i])
-                else:
+                else:    
                     to_prod.append([unique_streak])
-                    to_prod.append(list(permutations(range(idx[i] + 1, idx[i + 1]))))
+                    to_prod.append(list(permutations(range(idx[i], idx[i + 1]))))
+                    unique_streak = []
 
             perms = product(*to_prod)
             perms = [list(chain(*p)) for p in perms]
@@ -136,6 +167,14 @@ class ReactantGraph(BaseModel):
         return False
 
 def mol_featurizer(mol: Chem.Mol, rc: Iterable[int] = []):
+    '''
+    Args
+    ----
+    mol: Chem.Mol
+        RDKit molecule object
+    rc: Iterable[int] (optional)
+        List of atom indices corresponding to reaction center
+    '''
     fts = []
     for atom in mol.GetAtoms():
         aidx = atom.GetIdx()
@@ -151,7 +190,7 @@ def mol_featurizer(mol: Chem.Mol, rc: Iterable[int] = []):
 
 def atom_featurizer(atom: Chem.Atom):
     atomic_invariants = [
-        atom.GetDegree(), # Heavy atoms only
+        atom.GetDegree(), # # heavy atom neighbors
         atom.GetTotalValence() - atom.GetTotalNumHs(),
         atom.GetAtomicNum(),
         atom.GetFormalCharge(),
@@ -177,4 +216,35 @@ if __name__ == '__main__':
     rc = [(9, 7, 5)]
     rg = ReactantGraph.from_smiles(smi, mol_featurizer, rc)
     print(rg)
-    print(rg.k_hop_subgraphs(3))
+    subgaph_idxs = rg.k_hop_subgraphs(3)
+    for si in subgaph_idxs:
+        print(rg.subgraph(si))
+
+    smi2 = "OC(=O)C(N)CCC(=O)O"
+    rc2 = [(0, 1, 3)]
+    rg2 = ReactantGraph.from_smiles(smi2, mol_featurizer, rc2)
+    print(rg == rg2)
+
+    V = np.array(
+        [
+            [1, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0]
+        ]
+    )
+    A = np.eye(7)
+    A[2, 3] = 1
+    A[0, 1] = 1
+    P1 = np.eye(7)[[0, 1, 3, 2, 4, 6, 5]]
+    P2 = np.eye(7)[[1, 0, 2, 3, 4, 5, 6]]
+
+    rg0 = ReactantGraph(V=V, A=A, aidxs=np.arange(7))
+    rg1 = ReactantGraph(V=V, A=P1 @ A @ P1, aidxs=np.arange(7))
+    rg2 = ReactantGraph(V=V, A=P2 @ A @ P2, aidxs=np.arange(7))
+
+    assert rg0 == rg1
+    assert rg0 != rg2
