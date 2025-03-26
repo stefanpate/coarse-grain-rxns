@@ -210,6 +210,18 @@ def _get_non_aromatic_c_ox_state(atom: Chem.Atom):
             if bond.GetOtherAtom(atom).GetAtomicNum() != 6
         ]
         return sum(d_oxes)
+    
+def amphoteros_ox_state(atom: Chem.Atom):
+    '''
+    https://amphoteros.com/2013/10/22/counting-oxidation-states/
+    '''
+    if atom.GetAtomicNum() != 6:
+        return -1.0
+    else:
+        return sum(
+            (bond.GetBondTypeAsDouble() - 1.0) + float(bond.GetOtherAtom(atom).GetAtomicNum() != 6)
+            for bond in atom.GetBonds()
+        )
 
 if __name__ == '__main__':
     smi = 'OC(=O)CCC(N)C(=O)O'

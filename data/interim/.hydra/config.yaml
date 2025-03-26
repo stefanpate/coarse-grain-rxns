@@ -1,0 +1,8 @@
+filepaths:
+  root: /home/stef/cgr
+  data: ${.root}/data
+  artifacts: ${.root}/artifacts
+  raw_data: ${.data}/raw
+  processed_data: ${.data}/processed
+  interim_data: ${.data}/interim
+k: 3
