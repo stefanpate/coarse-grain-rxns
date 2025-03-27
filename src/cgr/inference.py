@@ -5,6 +5,7 @@ import numpy as np
 from typing import Iterable, Callable, Annotated, Any
 from itertools import accumulate, chain, permutations, product
 from functools import reduce
+from pathlib import Path
 
 def ndarray_before_validator(v):
     if not isinstance(v, np.ndarray):
@@ -78,6 +79,36 @@ class ReactantGraph(BaseModel):
         V = featurizer(rcts, rc)
 
         return cls(V=V, A=A, aidxs=np.arange(V.shape[0]))
+    
+    @classmethod
+    def load(cls, filepath: Path | str):
+        '''
+        Load a ReactantGraph object from a file.
+
+        Args
+        ----
+        filepath: Path | str
+            Path to file containing ReactantGraph ndarrays
+            storead as .npz file
+
+        Returns
+        -------
+        : ReactantGraph
+            The ReactantGraph object
+        '''
+        arrs = np.load(filepath)
+        return cls(V=arrs['V'], A=arrs['A'], aidxs=arrs['aidxs'])
+    
+    def save(self, filepath: Path | str):
+        '''
+        Save the ReactantGraph object to a .npz file.
+
+        Args
+        ----
+        filepath: Path | str
+            Path to save ReactantGraph object to
+        '''
+        np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs)
 
     def model_post_init(self, __context: Any) -> None:
         # Sort everything by feature nodes

@@ -4,6 +4,45 @@ from cgr.inference import ReactantGraph, mol_featurizer
 import json
 from pathlib import Path
 import numpy as np
+import pandas as pd
+from typing import Iterable
+from itertools import accumulate
+
+def rc_to_str(rc: Iterable[Iterable[Iterable[int]]]) -> str:
+    '''
+    Convert nested tuple representation of reaction center to string representation.
+    '''
+    if len(rc) == 1:
+        rc = [rc]
+        rc.append([])
+        rc[-1].append([])
+    return ">>".join(
+        [
+            ";".join(
+                [
+                    ",".join(
+                    [str(aidx) for aidx in mol]
+                    )
+                    for mol in side
+                ]
+            )
+            for side in rc
+        ]
+    )
+
+def rc_to_nest(rc: str) -> tuple[tuple[tuple[int]]]:
+    '''
+    Convert string representation of reaction center to nested tuple representation.
+    '''
+    return tuple(
+        tuple(
+            tuple(
+                int(aidx) for aidx in mol.split(",") if aidx != ""
+            )
+            for mol in side.split(";")
+        )
+        for side in rc.split(">>")
+    )
 
 @hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
 def main(cfg: DictConfig):
@@ -11,10 +50,16 @@ def main(cfg: DictConfig):
     # TODO: Iterate over all rxn subsets
     with open(Path(cfg.filepaths.raw_data) / "decarbs.json", 'r') as f:
         rxn_subset = json.load(f)
+    rule_id = 'decarb' # TODO: Make this a parameter
+    
+    subgraph_path = Path(f"{rule_id}/subgraphs")
+    if not subgraph_path.exists():
+        subgraph_path.mkdir(parents=True)
 
-    n_subgraphs = [{} for _ in range(cfg.max_n)]
+    n_subgraphs = [{} for _ in range(cfg.max_n)] # Subgraphs of size n at index n - 1
     unnormed_fts = []
-    for rid, elt in rxn_subset.items():
+    rxn_subset = list(rxn_subset.items())
+    for rid, elt in rxn_subset:
         rxn_fts = [set() for _ in range(cfg.max_n)]
         rcts = elt["smarts"].split(">>")[0]
         rc = elt["reaction_center"]
@@ -43,17 +88,30 @@ def main(cfg: DictConfig):
 
         unnormed_fts.append(rxn_fts)
 
-    # Construct binary feature matrix
-    f = sum(len(elt) for elt in n_subgraphs)
+    # Construct & save binary feature matrix & examples df
+    nfs = [0] + list(accumulate([len(elt) for elt in n_subgraphs]))
+    f = nfs[-1]
     n = len(unnormed_fts)
     bfm = np.zeros(shape=(n, f)) # Binary feature matrix
+    tmp = []
     for i, rxn_fts in enumerate(unnormed_fts):
-        for j, jfts in enumerate(rxn_fts):
-            jfts = np.array(list(jfts), dtype=int) + j
-            bfm[i, jfts] = 1
+        for j, (nf, n_fts) in enumerate(list(zip(nfs, rxn_fts))):
+            n_fts = list(n_fts)
+            col_idx = np.array(n_fts, dtype=int) + nf
+            bfm[i, col_idx] = 1
 
-# TODO: Decide on output format of this script
-    np.save(Path(cfg.filepaths.interim_data) / "decarb_bfm.npy", bfm)
+            for si, k in zip(col_idx, n_fts):
+                tmp.append([si, rxn_subset[i][0], rxn_subset[i][1]["smarts"], n_subgraphs[j][k].aidxs, rc_to_str(rxn_subset[i][1]["reaction_center"])])
+    
+    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "sidxs", "reaction_center"])
+    df.to_parquet(f"{rule_id}/subgraph_examples.parquet")
+    np.save(f"{rule_id}/decarb_bfm.npy", bfm)
+
+    # Save subgraphs
+    for i, s in enumerate(n_subgraphs):
+        for j, sg in s.items():
+            sg.save(subgraph_path / f"{rule_id}_{i + j}.npz")
+
 
 if __name__ == '__main__':
     main()
