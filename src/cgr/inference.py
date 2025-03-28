@@ -112,10 +112,10 @@ class ReactantGraph(BaseModel):
 
     def model_post_init(self, __context: Any) -> None:
         # Sort everything by feature nodes
-        srt_aidxs = np.lexsort(self.V.T)
-        self.V = self.V[srt_aidxs]
-        self.A = self.A[srt_aidxs, :][:, srt_aidxs]
-        self.aidxs = srt_aidxs
+        srt_nidxs = np.lexsort(self.V.T) # Sorted node idxs
+        self.V = self.V[srt_nidxs]
+        self.A = self.A[srt_nidxs, :][:, srt_nidxs]
+        self.aidxs = self.aidxs[srt_nidxs]
 
     def subgraph(self, node_idxs: Iterable[int]) -> 'ReactantGraph':
         '''

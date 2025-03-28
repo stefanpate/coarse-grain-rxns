@@ -60,7 +60,7 @@ def main(cfg: DictConfig):
     unnormed_fts = []
     rxn_subset = list(rxn_subset.items())
     for rid, elt in rxn_subset:
-        rxn_fts = [set() for _ in range(cfg.max_n)]
+        rxn_fts = [{} for _ in range(cfg.max_n)]
         rcts = elt["smarts"].split(">>")[0]
         rc = elt["reaction_center"]
         rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc)
@@ -73,18 +73,18 @@ def main(cfg: DictConfig):
             nn = len(n_subgraphs[n])
             if nn == 0:
                 n_subgraphs[n][0] = subgraph
-                rxn_fts[n].add(0)
+                rxn_fts[n][0] = subgraph.aidxs
             else:
                 exists = False
                 for j, sj in n_subgraphs[n].items():
                     if subgraph == sj:
-                        rxn_fts[n].add(j)
+                        rxn_fts[n][j] = subgraph.aidxs
                         exists = True
                         break
 
                 if not exists:
                     n_subgraphs[n][nn] = subgraph
-                    rxn_fts[n].add(nn)
+                    rxn_fts[n][nn] = subgraph.aidxs
 
         unnormed_fts.append(rxn_fts)
 
@@ -93,15 +93,13 @@ def main(cfg: DictConfig):
     bfm = np.zeros(shape=(len(unnormed_fts), sidx_offsets[-1])) # Binary feature matrix
     tmp = []
     for i, rxn_fts in enumerate(unnormed_fts):
-        for j, (so, n_fts) in enumerate(list(zip(sidx_offsets, rxn_fts))):
-            n_fts = list(n_fts)
-            col_idx = np.array(n_fts, dtype=int) + so
-            bfm[i, col_idx] = 1
+        for so, n_fts in zip(sidx_offsets, rxn_fts):
+            for k, v in n_fts.items():
+                bfm[i, k + so] = 1
 
-            for si, k in zip(col_idx, n_fts):
-                tmp.append([si, rxn_subset[i][0], rxn_subset[i][1]["smarts"], n_subgraphs[j][k].aidxs, rc_to_str(rxn_subset[i][1]["reaction_center"])])
+                tmp.append([k + so, rxn_subset[i][0], rxn_subset[i][1]["smarts"], v.tolist(), rc_to_str(rxn_subset[i][1]["reaction_center"])])
     
-    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "sidxs", "reaction_center"])
+    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "sg_idxs", "reaction_center"])
     df.to_parquet(f"{rule_id}/subgraph_examples.parquet")
     np.save(f"{rule_id}/decarb_bfm.npy", bfm)
 
@@ -109,7 +107,6 @@ def main(cfg: DictConfig):
     for so, s in zip(sidx_offsets, n_subgraphs):
         for j, sg in s.items():
             sg.save(subgraph_path / f"{rule_id}_{so + j}.npz")
-
 
 if __name__ == '__main__':
     main()
