@@ -9,3 +9,4 @@ pandas>=2.2.3
 pyarrow>=19.0.1
 pydantic>=2.10.6
 rdkit>=2024.9.6
+scipy>=1.15.2

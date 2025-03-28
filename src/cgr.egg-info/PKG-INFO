@@ -15,3 +15,4 @@ Requires-Dist: pandas>=2.2.3
 Requires-Dist: pyarrow>=19.0.1
 Requires-Dist: pydantic>=2.10.6
 Requires-Dist: rdkit>=2024.9.6
+Requires-Dist: scipy>=1.15.2
