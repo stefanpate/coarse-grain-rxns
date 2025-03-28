@@ -1,0 +1,13 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+src_file: mapped_mech_labeled_reactions.parquet
+# TODO: add list of col keys e.g., include_atoms: mech_atoms
+# TODO: add list of source rxn info to include with templates e.g., entry_id, mechanism_id
+
+hydra:
+  run:
+    dir: ${filepaths.interim_data}
+  job:
+    chdir: True
