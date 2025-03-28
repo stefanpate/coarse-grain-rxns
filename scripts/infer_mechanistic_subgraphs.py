@@ -89,15 +89,13 @@ def main(cfg: DictConfig):
         unnormed_fts.append(rxn_fts)
 
     # Construct & save binary feature matrix & examples df
-    nfs = [0] + list(accumulate([len(elt) for elt in n_subgraphs]))
-    f = nfs[-1]
-    n = len(unnormed_fts)
-    bfm = np.zeros(shape=(n, f)) # Binary feature matrix
+    sidx_offsets = [0] + list(accumulate([len(elt) for elt in n_subgraphs])) # 
+    bfm = np.zeros(shape=(len(unnormed_fts), sidx_offsets[-1])) # Binary feature matrix
     tmp = []
     for i, rxn_fts in enumerate(unnormed_fts):
-        for j, (nf, n_fts) in enumerate(list(zip(nfs, rxn_fts))):
+        for j, (so, n_fts) in enumerate(list(zip(sidx_offsets, rxn_fts))):
             n_fts = list(n_fts)
-            col_idx = np.array(n_fts, dtype=int) + nf
+            col_idx = np.array(n_fts, dtype=int) + so
             bfm[i, col_idx] = 1
 
             for si, k in zip(col_idx, n_fts):
@@ -108,9 +106,9 @@ def main(cfg: DictConfig):
     np.save(f"{rule_id}/decarb_bfm.npy", bfm)
 
     # Save subgraphs
-    for i, s in enumerate(n_subgraphs):
+    for so, s in zip(sidx_offsets, n_subgraphs):
         for j, sg in s.items():
-            sg.save(subgraph_path / f"{rule_id}_{i + j}.npz")
+            sg.save(subgraph_path / f"{rule_id}_{so + j}.npz")
 
 
 if __name__ == '__main__':
