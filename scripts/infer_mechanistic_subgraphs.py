@@ -5,44 +5,8 @@ import json
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from typing import Iterable
 from itertools import accumulate
-
-def rc_to_str(rc: Iterable[Iterable[Iterable[int]]]) -> str:
-    '''
-    Convert nested tuple representation of reaction center to string representation.
-    '''
-    if len(rc) == 1:
-        rc = [rc]
-        rc.append([])
-        rc[-1].append([])
-    return ">>".join(
-        [
-            ";".join(
-                [
-                    ",".join(
-                    [str(aidx) for aidx in mol]
-                    )
-                    for mol in side
-                ]
-            )
-            for side in rc
-        ]
-    )
-
-def rc_to_nest(rc: str) -> tuple[tuple[tuple[int]]]:
-    '''
-    Convert string representation of reaction center to nested tuple representation.
-    '''
-    return tuple(
-        tuple(
-            tuple(
-                int(aidx) for aidx in mol.split(",") if aidx != ""
-            )
-            for mol in side.split(";")
-        )
-        for side in rc.split(">>")
-    )
+from ergochemics.mapping import rc_to_str
 
 @hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
 def main(cfg: DictConfig):
@@ -97,7 +61,7 @@ def main(cfg: DictConfig):
             for k, v in n_fts.items():
                 bfm[i, k + so] = 1
 
-                tmp.append([k + so, rxn_subset[i][0], rxn_subset[i][1]["smarts"], v.tolist(), rc_to_str(rxn_subset[i][1]["reaction_center"])])
+                tmp.append([k + so, rxn_subset[i][0], rxn_subset[i][1]["smarts"], v.tolist(), rc_to_str([rxn_subset[i][1]["reaction_center"], [[]]])])
     
     df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "sg_idxs", "reaction_center"])
     df.to_parquet(f"{rule_id}/subgraph_examples.parquet")

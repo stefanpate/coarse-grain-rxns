@@ -19,8 +19,8 @@ dependencies = [
     "scipy>=1.15.2",
 ]
 
-[tool.uv.sources]
-ergochemics = { git = "https://github.com/stefanpate/ergochemics.git" }
-
 [dependency-groups]
 dev = []
+
+[tool.uv.sources]
+ergochemics = { git = "https://github.com/stefanpate/ergochemics.git" }
