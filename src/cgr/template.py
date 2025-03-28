@@ -4,7 +4,22 @@ import networkx as nx
 from itertools import combinations, product
 import re
 
-def extract_rule_template(rxn: str, atoms_to_include: Iterable[Iterable[int]]) -> str:
+def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]]) -> str:
+    '''
+    Extracts a reaction template from a reaction string and a list of atoms to include.
+    
+    Args
+    ----
+    rxn : str
+        Atom-mapped reaction string
+    atoms_to_include : Iterable[Iterable[int]]
+        List of lists of atom indices to include in the template
+
+    Returns
+    -------
+    str
+        Reaction template (SMARTS)    
+    '''
     lhs, rhs = [[Chem.MolFromSmiles(s) for s in side.split('.')] for side in rxn.split('>>')]
     rhs = [[rmol, set(), set()] for rmol in rhs] # Initialize rhs
 
@@ -49,6 +64,22 @@ def extract_rule_template(rxn: str, atoms_to_include: Iterable[Iterable[int]]) -
 
 
 def canonicalize_template(ltemplate: list[str], rtemplate :list[str]) -> str:
+    '''
+    Canonicalizes the atom map numbers in the reaction template. Encapsulates disjoint molecules in parentheses.
+
+    Args
+    ----
+    ltemplate: list[str]
+        SMARTS strings for each reactant
+    rtemplate: list[str]
+        SMARTS strings for each product
+
+    Returns
+    -------
+    : str
+        Canonicalized reaction template
+    
+    '''
     lmols = [Chem.MolFromSmarts(s) for s in ltemplate]
     rmols = [Chem.MolFromSmarts(s) for s in rtemplate]
 
@@ -118,6 +149,26 @@ def canonicalize_template(ltemplate: list[str], rtemplate :list[str]) -> str:
     return canonicalized_template
 
 def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_idxs: set[int]) -> str:
+    '''
+    Returns SMARTS pattern for a molecule given the indices of atoms to include with identity
+    and the indices of atoms to include as anonymous / wildcard.
+
+    Args
+    ----
+    mol: Chem.Mol
+        Molecule
+    incl_aidxs: set[int]
+        Indices of atoms to include with identity
+    cxn_idxs: set[int]
+        Indices of atoms to include as wildcard. Through these,
+        the named atoms from disjoint components are connected by the
+        fewest number of hops
+
+    Returns
+    -------
+    : str
+        SMARTS pattern for the molecule
+    '''
     aidx_to_amn = {atom.GetIdx(): atom.GetAtomMapNum() for atom in mol.GetAtoms()} # Save aidx2amn
     for atom in mol.GetAtoms():
         atom.SetAtomMapNum(0) # Remove amns from mol
@@ -140,6 +191,22 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_idxs: set[int]) ->
     return sma
 
 def connect_ccs(G: nx.Graph, ccs: list[set[int]]) -> set[int]:
+    '''
+    Returns indices of the atoms required to connect disjoint components
+    along the shortest paths possible
+
+    Args
+    ----
+    G: nx.Graph
+        Graph representation of the molecule
+    ccs: list[set[int]]
+        List of connected components
+
+    Returns
+    -------
+    : set[int]
+        Indices of atoms required to connect disjoint components
+    '''
     paths = dict(nx.shortest_path(G))
     connecting_aidxs = []
     for cc_i, cc_j in combinations(ccs, 2):
@@ -167,7 +234,7 @@ if __name__ == '__main__':
         mech_atoms = to_nested_lists(test['mech_atoms'])
         atoms_to_include = [chain(*elt) for elt in zip(rc[0], mech_atoms)]
         am_smarts = test['am_smarts']
-        template = extract_rule_template(am_smarts, atoms_to_include)
+        template = extract_reaction_template(am_smarts, atoms_to_include)
         print(template)
     
     print()
