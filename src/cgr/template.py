@@ -110,7 +110,6 @@ def canonicalize_template(ltemplate: list[str], rtemplate :list[str]) -> str:
             elt = elt.split('.')
             intra_srt = sorted(range(len(elt)), key=lambda x: de_am_rtemplate[i].split('.')[x])
             rtemplate[i] = ".".join([elt[j] for j in intra_srt])
-
     
     # Reassign atom map numbers in canonical order
     lmols = [Chem.MolFromSmarts(s) for s in ltemplate]
@@ -146,48 +145,6 @@ def canonicalize_template(ltemplate: list[str], rtemplate :list[str]) -> str:
     canonicalized_template = ".".join(canonicalized_l_template) + ">>" + ".".join(canonicalized_r_template)
     
     return canonicalized_template
-
-# def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_idxs: set[int]) -> str:
-#     '''
-#     Returns SMARTS pattern for a molecule given the indices of atoms to include with identity
-#     and the indices of atoms to include as anonymous / wildcard.
-
-#     Args
-#     ----
-#     mol: Chem.Mol
-#         Molecule
-#     incl_aidxs: set[int]
-#         Indices of atoms to include with identity
-#     cxn_idxs: set[int]
-#         Indices of atoms to include as wildcard. Through these,
-#         the named atoms from disjoint components are connected by the
-#         fewest number of hops
-
-#     Returns
-#     -------
-#     : str
-#         SMARTS pattern for the molecule
-#     '''
-#     aidx_to_amn = {atom.GetIdx(): atom.GetAtomMapNum() for atom in mol.GetAtoms()} # Save aidx2amn
-#     for atom in mol.GetAtoms():
-#         atom.SetAtomMapNum(0) # Remove amns from mol
-
-#     mol = Chem.MolFromSmiles(Chem.MolToSmiles(mol)) # Remove H information
-
-#     for atom in mol.GetAtoms():
-#         atom.SetAtomMapNum(aidx_to_amn[atom.GetIdx()]) # Re-establish amns
-    
-#     for aidxs in cxn_idxs:
-#         mol.GetAtomWithIdx(aidxs).SetAtomicNum(0) # Mark wildcard atoms
-
-#     for bond in mol.GetBonds():
-#         if bond.GetBeginAtomIdx() in cxn_idxs or bond.GetEndAtomIdx() in cxn_idxs:
-#             bond.SetBondType(Chem.rdchem.BondType.ZERO) # Mark wildcard bonds
-    
-#     sma = Chem.MolFragmentToSmarts(mol, atomsToUse=incl_aidxs | cxn_idxs)
-#     sma = re.sub(r'\[#0H*\d*', '[*', sma) # Wildcard atoms
-
-#     return sma
 
 def connect_ccs(G: nx.Graph, ccs: list[set[int]]) -> set[int]:
     '''
@@ -253,26 +210,24 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -
             bond.SetBondType(Chem.rdchem.BondType.ZERO) # Mark wildcard bonds
     
     sma = Chem.MolFragmentToSmarts(mol, atomsToUse=incl_aidxs | cxn_aidxs)
-    sma = re.sub(r'\[#0H?\d*', '[*', sma) # Wildcard atoms
-    sma = f"[{sma}]" # Hack to force trailing aromatic bonds e.g., '-1', into bond pattern 
-
-    _sma = sma
-    sma = re.split(r'([\]\[\(\)][\d]?[-:.=#~][\d]?[-:.=#~]?[\]\[\(\)])', sma) # Split on bond patterns
+    sma = re.sub(r'\[#0H?\d?\+?', '[*', sma) # Wildcard atoms
+    sma = re.split(r'(\[#\d{1,3}H?\d?\+?:\d{1,3}\])', sma) # Split on atom patterns
+    
     tmp = []
     for i, elt in enumerate(sma):
         if elt == '':
             continue
         
-        if i % 2 == 0: # Atomic patts
+        if i % 2 == 1: # Atomic patts
             amn = int(elt.strip('[]').split(':')[-1]) # Hard brackets will return from atomic patt replacements
             repl = get_atom_smarts(mol.GetAtomWithIdx(amn_to_aidx[amn]))
             tmp.append(repl) # Replace with the SMARTS for the atom
         else: # Bond patts
-            tmp.append(elt.strip('[]')) # Hard brackets will return from atomic patt replacements
+            tmp.append(elt) # Hard brackets will return from atomic patt replacements
 
-    sma_ = "".join(tmp) # Join back together
+    sma = "".join(tmp) # Join back together
 
-    return sma_
+    return sma
 
 def get_atom_smarts(
     atom: Chem.Atom,
