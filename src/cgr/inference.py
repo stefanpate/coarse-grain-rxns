@@ -7,6 +7,80 @@ from itertools import accumulate, chain, permutations, product
 from functools import reduce
 from pathlib import Path
 
+class MolFeaturizer:
+    def __init__(self, atom_featurizer: Callable[[Chem.Atom], list[int | float]]):
+        self.atom_featurizer = atom_featurizer
+
+    def featurize(self, mol: Chem.Mol, rc: Iterable[int] = []):
+        '''
+        Args
+        ----
+        mol: Chem.Mol
+            RDKit molecule object
+        rc: Iterable[int] (optional)
+            List of atom indices corresponding to reaction center
+        '''
+        fts = []
+        for atom in mol.GetAtoms():
+            aidx = atom.GetIdx()
+            local_fts = self.atom_featurizer(atom)
+            spls = [
+                len(Chem.GetShortestPath(mol, aidx, rcidx)) - 1 if aidx != rcidx else 0
+                for rcidx in rc
+            ]
+            fts.append(local_fts + spls)
+
+        fts = np.array(fts)
+        return fts
+
+def atom_featurizer_v0(atom: Chem.Atom) -> list[int | float]:
+    atomic_invariants = [
+        atom.GetDegree(), # # heavy atom neighbors
+        atom.GetTotalValence() - atom.GetTotalNumHs(),
+        atom.GetAtomicNum(),
+        atom.GetFormalCharge(),
+        int(atom.IsInRing()),
+        int(atom.GetIsAromatic()),
+        _get_non_aromatic_c_ox_state(atom)
+    ]
+
+    return atomic_invariants
+
+def atom_featurizer_v1(atom: Chem.Atom) -> list[int | float]:
+    atomic_invariants = [
+        atom.GetDegree(), # # heavy atom neighbors
+        atom.GetTotalValence() - atom.GetTotalNumHs(),
+        atom.GetAtomicNum(),
+        atom.GetFormalCharge(),
+        int(atom.IsInRing()),
+        int(atom.GetIsAromatic()),
+        amphoteros_ox_state(atom)
+    ]
+
+    return atomic_invariants
+
+def _get_non_aromatic_c_ox_state(atom: Chem.Atom) -> float:
+    if atom.GetAtomicNum() != 6 or atom.GetIsAromatic(): # Non-aromatic-C get constant outside range
+        return -1.0
+    else: # Count heteroatom neighbors, scl by bond degree, sum
+        d_oxes = [
+            bond.GetBondTypeAsDouble() for bond in atom.GetBonds()
+            if bond.GetOtherAtom(atom).GetAtomicNum() != 6
+        ]
+        return sum(d_oxes)
+    
+def amphoteros_ox_state(atom: Chem.Atom) -> float:
+    '''
+    https://amphoteros.com/2013/10/22/counting-oxidation-states/
+    '''
+    if atom.GetAtomicNum() != 6:
+        return -1.0
+    else:
+        return sum(
+            (bond.GetBondTypeAsDouble() - 1.0) + float(bond.GetOtherAtom(atom).GetAtomicNum() != 6)
+            for bond in atom.GetBonds()
+        )
+
 def ndarray_before_validator(v):
     if not isinstance(v, np.ndarray):
         raise TypeError(f"Expected numpy array, got {type(v)} for value {v}")
@@ -36,7 +110,7 @@ class ReactantGraph(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
-    def from_smiles(cls, rcts: str, featurizer: Callable[[Chem.Mol, Iterable[int]], np.ndarray], rc: Iterable[Iterable[int]] = []):
+    def from_smiles(cls, rcts: str, featurizer: MolFeaturizer, rc: Iterable[Iterable[int]] = []):
         '''
         Create a ReactantGraph object from a SMILES string of reactants.
         
@@ -76,7 +150,7 @@ class ReactantGraph(BaseModel):
         rc = tuple(chain(*rc))
         rcts = reduce(Chem.CombineMols, sep_mols)
         A = Chem.GetAdjacencyMatrix(rcts, useBO=True)
-        V = featurizer(rcts, rc)
+        V = featurizer.featurize(rcts, rc)
 
         return cls(V=V, A=A, aidxs=np.arange(V.shape[0]))
     
@@ -196,63 +270,6 @@ class ReactantGraph(BaseModel):
                     return True
         
         return False
-
-def mol_featurizer(mol: Chem.Mol, rc: Iterable[int] = []):
-    '''
-    Args
-    ----
-    mol: Chem.Mol
-        RDKit molecule object
-    rc: Iterable[int] (optional)
-        List of atom indices corresponding to reaction center
-    '''
-    fts = []
-    for atom in mol.GetAtoms():
-        aidx = atom.GetIdx()
-        local_fts = atom_featurizer(atom)
-        spls = [
-            len(Chem.GetShortestPath(mol, aidx, rcidx)) - 1 if aidx != rcidx else 0
-            for rcidx in rc
-        ]
-        fts.append(local_fts + spls)
-
-    fts = np.array(fts)
-    return fts
-
-def atom_featurizer(atom: Chem.Atom):
-    atomic_invariants = [
-        atom.GetDegree(), # # heavy atom neighbors
-        atom.GetTotalValence() - atom.GetTotalNumHs(),
-        atom.GetAtomicNum(),
-        atom.GetFormalCharge(),
-        int(atom.IsInRing()),
-        int(atom.GetIsAromatic()),
-        _get_non_aromatic_c_ox_state(atom)
-    ]
-
-    return atomic_invariants
-
-def _get_non_aromatic_c_ox_state(atom: Chem.Atom):
-    if atom.GetAtomicNum() != 6 or atom.GetIsAromatic(): # Non-aromatic-C get constant outside range
-        return -1.0
-    else: # Count heteroatom neighbors, scl by bond degree, sum
-        d_oxes = [
-            bond.GetBondTypeAsDouble() for bond in atom.GetBonds()
-            if bond.GetOtherAtom(atom).GetAtomicNum() != 6
-        ]
-        return sum(d_oxes)
-    
-def amphoteros_ox_state(atom: Chem.Atom):
-    '''
-    https://amphoteros.com/2013/10/22/counting-oxidation-states/
-    '''
-    if atom.GetAtomicNum() != 6:
-        return -1.0
-    else:
-        return sum(
-            (bond.GetBondTypeAsDouble() - 1.0) + float(bond.GetOtherAtom(atom).GetAtomicNum() != 6)
-            for bond in atom.GetBonds()
-        )
 
 if __name__ == '__main__':
     smi = 'OC(=O)CCC(N)C(=O)O'
