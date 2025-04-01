@@ -122,9 +122,8 @@ class ReactantGraph(BaseModel):
         ----
         rcts: str
             SMILES string of reactants. Multiple reactants should be separated by '.'
-        featurizer: Callable
-            Function that takes an RDKit molecule and a list of atom indices
-            correpsonding to reaction center and returns a feature vector.
+        featurizer: MolFeaturizer
+            Instance of MolFeaturizer to use for featurizing the reactants
         rc: Iterable[Iterable[int]] (optional)
             List of lists of atom indices corresponding to reaction centers in each
             reactant
@@ -135,7 +134,7 @@ class ReactantGraph(BaseModel):
             A ReactantGraph object containing the adjacency matrix and feature vector.       
         '''
         sep_mols = [Chem.MolFromSmiles(s) for s in rcts.split('.')]
-        aidx_offset = accumulate([mol.GetNumAtoms() for mol in sep_mols])
+        aidx_offset = list(accumulate([mol.GetNumAtoms() for mol in sep_mols]))
 
         if type(rc) is not list:
             rc = list(rc)

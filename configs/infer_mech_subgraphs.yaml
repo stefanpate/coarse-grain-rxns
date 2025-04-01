@@ -4,6 +4,9 @@ defaults:
 
 k: 3
 max_n: 50
+rule_id: decarb
+src_file: decarbs.parquet
+input_path: ${filepaths.raw_data}/${src_file}
 
 hydra:
   run:

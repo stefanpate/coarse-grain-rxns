@@ -5,8 +5,7 @@ filepaths:
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
-k: 3
-max_n: 50
 rule_id: decarb
-src_file: decarbs.parquet
-input_path: ${filepaths.raw_data}/${src_file}
+subgraph_instances: subgraph_instances.parquet
+binary_feature_matrix: bfm.npy
+frequency_lb_scl: 10
