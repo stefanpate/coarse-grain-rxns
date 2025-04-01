@@ -1,35 +1,26 @@
 import hydra
 from omegaconf import DictConfig
-from cgr.inference import ReactantGraph, mol_featurizer
-import json
+from cgr.inference import ReactantGraph, MolFeaturizer, atom_featurizer_v0
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from itertools import accumulate
-from ergochemics.mapping import rc_to_str
+from ergochemics.mapping import rc_to_nest
 
 @hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
 def main(cfg: DictConfig):
     
-    # TODO: Iterate over all rxn subsets
-    with open(Path(cfg.filepaths.raw_data) / "decarbs.json", 'r') as f:
-        rxn_subset = json.load(f)
-    rule_id = 'decarb' # TODO: Make this a parameter
+    rxn_subset = pd.read_parquet(Path(cfg.input_path)) # TODO: cfg.rule_id -> actual rule_id, subselect rxn_subset from src file. May need to reset index?
+    mol_featurizer = MolFeaturizer(atom_featurizer_v0)
     
-    subgraph_path = Path(f"{rule_id}/subgraphs")
-    if not subgraph_path.exists():
-        subgraph_path.mkdir(parents=True)
-
     n_subgraphs = [{} for _ in range(cfg.max_n)] # Subgraphs of size n at index n - 1
     unnormed_fts = []
-    rxn_subset = list(rxn_subset.items())
-    for rid, elt in rxn_subset:
+    for _, elt in rxn_subset.iterrows():
         rxn_fts = [{} for _ in range(cfg.max_n)]
         rcts = elt["smarts"].split(">>")[0]
-        rc = elt["reaction_center"]
+        rc = rc_to_nest(elt["reaction_center"])[0]
         rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc)
         subgraph_idxs = rg.k_hop_subgraphs(cfg.k)
-
 
         for sidxs in subgraph_idxs:
             subgraph = rg.subgraph(sidxs)
@@ -61,11 +52,20 @@ def main(cfg: DictConfig):
             for k, v in n_fts.items():
                 bfm[i, k + so] = 1
 
-                tmp.append([k + so, rxn_subset[i][0], rxn_subset[i][1]["smarts"], v.tolist(), rc_to_str([rxn_subset[i][1]["reaction_center"], [[]]])])
+                tmp.append(
+                    [
+                        k + so,
+                        rxn_subset.loc[i, "id"],
+                        rxn_subset.loc[i, "smarts"],
+                        rxn_subset.loc[i, "am_smarts"],
+                        rxn_subset.loc[i, "reaction_center"],
+                        v.tolist(),
+                    ]
+                )
     
-    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "sg_idxs", "reaction_center"])
-    df.to_parquet(f"{rule_id}/subgraph_instances.parquet")
-    np.save(f"{rule_id}/bfm.npy", bfm)
+    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "am_smarts", "reaction_center", "sg_idxs"])
+    df.to_parquet(f"{cfg.rule_id}/subgraph_instances.parquet")
+    np.save(f"{cfg.rule_id}/bfm.npy", bfm)
 
 if __name__ == '__main__':
     main()

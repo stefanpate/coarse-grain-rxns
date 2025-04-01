@@ -2,12 +2,13 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-rule_id: decarbs
+rule_id: decarb
 subgraph_instances: subgraph_instances.parquet
-bfm: bfm.npy
+binary_feature_matrix: bfm.npy
+frequency_lb_scl: 10
 
 hydra:
   run:
-    dir: ${filepaths.interim_data}
+    dir: ${filepaths.processed_data}
   job:
     chdir: True

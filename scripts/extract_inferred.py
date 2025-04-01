@@ -3,46 +3,49 @@ from omegaconf import DictConfig
 from cgr.template import extract_reaction_template
 from pathlib import Path
 import pandas as pd
+import numpy as np
 from ergochemics.mapping import rc_to_str, rc_to_nest
 from itertools import chain
 from collections import defaultdict
+from rdkit import Chem
 
 @hydra.main(version_base=None, config_path='../configs', config_name='extract_inferred')
 def main(cfg: DictConfig):
     '''
-    TODO:
-    - Read in bfm
-    - Read in subgraph instances
-    - Get subgraph freqs
-    - Iterate over reactions
-    - Get union of subgraphs > freq threshold
-    - Extract templates
-    - Save templates to CSV
+    TODO: maybe iterate over all rule_ids and save one single file?
     
     '''
 
-    to_nested_lists = lambda x: [[arr.tolist() for arr in side] for side in x]
-
-    mm = pd.read_parquet(
-    Path(cfg.filepaths.raw_data) / cfg.src_file
+    sg_insts = pd.read_parquet(
+        Path(cfg.filepaths.interim_data) / cfg.rule_id / cfg.subgraph_instances
     )
 
+    bfm = np.load(
+        Path(cfg.filepaths.interim_data) / cfg.rule_id / cfg.binary_feature_matrix,
+    )
+
+    p1 = bfm.sum(axis=0) / bfm.shape[0]
+    sg_insts['reaction_center'] = sg_insts['reaction_center'].apply(rc_to_nest)
+
+    lb = cfg.frequency_lb_scl / bfm.shape[0]
     templates = defaultdict(list)
-    for _, row in mm.iterrows():
-        rc = to_nested_lists(row['reaction_center'])
-        mech_atoms = to_nested_lists(row['mech_atoms'])
-        atoms_to_include = [chain(*elt) for elt in zip(rc[0], mech_atoms)]
-        am_smarts = row['am_smarts']
-        template = extract_reaction_template(am_smarts, atoms_to_include)
-        templates[template].append((row["entry_id"], row['mechanism_id']))
+    for name, gb in sg_insts.groupby(by="rxn_id"):
+        am_smarts = gb.iloc[0]['am_smarts']
+        reaction_center = gb.iloc[0]['reaction_center']
+        n_rcts = len(reaction_center[0])
+        
+        # TODO: need to rewrite below block once figure out one
+        # vs multiple mol representation
+        sg_idxs = [set() for _ in range(n_rcts)]
+        for _, row in gb.iterrows():
+            if p1[row['subgraph_id']] > lb:
+                sg_idxs.update(row['sg_idxs'].tolist())
 
-    tmp = []
-    for template, ems in templates.items():
-        entries, mechs = zip(*ems)
-        tmp.append((template, list(entries), list(mechs)))
+        template = extract_reaction_template(rxn=am_smarts, atoms_to_include=sg_idxs, reaction_center=reaction_center[0])
+        templates[template].append(name)
 
-    df = pd.DataFrame(tmp, columns=["template", "entry_id", "mechanism_id"])
-    df.to_csv(Path(cfg.filepaths.processed_data) / "mechanistic_reaction_templates.csv", sep=',')
+    df = pd.DataFrame(data=list(templates), columns=["template", "rxn_id"])
+    df.to_csv(Path(cfg.filepaths.processed_data) / "inferred_reaction_templates.csv", sep=',')
 
 if __name__ == '__main__':
     main()
