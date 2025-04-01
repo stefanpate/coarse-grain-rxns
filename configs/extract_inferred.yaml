@@ -1,0 +1,13 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+rule_id: decarbs
+subgraph_instances: subgraph_instances.parquet
+bfm: bfm.npy
+
+hydra:
+  run:
+    dir: ${filepaths.interim_data}
+  job:
+    chdir: True

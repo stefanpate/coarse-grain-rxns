@@ -113,12 +113,12 @@ hydra:
     - hydra.mode=RUN
     task: []
   job:
-    name: extract_reaction_templates
+    name: extract_mechanistic
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: extract_reaction_templates
+    config_name: extract_mechanistic
     env_set: {}
     env_copy: []
     config:

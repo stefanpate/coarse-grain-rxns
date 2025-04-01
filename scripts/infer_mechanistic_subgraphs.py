@@ -53,7 +53,7 @@ def main(cfg: DictConfig):
         unnormed_fts.append(rxn_fts)
 
     # Construct & save binary feature matrix & examples df
-    sidx_offsets = [0] + list(accumulate([len(elt) for elt in n_subgraphs])) # 
+    sidx_offsets = [0] + list(accumulate([len(elt) for elt in n_subgraphs]))
     bfm = np.zeros(shape=(len(unnormed_fts), sidx_offsets[-1])) # Binary feature matrix
     tmp = []
     for i, rxn_fts in enumerate(unnormed_fts):
@@ -64,13 +64,8 @@ def main(cfg: DictConfig):
                 tmp.append([k + so, rxn_subset[i][0], rxn_subset[i][1]["smarts"], v.tolist(), rc_to_str([rxn_subset[i][1]["reaction_center"], [[]]])])
     
     df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "sg_idxs", "reaction_center"])
-    df.to_parquet(f"{rule_id}/subgraph_examples.parquet")
-    np.save(f"{rule_id}/decarb_bfm.npy", bfm)
-
-    # Save subgraphs
-    for so, s in zip(sidx_offsets, n_subgraphs):
-        for j, sg in s.items():
-            sg.save(subgraph_path / f"{rule_id}_{so + j}.npz")
+    df.to_parquet(f"{rule_id}/subgraph_instances.parquet")
+    np.save(f"{rule_id}/bfm.npy", bfm)
 
 if __name__ == '__main__':
     main()
