@@ -1,10 +1,9 @@
 from rdkit import Chem
 from typing import Iterable
 import networkx as nx
-from itertools import combinations, product
 import re
 
-def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]]) -> str:
+def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]], reaction_center: Iterable[Iterable[int]]) -> str:
     '''
     Extracts a reaction template from a reaction string and a list of atoms to include.
     
@@ -13,7 +12,10 @@ def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]
     rxn : str
         Atom-mapped reaction string
     atoms_to_include : Iterable[Iterable[int]]
-        List of lists of atom indices to include in the template
+        List of lists of atom indices to include in the template. NOTE:
+        These should not include the reaction center
+    reaction_center : Iterable[Iterable[int]]
+        List of lists of atom indices that are part of the reaction center.
 
     Returns
     -------
@@ -24,22 +26,27 @@ def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]
     rhs = [[rmol, set(), set()] for rmol in rhs] # Initialize rhs
 
     ltemplate = []
-    for lmol, l_incl_aidxs in zip(lhs, atoms_to_include):
-        l_incl_aidxs = set(l_incl_aidxs)
+    for lmol, l_incl_aidxs, rc in zip(lhs, atoms_to_include, reaction_center):
+        rc = set(rc)
+        l_incl_aidxs = set(l_incl_aidxs) - rc # Ensure rc atoms not double counted in incl_aidxs
+        
         A = Chem.GetAdjacencyMatrix(lmol)
-        A_incl = A[tuple(l_incl_aidxs), :][:, tuple(l_incl_aidxs)]
-        G_incl = nx.from_numpy_array(A_incl)
-        ccs = list(nx.connected_components(G_incl))
+        A_incl_rc = A[tuple(l_incl_aidxs | rc), :][:, tuple(l_incl_aidxs | rc)] # Subgraph on incl | rc
+        A_rc = A[tuple(rc), :][:, tuple(rc)]
+        
+        G_incl_rc = nx.from_numpy_array(A_incl_rc)
+        G_rc = nx.from_numpy_array(A_rc)
+        rc_ccs = list(nx.connected_components(G_rc))
+        incl_rc_ccs = list(nx.connected_components(G_incl_rc))
 
-        if len(ccs) > 1:
-            G = nx.from_numpy_array(A)
-            l_connecting_aidxs = connect_ccs(G, ccs)
-            l_connecting_aidxs = l_connecting_aidxs - l_incl_aidxs
+        if len(incl_rc_ccs) > len(rc_ccs): # Not all incl atoms connected to rc atoms thru incl or rc atom paths
+            l_connecting_aidxs = connect_to_rc(lmol, rc, l_incl_aidxs)
             connecting_amns = [lmol.GetAtomWithIdx(idx).GetAtomMapNum() for idx in l_connecting_aidxs]
-        else:
+        else: # Already connected through rc and incl atoms
             l_connecting_aidxs = set()
             connecting_amns = []
         
+        l_incl_aidxs = l_incl_aidxs | rc # Now unify rc atoms and incl atoms
         incl_amns = [lmol.GetAtomWithIdx(idx).GetAtomMapNum() for idx in l_incl_aidxs]
 
         # Collect rhs aidxs corresponding to lhs aidxs
@@ -146,33 +153,17 @@ def canonicalize_template(ltemplate: list[str], rtemplate :list[str]) -> str:
     
     return canonicalized_template
 
-def connect_ccs(G: nx.Graph, ccs: list[set[int]]) -> set[int]:
-    '''
-    Returns indices of the atoms required to connect disjoint components
-    along the shortest paths possible
+def connect_to_rc(mol: Chem.Mol, rc: set[int], incl_aidxs: set[int]) -> set[int]:
+    shortest_paths = []
+    for aidx in incl_aidxs:
+        shortest_path = sorted(
+            [Chem.GetShortestPath(mol, aidx, rcidx) for rcidx in rc],
+            key = lambda x: len(x),
 
-    Args
-    ----
-    G: nx.Graph
-        Graph representation of the molecule
-    ccs: list[set[int]]
-        List of connected components
+        )[0]
+        shortest_paths += shortest_path
 
-    Returns
-    -------
-    : set[int]
-        Indices of atoms required to connect disjoint components
-    '''
-    paths = dict(nx.shortest_path(G))
-    connecting_aidxs = []
-    for cc_i, cc_j in combinations(ccs, 2):
-        ij_paths = [paths[i][j] for i, j in product(cc_i, cc_j)]
-        min_ij_path = ij_paths[
-            min(range(len(ij_paths)), key=lambda x: len(ij_paths[x]))
-        ]
-        connecting_aidxs.extend(min_ij_path)
-
-    return set(connecting_aidxs)
+    return set(shortest_paths) - incl_aidxs - rc
 
 def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -> str:
     '''
@@ -240,6 +231,37 @@ def get_atom_smarts(
     heteroneighbors: bool = True,
     atom_map_num: bool = True
     ) -> str:
+    '''
+    Returns SMARTS pattern representing the atom including the
+    properties specified by the parameters.
+
+    Args
+    ----
+    atom : Chem.Atom
+        The atom to get the SMARTS pattern for.
+    degree : bool
+        Whether to include the degree of the atom in the SMARTS pattern.
+    valence : bool
+        Whether to include the total valence of the atom in the SMARTS pattern.
+    hydgrogens : bool
+        Whether to include the number of hydrogen atoms attached to the atom in the SMARTS pattern.
+    aromatic : bool
+        Whether to use lowercase for aromatic atoms in the SMARTS pattern.
+    formal_charge : bool
+        Whether to include the formal charge of the atom in the SMARTS pattern.
+    in_ring : bool
+        Whether to include whether the atom is in a ring in the SMARTS pattern.
+    heteroneighbors : bool
+        Whether to include the number of heteroatom neighbors for carbon atoms in the SMARTS pattern.
+    atom_map_num : bool 
+        Whether to include the atom map number in the SMARTS pattern.
+
+    Returns
+    -------
+    : str
+        SMARTS pattern for the atom with specified properties. Properties
+        are separated by '&' logical operator  
+    '''
     symbol = atom.GetSymbol()
 
     if aromatic and atom.GetIsAromatic():
@@ -302,7 +324,8 @@ if __name__ == '__main__':
         mech_atoms = to_nested_lists(test['mech_atoms'])
         atoms_to_include = [chain(*elt) for elt in zip(rc[0], mech_atoms)]
         am_smarts = test['am_smarts']
-        template = extract_reaction_template(am_smarts, atoms_to_include)
+        template = extract_reaction_template(am_smarts, atoms_to_include, rc[0])
         print(template)
+        print('\n')
     
     print()
