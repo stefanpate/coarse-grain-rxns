@@ -103,10 +103,20 @@ class ReactantGraph(BaseModel):
         Adjacency matrix (weighted w/ bond order)
     aidxs: NumpyArray
         Atom indices, sorted by node feature vectors
+    sep_aidxs: NumpyArray | None
+        Atom indices for each separate reactant, in order they are entered in the SMILES string.
+    rct_idxs: NumpyArray | None
+        Indices of reactants for each atom in order they are entered in the SMILES string.
+    n_rcts: int | None
+        Number of reactants in the full graph. If the ReactantGraph instance is a subgraph 
+        of a parent graph, this wil be equal to the number of reactants in the parent graph.
     '''
     V: NumpyArray
     A: NumpyArray
     aidxs: NumpyArray
+    sep_aidxs: NumpyArray | None = None
+    rct_idxs: NumpyArray | None = None
+    n_rcts: int | None = None
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
@@ -150,8 +160,11 @@ class ReactantGraph(BaseModel):
         rcts = reduce(Chem.CombineMols, sep_mols)
         A = Chem.GetAdjacencyMatrix(rcts, useBO=True)
         V = featurizer.featurize(rcts, rc)
+        aidxs = np.arange(V.shape[0], dtype=np.int32)
+        sep_aidxs = np.concatenate([np.arange(mol.GetNumAtoms(), dtype=np.int32) for mol in sep_mols])
+        rct_idxs = np.concatenate([np.zeros(shape=(mol.GetNumAtoms()), dtype=np.int32) + i for i, mol in enumerate(sep_mols)])
 
-        return cls(V=V, A=A, aidxs=np.arange(V.shape[0]))
+        return cls(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=len(sep_mols))
     
     @classmethod
     def load(cls, filepath: Path | str):
@@ -170,7 +183,10 @@ class ReactantGraph(BaseModel):
             The ReactantGraph object
         '''
         arrs = np.load(filepath)
-        return cls(V=arrs['V'], A=arrs['A'], aidxs=arrs['aidxs'])
+        n_rcts = arrs.get('n_rcts')
+        if n_rcts is not None:
+            n_rcts = int(n_rcts[0])
+        return cls(V=arrs['V'], A=arrs['A'], aidxs=arrs['aidxs'], sep_aidxs=arrs.get('sep_aidxs'), rct_idxs=arrs.get('rct_idxs'), n_rcts=n_rcts)
     
     def save(self, filepath: Path | str):
         '''
@@ -181,7 +197,10 @@ class ReactantGraph(BaseModel):
         filepath: Path | str
             Path to save ReactantGraph object to
         '''
-        np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs)
+        if self.sep_aidxs is not None and self.rct_idxs is not None and self._n_rcts is not None:
+            np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs, sep_aidxs=self.sep_aidxs, rct_idxs=self.rct_idxs, n_rcts=np.array([self.n_rcts]))
+        else:
+            np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs)
 
     def model_post_init(self, __context: Any) -> None:
         # Sort everything by feature nodes
@@ -189,6 +208,8 @@ class ReactantGraph(BaseModel):
         self.V = self.V[srt_nidxs]
         self.A = self.A[srt_nidxs, :][:, srt_nidxs]
         self.aidxs = self.aidxs[srt_nidxs]
+        self.sep_aidxs = self.sep_aidxs[srt_nidxs] if self.sep_aidxs is not None else None
+        self.rct_idxs = self.rct_idxs[srt_nidxs] if self.rct_idxs is not None else None
 
     def subgraph(self, node_idxs: Iterable[int]) -> 'ReactantGraph':
         '''
@@ -209,8 +230,10 @@ class ReactantGraph(BaseModel):
         V = self.V[node_idxs]
         A = self.A[node_idxs, :][:, node_idxs]
         aidxs = self.aidxs[node_idxs]
+        sep_aidxs = self.sep_aidxs[node_idxs] if self.sep_aidxs is not None else None
+        rct_idxs = self.rct_idxs[node_idxs] if self.rct_idxs is not None else None
 
-        return ReactantGraph(V=V, A=A, aidxs=aidxs)
+        return ReactantGraph(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=self.n_rcts)
 
     def k_hop_subgraphs(self, k: int) -> set[tuple[int]]:
         '''
@@ -273,8 +296,10 @@ class ReactantGraph(BaseModel):
 if __name__ == '__main__':
     smi = 'OC(=O)CCC(N)C(=O)O'
     rc = [(9, 7, 5)]
+    mol_featurizer = MolFeaturizer(atom_featurizer_v1)
     rg = ReactantGraph.from_smiles(smi, mol_featurizer, rc)
     print(rg)
+    rg.n_rcts
     subgaph_idxs = rg.k_hop_subgraphs(3)
     for si in subgaph_idxs:
         print(rg.subgraph(si))

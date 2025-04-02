@@ -26,6 +26,7 @@ def main(cfg: DictConfig):
 
     p1 = bfm.sum(axis=0) / bfm.shape[0]
     sg_insts['reaction_center'] = sg_insts['reaction_center'].apply(rc_to_nest)
+    sg_insts['sep_sg_idxs'] = sg_insts['sep_sg_idxs'].apply(rc_to_nest)
 
     lb = cfg.frequency_lb_scl / bfm.shape[0]
     templates = defaultdict(list)
@@ -39,12 +40,13 @@ def main(cfg: DictConfig):
         sg_idxs = [set() for _ in range(n_rcts)]
         for _, row in gb.iterrows():
             if p1[row['subgraph_id']] > lb:
-                sg_idxs.update(row['sg_idxs'].tolist())
+                for i, elt in enumerate(row['sep_sg_idxs'][0]):
+                    sg_idxs[i].update(elt)
 
         template = extract_reaction_template(rxn=am_smarts, atoms_to_include=sg_idxs, reaction_center=reaction_center[0])
         templates[template].append(name)
 
-    df = pd.DataFrame(data=list(templates), columns=["template", "rxn_id"])
+    df = pd.DataFrame(data=list(templates.items()), columns=["template", "rxn_id"])
     df.to_csv(Path(cfg.filepaths.processed_data) / "inferred_reaction_templates.csv", sep=',')
 
 if __name__ == '__main__':

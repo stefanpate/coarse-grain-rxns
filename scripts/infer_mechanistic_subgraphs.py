@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from itertools import accumulate
-from ergochemics.mapping import rc_to_nest
+from ergochemics.mapping import rc_to_nest, rc_to_str
 
 @hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
 def main(cfg: DictConfig):
@@ -28,18 +28,18 @@ def main(cfg: DictConfig):
             nn = len(n_subgraphs[n])
             if nn == 0:
                 n_subgraphs[n][0] = subgraph
-                rxn_fts[n][0] = subgraph.aidxs
+                rxn_fts[n][0] = subgraph
             else:
                 exists = False
                 for j, sj in n_subgraphs[n].items():
                     if subgraph == sj:
-                        rxn_fts[n][j] = subgraph.aidxs
+                        rxn_fts[n][j] = subgraph
                         exists = True
                         break
 
                 if not exists:
                     n_subgraphs[n][nn] = subgraph
-                    rxn_fts[n][nn] = subgraph.aidxs
+                    rxn_fts[n][nn] = subgraph
 
         unnormed_fts.append(rxn_fts)
 
@@ -51,6 +51,7 @@ def main(cfg: DictConfig):
         for so, n_fts in zip(sidx_offsets, rxn_fts):
             for k, v in n_fts.items():
                 bfm[i, k + so] = 1
+                sep_sg_idxs = [v.sep_aidxs[v.rct_idxs == n].tolist() for n in range(v.n_rcts)]
 
                 tmp.append(
                     [
@@ -59,11 +60,13 @@ def main(cfg: DictConfig):
                         rxn_subset.loc[i, "smarts"],
                         rxn_subset.loc[i, "am_smarts"],
                         rxn_subset.loc[i, "reaction_center"],
-                        v.tolist(),
+                        v.aidxs.tolist(),
+                        rc_to_str(sep_sg_idxs),
                     ]
                 )
     
-    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "am_smarts", "reaction_center", "sg_idxs"])
+    # Outputs subgraph indices both for the multi-reactant graph (sg_idxs) and for separate single reactant graphs (sep_sg_idxs)
+    df = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "am_smarts", "reaction_center", "sg_idxs", "sep_sg_idxs"])
     df.to_parquet(f"{cfg.rule_id}/subgraph_instances.parquet")
     np.save(f"{cfg.rule_id}/bfm.npy", bfm)
 
