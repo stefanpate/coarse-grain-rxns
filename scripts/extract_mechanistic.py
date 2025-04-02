@@ -4,7 +4,6 @@ from cgr.template import extract_reaction_template
 from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_str, rc_to_nest
-from itertools import chain
 from collections import defaultdict
 
 @hydra.main(version_base=None, config_path='../configs', config_name='extract_mechanistic')
@@ -30,7 +29,7 @@ def main(cfg: DictConfig):
         tmp.append((template, list(entries), list(mechs)))
 
     df = pd.DataFrame(tmp, columns=["template", "entry_id", "mechanism_id"])
-    df.to_csv(Path(cfg.filepaths.processed_data) / "mechanistic_reaction_templates.csv", sep=',')
+    df.to_csv(Path(cfg.filepaths.processed_data) / "mechanistic_reaction_templates.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()

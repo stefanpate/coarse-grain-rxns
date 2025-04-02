@@ -47,7 +47,7 @@ def main(cfg: DictConfig):
         templates[template].append(name)
 
     df = pd.DataFrame(data=list(templates.items()), columns=["template", "rxn_id"])
-    df.to_csv(Path(cfg.filepaths.processed_data) / "inferred_reaction_templates.csv", sep=',')
+    df.to_csv(Path(cfg.filepaths.processed_data) / "inferred_reaction_templates.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()

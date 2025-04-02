@@ -2,6 +2,7 @@ from rdkit import Chem
 from typing import Iterable
 import networkx as nx
 import re
+from copy import deepcopy
 
 def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]], reaction_center: Iterable[Iterable[int]]) -> str:
     '''
@@ -188,6 +189,7 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -
     : str
         SMARTS pattern for the molecule
     '''
+    unanon_mol = deepcopy(mol)
     amn_to_aidx = {}
     for atom in mol.GetAtoms():
         if atom.GetAtomMapNum() > 0: # Atom mapping provided
@@ -213,7 +215,7 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -
         
         if i % 2 == 1: # Atomic patts
             amn = int(elt.strip('[]').split(':')[-1]) # Hard brackets will return from atomic patt replacements
-            repl = get_atom_smarts(mol.GetAtomWithIdx(amn_to_aidx[amn]))
+            repl = get_atom_smarts(unanon_mol.GetAtomWithIdx(amn_to_aidx[amn]))
             tmp.append(repl) # Replace with the SMARTS for the atom
         else: # Bond patts
             tmp.append(elt) # Hard brackets will return from atomic patt replacements
