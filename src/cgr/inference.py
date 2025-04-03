@@ -6,6 +6,8 @@ from typing import Iterable, Callable, Annotated, Any
 from itertools import accumulate, chain, permutations, product
 from functools import reduce
 from pathlib import Path
+from collections import defaultdict
+from copy import deepcopy
 
 class MolFeaturizer:
     def __init__(self, atom_featurizer: Callable[[Chem.Atom], list[int | float]]):
@@ -50,6 +52,20 @@ def atom_featurizer_v1(atom: Chem.Atom) -> list[int | float]:
     atomic_invariants = [
         atom.GetDegree(), # # heavy atom neighbors
         atom.GetTotalValence() - atom.GetTotalNumHs(),
+        atom.GetAtomicNum(),
+        atom.GetFormalCharge(),
+        int(atom.IsInRing()),
+        int(atom.GetIsAromatic()),
+        amphoteros_ox_state(atom)
+    ]
+
+    return atomic_invariants
+
+def atom_featurizer_v2(atom: Chem.Atom) -> list[int | float]:
+    atomic_invariants = [
+        atom.GetDegree(), # # heavy atom neighbors
+        atom.GetTotalValence(),
+        atom.GetTotalNumHs(),
         atom.GetAtomicNum(),
         atom.GetFormalCharge(),
         int(atom.IsInRing()),
@@ -292,6 +308,78 @@ class ReactantGraph(BaseModel):
                     return True
         
         return False
+    
+    def mcs(self, other: 'ReactantGraph') -> 'ReactantGraph':
+        """
+        Find the maximum common subgraph (MCS) between two ReactantGraph instances.
+        
+        Args
+        ----
+        other: ReactantGraph
+            The other ReactantGraph to compare with.
+
+        Returns
+        -------
+        ReactantGraph
+            A new ReactantGraph instance representing the MCS.
+        """
+        node_colors = {0: {}, 1: {}}
+        unique_nodes = []
+        for i, rg in enumerate([self, other]):
+            for nidx in range(rg.aidxs.shape[0]):
+                if len(unique_nodes) == 0:
+                    unique_nodes.append(rg.V[nidx])
+                    node_colors[i][nidx] = 0
+                else:
+                    found = False
+                    for j, elt in enumerate(unique_nodes):
+                        if np.array_equal(elt, rg.V[nidx]):
+                            node_colors[i][nidx] = j
+                            found = True
+                            break
+                    
+                    if not found:
+                        unique_nodes.append(rg.V[nidx])
+                        node_colors[i][nidx] = len(unique_nodes) - 1
+
+        color_edges = {0: defaultdict(list), 1: defaultdict(list)}
+        unique_edges = []
+        for i, rg in enumerate([self, other]):
+            for u, row in enumerate(rg.A):
+                for v in np.nonzero(row)[0]:
+                    v = int(v)
+                    if v < u:
+                        continue
+                    bond_triplet = (node_colors[i][u], float(rg.A[u, v]), node_colors[i][v])
+                    if len(unique_edges) == 0:
+                        unique_edges.append(bond_triplet)
+                        color_edges[i][0].append((u, v))
+                    else:
+                        found = False
+                        for j, elt in enumerate(unique_edges):
+                            if elt == bond_triplet:
+                                color_edges[i][j].append((u, v))
+                                found = True
+                                break
+                            
+                        if not found:
+                            unique_edges.append(bond_triplet)
+                            color_edges[i][len(unique_edges) - 1].append((u, v))
+
+        xor_edge_colors = color_edges[0].keys() ^ color_edges[1].keys()
+        prune_edges = [list(chain(*[color_edges[i][k] for k in xor_edge_colors if k in color_edges[i]])) for i in range(2)]
+
+        tmp = deepcopy(self.A)
+        tmp[*zip(*prune_edges[0])] = 0
+        pruned_G = nx.from_numpy_array(tmp)
+        tmp = deepcopy(other.A)
+        tmp[*zip(*prune_edges[1])] = 0
+        pruned_H = nx.from_numpy_array(tmp)
+        
+
+
+        print()
+
 
 if __name__ == '__main__':
     smi = 'OC(=O)CCC(N)C(=O)O'
@@ -299,7 +387,13 @@ if __name__ == '__main__':
     mol_featurizer = MolFeaturizer(atom_featurizer_v1)
     rg = ReactantGraph.from_smiles(smi, mol_featurizer, rc)
     print(rg)
-    rg.n_rcts
+
+    smi3 = 'CCC(N)C(=O)O'
+    rc3 = [(6, 4, 2)]
+    mol_featurizer = MolFeaturizer(atom_featurizer_v1)
+    rg3 = ReactantGraph.from_smiles(smi3, mol_featurizer, rc3)
+
+    rg.mcs(rg3)
     subgaph_idxs = rg.k_hop_subgraphs(3)
     for si in subgaph_idxs:
         print(rg.subgraph(si))
