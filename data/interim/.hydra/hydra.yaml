@@ -113,12 +113,12 @@ hydra:
     - hydra.mode=RUN
     task: []
   job:
-    name: extract_mechanistic
+    name: infer_mechanistic_subgraphs
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: extract_mechanistic
+    config_name: infer_mech_subgraphs
     env_set: {}
     env_copy: []
     config:

@@ -35,8 +35,6 @@ def main(cfg: DictConfig):
         reaction_center = gb.iloc[0]['reaction_center']
         n_rcts = len(reaction_center[0])
         
-        # TODO: need to rewrite below block once figure out one
-        # vs multiple mol representation
         sg_idxs = [set() for _ in range(n_rcts)]
         for _, row in gb.iterrows():
             if p1[row['subgraph_id']] > lb:

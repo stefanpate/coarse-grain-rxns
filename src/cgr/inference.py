@@ -227,21 +227,19 @@ class ReactantGraph(BaseModel):
         self.sep_aidxs = self.sep_aidxs[srt_nidxs] if self.sep_aidxs is not None else None
         self.rct_idxs = self.rct_idxs[srt_nidxs] if self.rct_idxs is not None else None
 
-    def subgraph(self, node_idxs: Iterable[int]) -> 'ReactantGraph':
+    def subgraph(self, node_idxs: list[int]) -> 'ReactantGraph':
         '''
         Returns subgraph of the reactant graph specified by the node indices provided.
 
         Args
         ----
-        node_idxs: Iterable[int]
+        node_idxs: list[int]
             Indices of nodes to include in the subgraph
         Returns
         -------
         : ReactantGraph
             The subgraph
         '''
-        if type(node_idxs) is tuple:
-            node_idxs = list(node_idxs)
         
         V = self.V[node_idxs]
         A = self.A[node_idxs, :][:, node_idxs]
