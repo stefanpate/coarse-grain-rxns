@@ -5,4 +5,11 @@ filepaths:
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
-src_file: mapped_mech_labeled_reactions.parquet
+k: 3
+max_n: 50
+rule_id: decarb
+src_file: decarbs.parquet
+input_path: ${filepaths.raw_data}/${src_file}
+frequency_lb_scl:
+- 10
+- 20
