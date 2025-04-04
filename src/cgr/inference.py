@@ -219,7 +219,7 @@ class ReactantGraph(BaseModel):
             np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs)
 
     def model_post_init(self, __context: Any) -> None:
-        # Sort everything by feature nodes
+        # Sort everything by node features
         srt_nidxs = np.lexsort(self.V.T) # Sorted node idxs
         self.V = self.V[srt_nidxs]
         self.A = self.A[srt_nidxs, :][:, srt_nidxs]
@@ -309,7 +309,7 @@ class ReactantGraph(BaseModel):
         
         return False
     
-    def mcs(self, other: 'ReactantGraph') -> 'ReactantGraph':
+    def mcs(self, other: 'ReactantGraph') -> list[tuple[int, int]]:
         """
         Find the maximum common subgraph (MCS) between two ReactantGraph instances.
         
@@ -320,67 +320,111 @@ class ReactantGraph(BaseModel):
 
         Returns
         -------
-        ReactantGraph
-            A new ReactantGraph instance representing the MCS.
+        mapping: list[tuple[int, int]]
+            A list of tuples where each tuple (i, j) indicates that node i in self
+            corresponds to node j in other. If no common subgraph is found, returns an empty list.
         """
-        node_colors = {0: {}, 1: {}}
+        node_colors = ({}, {})
         unique_nodes = []
         for i, rg in enumerate([self, other]):
             for nidx in range(rg.aidxs.shape[0]):
                 if len(unique_nodes) == 0:
                     unique_nodes.append(rg.V[nidx])
-                    node_colors[i][nidx] = 0
+                    node_colors[i][nidx] = [0]
                 else:
                     found = False
                     for j, elt in enumerate(unique_nodes):
                         if np.array_equal(elt, rg.V[nidx]):
-                            node_colors[i][nidx] = j
+                            node_colors[i][nidx] = [j]
                             found = True
                             break
                     
                     if not found:
                         unique_nodes.append(rg.V[nidx])
-                        node_colors[i][nidx] = len(unique_nodes) - 1
+                        node_colors[i][nidx] = [len(unique_nodes) - 1]
 
-        color_edges = {0: defaultdict(list), 1: defaultdict(list)}
-        unique_edges = []
-        for i, rg in enumerate([self, other]):
-            for u, row in enumerate(rg.A):
-                for v in np.nonzero(row)[0]:
-                    v = int(v)
-                    if v < u:
-                        continue
-                    bond_triplet = (node_colors[i][u], float(rg.A[u, v]), node_colors[i][v])
-                    if len(unique_edges) == 0:
-                        unique_edges.append(bond_triplet)
-                        color_edges[i][0].append((u, v))
-                    else:
-                        found = False
-                        for j, elt in enumerate(unique_edges):
-                            if elt == bond_triplet:
-                                color_edges[i][j].append((u, v))
-                                found = True
-                                break
-                            
-                        if not found:
-                            unique_edges.append(bond_triplet)
-                            color_edges[i][len(unique_edges) - 1].append((u, v))
-
-        xor_edge_colors = color_edges[0].keys() ^ color_edges[1].keys()
-        prune_edges = [list(chain(*[color_edges[i][k] for k in xor_edge_colors if k in color_edges[i]])) for i in range(2)]
-
-        tmp = deepcopy(self.A)
-        tmp[*zip(*prune_edges[0])] = 0
-        pruned_G = nx.from_numpy_array(tmp)
-        tmp = deepcopy(other.A)
-        tmp[*zip(*prune_edges[1])] = 0
-        pruned_H = nx.from_numpy_array(tmp)
+        # Convert aromatic bonds to integer
+        A_int = np.where(self.A == 1.5, 4, self.A).astype(np.int16)
+        other_A_int = np.where(other.A == 1.5, 4, other.A).astype(np.int16)
         
+        return mcsplit(A_G=A_int, A_H=other_A_int, node_labels=node_colors)
 
+def mcsplit(A_G: np.ndarray, A_H: np.ndarray, node_labels: tuple[dict[int, list[int]], dict[int, list[int]]] = tuple(), mapping: set[tuple[int]] = set()) -> list[tuple[int, int]]:
+    '''
+    Implements McSplit algorithm for finding the maximum common subgraph (MCS) between two graphs.
+    Works for undirected graphs with integer weighted adjacency matrices. Graph may have labeled nodes.
 
-        print()
+    Args
+    ----
+    A_G: np.ndarray
+        Adjacency matrix of the first graph (G).
+    A_H: np.ndarray
+        Adjacency matrix of the second graph (H).
+    node_labels: tuple[dict[int, list[int]], dict[int, list[int]]] (Optional)
+        A tuple of two dictionaries where keys are node indices and values are lists of labels for each node.
+    mapping: set[tuple[int]] (Optional)
+        A set of tuples where each tuple (i, j) indicates that node i in the first graph
+        corresponds to node j in the second graph. This is used to keep track of already found mappings.
+    Returns
+    -------
+    mapping: set[tuple[int]]
+        A set of tuples where each tuple (i, j) indicates that node i in the first graph
+        corresponds to node j in the second graph. This is the maximum common subgraph found.
+    
+    Notes
+    -----
+    https://doi.org/10.24963/ijcai.2017/99
+    
+    '''
+    # If no node labels provided, initialize them
+    if len(node_labels) == 0:
+        node_labels = ({i: [0] for i in range(A_G.shape[0])}, {i: [0] for i in range(A_H.shape[0])})
+    
+    matches = _get_matching_node_pairs(node_labels)
+    matches -= mapping # Remove pairs already added to the mapping
+    if not matches:
+        return mapping
+    
+    for pair in matches:
+        best_mapping = mapping.union(set([pair])) # Update with current pair
 
+        # Update node labels w/ neighbor info wrt current pair
+        new_node_labels = ({}, {})
+        for i, A in enumerate((A_G, A_H)):
+            for j in range(A.shape[0]):
+                new_node_labels[i][j] = node_labels[i][j] + [int(A[pair[i], j])]
 
+        new_mapping = mcsplit(A_G, A_H, new_node_labels, best_mapping)
+
+        if len(new_mapping) > len(best_mapping):
+            best_mapping = new_mapping
+
+    return best_mapping
+
+def _get_matching_node_pairs(node_labels: tuple[dict[int, int], dict[int, int]]) -> list[tuple[int, int]]:
+    """
+    Helper function to find matching node pairs between two node label dictionaries
+    corresponding to two graphs.
+    
+    Args
+    ----
+    node_labels: tuple[dict[int, int], dict[int, int]]
+        A tuple of two dictionaries where keys are node indices and values are their labels.
+
+    Returns
+    -------
+    set[tuple[int, int]]
+        A list of tuples where each tuple (i, j) indicates that node i in the first graph
+        corresponds to node j in the second graph.
+    """
+    matches = set()
+    for i, label_i in node_labels[0].items():
+        for j, label_j in node_labels[1].items():
+            if label_i == label_j:
+                matches.add((i, j))
+    return matches
+
+    
 if __name__ == '__main__':
     smi = 'OC(=O)CCC(N)C(=O)O'
     rc = [(9, 7, 5)]
@@ -393,7 +437,7 @@ if __name__ == '__main__':
     mol_featurizer = MolFeaturizer(atom_featurizer_v1)
     rg3 = ReactantGraph.from_smiles(smi3, mol_featurizer, rc3)
 
-    rg.mcs(rg3)
+    mcs = rg.mcs(rg3)
     subgaph_idxs = rg.k_hop_subgraphs(3)
     for si in subgaph_idxs:
         print(rg.subgraph(si))
