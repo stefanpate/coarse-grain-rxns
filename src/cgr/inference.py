@@ -21,6 +21,15 @@ class MolFeaturizer:
             RDKit molecule object
         rc: Iterable[int] (optional)
             List of atom indices corresponding to reaction center
+
+        Returns
+        -------
+        fts: np.ndarray
+            Node feature matrix of shape (num_atoms, num_features)
+        
+        Notes
+        -----
+        Distance to reaction center are always the last n features where n is number of reaction center atoms.
         '''
         fts = []
         for atom in mol.GetAtoms():
@@ -37,7 +46,7 @@ class MolFeaturizer:
 
 def atom_featurizer_v0(atom: Chem.Atom) -> list[int | float]:
     atomic_invariants = [
-        atom.GetDegree(), # # heavy atom neighbors
+        atom.GetDegree(),
         atom.GetTotalValence() - atom.GetTotalNumHs(),
         atom.GetAtomicNum(),
         atom.GetFormalCharge(),
@@ -50,7 +59,7 @@ def atom_featurizer_v0(atom: Chem.Atom) -> list[int | float]:
 
 def atom_featurizer_v1(atom: Chem.Atom) -> list[int | float]:
     atomic_invariants = [
-        atom.GetDegree(), # # heavy atom neighbors
+        atom.GetDegree(),
         atom.GetTotalValence() - atom.GetTotalNumHs(),
         atom.GetAtomicNum(),
         atom.GetFormalCharge(),
@@ -63,7 +72,7 @@ def atom_featurizer_v1(atom: Chem.Atom) -> list[int | float]:
 
 def atom_featurizer_v2(atom: Chem.Atom) -> list[int | float]:
     atomic_invariants = [
-        atom.GetDegree(), # # heavy atom neighbors
+        atom.GetDegree(),
         atom.GetTotalValence(),
         atom.GetTotalNumHs(),
         atom.GetAtomicNum(),
@@ -87,6 +96,14 @@ def _get_non_aromatic_c_ox_state(atom: Chem.Atom) -> float:
     
 def amphoteros_ox_state(atom: Chem.Atom) -> float:
     '''
+    Returns
+    -------
+    : float
+        -1 if atom is not carbon
+        + (# pi bonds + # heteroatom neighbors) otherwise
+
+    Notes
+    -----
     https://amphoteros.com/2013/10/22/counting-oxidation-states/
     '''
     if atom.GetAtomicNum() != 6:
@@ -127,6 +144,8 @@ class ReactantGraph(BaseModel):
     n_rcts: int | None
         Number of reactants in the full graph. If the ReactantGraph instance is a subgraph 
         of a parent graph, this wil be equal to the number of reactants in the parent graph.
+    rcsz: int | None
+        Number of atoms in the reaction center
     '''
     V: NumpyArray
     A: NumpyArray
@@ -134,6 +153,7 @@ class ReactantGraph(BaseModel):
     sep_aidxs: NumpyArray | None = None
     rct_idxs: NumpyArray | None = None
     n_rcts: int | None = None
+    rcsz: int | None = None
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
@@ -173,7 +193,7 @@ class ReactantGraph(BaseModel):
             else:
                 rc[i] = [idx + aidx_offset[i-1] for idx in mol_rc]
 
-        rc = tuple(chain(*rc))
+        rc = tuple(chain(*rc)) if len(rc) > 0 else tuple()
         rcts = reduce(Chem.CombineMols, sep_mols)
         A = Chem.GetAdjacencyMatrix(rcts, useBO=True)
         V = featurizer.featurize(rcts, rc)
@@ -181,7 +201,7 @@ class ReactantGraph(BaseModel):
         sep_aidxs = np.concatenate([np.arange(mol.GetNumAtoms(), dtype=np.int32) for mol in sep_mols])
         rct_idxs = np.concatenate([np.zeros(shape=(mol.GetNumAtoms()), dtype=np.int32) + i for i, mol in enumerate(sep_mols)])
 
-        return cls(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=len(sep_mols))
+        return cls(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=len(sep_mols), rcsz=len(rc))
     
     @classmethod
     def load(cls, filepath: Path | str):
@@ -199,13 +219,17 @@ class ReactantGraph(BaseModel):
         : ReactantGraph
             The ReactantGraph object
         '''
+        int_fields = {
+            'n_rcts': None,
+            'rcsz': None,
+        }
         arrs = np.load(filepath)
-        n_rcts = arrs.get('n_rcts')
-        if n_rcts is not None:
-            n_rcts = int(n_rcts[0])
-        return cls(V=arrs['V'], A=arrs['A'], aidxs=arrs['aidxs'], sep_aidxs=arrs.get('sep_aidxs'), rct_idxs=arrs.get('rct_idxs'), n_rcts=n_rcts)
+        for k in int_fields.keys():
+            int_fields[k] = arrs.get(k)
+
+        return cls(V=arrs['V'], A=arrs['A'], aidxs=arrs.get('aidxs'), sep_aidxs=arrs.get('sep_aidxs'), rct_idxs=arrs.get('rct_idxs'), **int_fields)
     
-    def save(self, filepath: Path | str):
+    def save(self, filepath: Path | str) -> None:
         '''
         Save the ReactantGraph object to a .npz file.
 
@@ -272,7 +296,7 @@ class ReactantGraph(BaseModel):
         sep_aidxs = self.sep_aidxs[node_idxs] if self.sep_aidxs is not None else None
         rct_idxs = self.rct_idxs[node_idxs] if self.rct_idxs is not None else None
 
-        return ReactantGraph(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=self.n_rcts)
+        return ReactantGraph(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=self.n_rcts, rcsz=self.rcsz)
 
     def k_hop_subgraphs(self, k: int) -> set[tuple[int]]:
         '''
@@ -350,7 +374,7 @@ class ReactantGraph(BaseModel):
         node_colors = ({}, {})
         unique_nodes = []
         for i, rg in enumerate([self, other]):
-            for nidx in range(rg.aidxs.shape[0]):
+            for nidx in range(rg.V.shape[0]):
                 if len(unique_nodes) == 0:
                     unique_nodes.append(rg.V[nidx])
                     node_colors[i][nidx] = [0]
