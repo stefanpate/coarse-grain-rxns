@@ -109,7 +109,8 @@ NumpyArray = Annotated[np.ndarray, BeforeValidator(ndarray_before_validator), Pl
 
 class ReactantGraph(BaseModel):
     '''
-    Encodes a set of reactants as a graph
+    Encodes a set of reactants as a graph. May represent reactants from a specific
+    reaction or reactants from a reaction template.
 
     Attributes
     ----------
@@ -117,7 +118,7 @@ class ReactantGraph(BaseModel):
         Node (atom) feature matrix (# nodes x # features)
     A: NumpyArray
         Adjacency matrix (weighted w/ bond order)
-    aidxs: NumpyArray
+    aidxs: NumpyArray | None
         Atom indices, sorted by node feature vectors
     sep_aidxs: NumpyArray | None
         Atom indices for each separate reactant, in order they are entered in the SMILES string.
@@ -129,7 +130,7 @@ class ReactantGraph(BaseModel):
     '''
     V: NumpyArray
     A: NumpyArray
-    aidxs: NumpyArray
+    aidxs: NumpyArray | None = None
     sep_aidxs: NumpyArray | None = None
     rct_idxs: NumpyArray | None = None
     n_rcts: int | None = None
@@ -213,17 +214,23 @@ class ReactantGraph(BaseModel):
         filepath: Path | str
             Path to save ReactantGraph object to
         '''
-        if self.sep_aidxs is not None and self.rct_idxs is not None and self._n_rcts is not None:
-            np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs, sep_aidxs=self.sep_aidxs, rct_idxs=self.rct_idxs, n_rcts=np.array([self.n_rcts]))
-        else:
-            np.savez(filepath, V=self.V, A=self.A, aidxs=self.aidxs)
+        to_save = {}
+        for k, v in self.__dict__.items():
+            if v is None:
+                continue
+            elif isinstance(v, np.ndarray):
+                to_save[k] = v
+            elif isinstance(v, int) or isinstance(v, float):
+                to_save[k] = np.array([v])
+        
+        np.savez(filepath, **to_save)
 
     def model_post_init(self, __context: Any) -> None:
         # Sort everything by node features
         srt_nidxs = np.lexsort(self.V.T) # Sorted node idxs
         self.V = self.V[srt_nidxs]
         self.A = self.A[srt_nidxs, :][:, srt_nidxs]
-        self.aidxs = self.aidxs[srt_nidxs]
+        self.aidxs = self.aidxs[srt_nidxs] if self.aidxs is not None else None
         self.sep_aidxs = self.sep_aidxs[srt_nidxs] if self.sep_aidxs is not None else None
         self.rct_idxs = self.rct_idxs[srt_nidxs] if self.rct_idxs is not None else None
 
@@ -243,7 +250,7 @@ class ReactantGraph(BaseModel):
         
         V = self.V[node_idxs]
         A = self.A[node_idxs, :][:, node_idxs]
-        aidxs = self.aidxs[node_idxs]
+        aidxs = self.aidxs[node_idxs] if self.aidxs is not None else None
         sep_aidxs = self.sep_aidxs[node_idxs] if self.sep_aidxs is not None else None
         rct_idxs = self.rct_idxs[node_idxs] if self.rct_idxs is not None else None
 
@@ -429,6 +436,10 @@ if __name__ == '__main__':
     mol_featurizer = MolFeaturizer(atom_featurizer_v1)
     rg = ReactantGraph.from_smiles(smi, mol_featurizer, rc)
     print(rg)
+    rg.save("test_rg.npz")
+    rg_loaded = ReactantGraph.load("test_rg.npz")
+    print("Loaded ReactantGraph:", rg_loaded)
+    assert rg == rg_loaded, "Loaded ReactantGraph does not match the original."
 
     smi3 = 'CCC(N)C(=O)O'
     rc3 = [(6, 4, 2)]
