@@ -226,13 +226,31 @@ class ReactantGraph(BaseModel):
         np.savez(filepath, **to_save)
 
     def model_post_init(self, __context: Any) -> None:
-        # Sort everything by node features
+        '''
+        Sort everything by node features
+        '''
         srt_nidxs = np.lexsort(self.V.T) # Sorted node idxs
         self.V = self.V[srt_nidxs]
         self.A = self.A[srt_nidxs, :][:, srt_nidxs]
         self.aidxs = self.aidxs[srt_nidxs] if self.aidxs is not None else None
         self.sep_aidxs = self.sep_aidxs[srt_nidxs] if self.sep_aidxs is not None else None
         self.rct_idxs = self.rct_idxs[srt_nidxs] if self.rct_idxs is not None else None
+
+    def remove_specific_indexing(self) -> None:
+        '''
+        Remove indexing specific to a particulare reaction. Sets aidxs, n_rcts, & sep_aidxs
+        to None. Normalizes & preserves sep_aidxs and rct_idxsas a convenient way to access 
+        connected components. Useful for template extraction.
+        '''
+        self.aidxs = None
+        self.n_rcts = None
+        self.sep_aidxs = None
+        old2new_cc = {v: u for u, v in enumerate(np.unique(self.rct_idxs))}
+        rct_idxs = np.zeros_like(self.rct_idxs, dtype=np.int32)
+        for old_idx, new_idx in old2new_cc.items():
+            rct_idxs[self.rct_idxs == old_idx] = new_idx
+
+        self.rct_idxs = rct_idxs
 
     def subgraph(self, node_idxs: list[int]) -> 'ReactantGraph':
         '''
@@ -436,6 +454,7 @@ if __name__ == '__main__':
     mol_featurizer = MolFeaturizer(atom_featurizer_v1)
     rg = ReactantGraph.from_smiles(smi, mol_featurizer, rc)
     print(rg)
+    rg.remove_specific_indexing()  # Remove indexing specific to a particular reaction
     rg.save("test_rg.npz")
     rg_loaded = ReactantGraph.load("test_rg.npz")
     print("Loaded ReactantGraph:", rg_loaded)
