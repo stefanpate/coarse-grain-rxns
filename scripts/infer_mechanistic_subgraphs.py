@@ -220,6 +220,8 @@ def main(cfg: DictConfig):
         # Save summary stats
         coverage_df = pd.DataFrame(mech_cov_data, columns=mech_cov_cols)
         summary_stats_df = pd.DataFrame(summary_stats_data, columns=summary_stats_cols)
+        basic_df = pd.DataFrame(data=[[n_rxns, rcsz]], columns=["n_rxns", "rcsz"])
+        basic_df.to_csv("basic.csv", index=False)
         coverage_df.to_csv("mech_coverage.csv", index=False)
         summary_stats_df.to_csv("summary_stats.csv", index=False)
 
