@@ -11,6 +11,7 @@ rule_id: decarb
 src_file: decarbs.parquet
 input_path: ${filepaths.raw_data}/${src_file}
 frequency_lb_scl:
+- 1
 - 5
 - 7
 - 10

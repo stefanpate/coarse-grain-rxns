@@ -125,12 +125,18 @@ def main(cfg: DictConfig):
             mech_rgs.append(mech_rg)
 
         p1 = bfm.sum(axis=0) / bfm.shape[0]
-        coverage_cols = ["scl_lb", "mech_id", "max_coverage", "mean_extra_atoms", "std_extra_atoms"]
-        putative_cols = ["scl_lb", "n_novel_subgraphs", "n_total_inferred"]
-        coverage_data = []
-        putative_data = []
+        n_rxns = bfm.shape[0]
+        rcsz = full_rgs[list(full_rgs.keys())[0]].rcsz
+
+        # coverage is the ratio of MCS size to mechanistic subgraph size
+        # atom_ratio is the ratio of inferred subgraph size to mechanistic subgraph size
+        mech_cov_cols = ["scl_lb", "mech_id", "inf_id", "coverage", "atom_ratio"]
+        summary_stats_cols = ["scl_lb", "n_novel_subgraphs", "n_total_inferred", "rxn_cov_frac"]
+        mech_cov_data = []
+        summary_stats_data = []
 
         for scl_lb in cfg.frequency_lb_scl:
+            rxn_ct = 0
             # Extract inferred subgraphs = union of subgraphs with frequency > lb
             # on per-reaction basis
             inferred_subgraphs = {}
@@ -153,6 +159,7 @@ def main(cfg: DictConfig):
                 if (subgraph.V[-(subgraph.rcsz + 1)] == 0).all(): # Reject if only contains C w/ amphoteros ox state = 0
                     continue
 
+                rxn_ct += 1 # Count rxn covered
                 subgraph.remove_specific_indexing()
 
                 if len(inferred_subgraphs) == 0: 
@@ -170,8 +177,6 @@ def main(cfg: DictConfig):
             # Do MCS on all pairs of (mechanistic, inferred) subgraphs
             # and calculate summary stats
             mcs = defaultdict(lambda: defaultdict(list))
-            max_coverage = defaultdict(int)
-            extra_atoms = defaultdict(list)
             novels = set(inferred_subgraphs.keys())
             for i, inf_rg in inferred_subgraphs.items():
                 inf_n_atoms = inf_rg.V.shape[0]
@@ -180,26 +185,25 @@ def main(cfg: DictConfig):
                     M = list(inf_rg.mcs(mech_rg)) # MCS mapping
                     mcs[i][j] = M
 
+                    # If entire mech is a subgraph of inferred, inferred is not novel
+                    # else, is putatively novel
                     if len(M) == mech_n_atoms:
-                        extra_atoms[j].append(inf_n_atoms - mech_n_atoms)
-                        novels.discard(i) # If mech subgraph is a subgraph of inferred subgraph, inferred is not novel
+                        novels.discard(i) 
 
                     coverage = len(M) / mech_n_atoms
-                    if coverage > max_coverage[j]:
-                        max_coverage[j] = coverage
+                    atom_ratio = inf_n_atoms / mech_n_atoms
 
-            for j in range(len(mech_rgs)):
-                coverage_data.append(
-                    [
-                        scl_lb,
-                        j,
-                        max_coverage[j],
-                        np.mean(extra_atoms[j]) if len(extra_atoms[j]) > 0 else 0,
-                        np.std(extra_atoms[j]) if len(extra_atoms[j]) > 0 else 0,
-                    ]
-                )
-            
-            putative_data.append([scl_lb, len(novels), len(inferred_subgraphs)])
+                    mech_cov_data.append(
+                        [
+                            scl_lb,
+                            j,
+                            i,
+                            coverage,
+                            atom_ratio
+                        ]
+                    )
+
+            summary_stats_data.append([scl_lb, len(novels), len(inferred_subgraphs), rxn_ct / n_rxns])
 
             # # More finegrained stuff could be saved
             # with open(f"mcs_scl_lb_{scl_lb}.json", 'w') as f:
@@ -214,10 +218,10 @@ def main(cfg: DictConfig):
             #     )
 
         # Save summary stats
-        coverage_df = pd.DataFrame(coverage_data, columns=coverage_cols)
-        putative_df = pd.DataFrame(putative_data, columns=putative_cols)
-        coverage_df.to_csv("coverage.csv", index=False)
-        putative_df.to_csv("putative.csv", index=False)
+        coverage_df = pd.DataFrame(mech_cov_data, columns=mech_cov_cols)
+        summary_stats_df = pd.DataFrame(summary_stats_data, columns=summary_stats_cols)
+        coverage_df.to_csv("mech_coverage.csv", index=False)
+        summary_stats_df.to_csv("summary_stats.csv", index=False)
 
 if __name__ == '__main__':
     main()

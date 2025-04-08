@@ -7,7 +7,7 @@ max_n: 50
 rule_id: decarb
 src_file: decarbs.parquet
 input_path: ${filepaths.raw_data}/${src_file}
-frequency_lb_scl: [5, 7, 10, 12, 15, 20, 25, 30, 35, 40]
+frequency_lb_scl: [1, 5, 7, 10, 12, 15, 20, 25, 30, 35, 40]
 
 hydra:
   run:
