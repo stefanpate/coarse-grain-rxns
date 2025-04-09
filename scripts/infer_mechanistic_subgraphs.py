@@ -154,10 +154,11 @@ def main(cfg: DictConfig):
                 if (rg.V[nidx_complement, -rg.rcsz:] == 0).any(): # Reject if any RC atoms are not covered
                     continue
 
-                subgraph = full_rgs[rxn_id].subgraph(list(nidxs))
-
-                if (subgraph.V[-(subgraph.rcsz + 1)] == 0).all(): # Reject if only contains C w/ amphoteros ox state = 0
+                rc_mask = (rg.V[:, -rg.rcsz:] == 0).any(axis=1)
+                if (rg.V[rc_mask, -(rg.rcsz + 1)] == 0).all(): # Reject if only adds C w/ amphoteros ox state = 0
                     continue
+
+                subgraph = full_rgs[rxn_id].subgraph(list(nidxs))
 
                 rxn_ct += 1 # Count rxn covered
                 subgraph.remove_specific_indexing()
