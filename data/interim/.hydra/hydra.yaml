@@ -113,12 +113,12 @@ hydra:
     - hydra.mode=RUN
     task: []
   job:
-    name: infer_mechanistic_subgraphs
+    name: extract_mechanistic
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: infer_mech_subgraphs
+    config_name: extract_mechanistic
     env_set: {}
     env_copy: []
     config:
@@ -129,7 +129,7 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr
+    cwd: /home/stef/cgr/scripts
     config_sources:
     - path: hydra.conf
       schema: pkg
