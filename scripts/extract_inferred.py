@@ -44,8 +44,8 @@ def main(cfg: DictConfig):
         template = extract_reaction_template(rxn=am_smarts, atoms_to_include=sg_idxs, reaction_center=reaction_center[0])
         templates[template].append(name)
 
-    df = pd.DataFrame(data=list(templates.items()), columns=["template", "rxn_id"])
-    df.to_csv(Path(cfg.filepaths.processed_data) / "inferred_reaction_templates.csv", sep=',', index=False)
+    df = pd.DataFrame(data=[(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rxn_ids"])
+    df.to_csv(Path(cfg.filepaths.processed_data) / "inferred_reaction_rules.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
