@@ -2,12 +2,14 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-k: 3
-max_n: 50
-rule_id: decarb
-src_file: decarbs.parquet
+k: 3 # Max k for k-hop subgraph collecting
+max_n: 50 # Number atoms in largest subgraph
+N_ave: 22 # Average # rxns mapped by min op
+rule_id: 1023
+src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
 input_path: ${filepaths.raw_data}/${src_file}
-frequency_lb_scl: [1, 5, 7, 10, 12, 15, 20, 25, 30, 35, 40]
+xref: True # Whether to cross-reference w/ mechanistic
+ds: 2 # Downsample factor
 
 hydra:
   run:
