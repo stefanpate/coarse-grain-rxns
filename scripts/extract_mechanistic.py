@@ -33,7 +33,7 @@ def main(cfg: DictConfig):
         tmp.append((i, template, list(entries), list(mechs)))
 
     df = pd.DataFrame(tmp, columns=["id", "smarts", "entry_id", "mechanism_id"])
-    df.to_csv(Path(cfg.filepaths.processed_data) / "mechanistic_reaction_rules.csv", sep=',', index=False)
+    df.to_csv(Path(cfg.filepaths.processed_data) / "mechanistic_rules.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
