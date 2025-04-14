@@ -9,21 +9,22 @@ from collections import defaultdict
 from ergochemics.mapping import rc_to_nest, rc_to_str
 import json
 
-@hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
-def main(cfg: DictConfig):
+def bayesian_freq(ct: int, N_i: int, N_avg: int) -> float:
+    pass
 
-    
-    # TODO: cfg.rule_id -> actual rule_id, subselect rxn_subset from src file. May need to reset index of df?
+@hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
+def main(cfg: DictConfig):    
     rxn_subset = pd.read_parquet(Path(cfg.input_path))
+    rxn_subset = rxn_subset.loc[rxn_subset['rule_id'] == cfg.rule_id].reset_index(drop=True)
     mol_featurizer = MolFeaturizer(atom_featurizer_v2)
 
-    
+    # Decompose reactions into subgraphs
     n_subgraphs = [{} for _ in range(cfg.max_n)] # Subgraphs of size n at index n - 1
     subgraph_decomp = []
     sg_idx_lut = defaultdict(lambda : [{} for _ in range(cfg.max_n)])  # {rxn_id: {sg_id: sidxs}}
     full_rgs = {}
     for _, elt in rxn_subset.iterrows():
-        rxn_id = elt["id"]
+        rxn_id = elt["rxn_id"]
         decomp_rxn = [{} for _ in range(cfg.max_n)]
         rcts = elt["smarts"].split(">>")[0]
         rc = rc_to_nest(elt["reaction_center"])[0]
@@ -68,12 +69,12 @@ def main(cfg: DictConfig):
                 tmp.append(
                     [
                         k + so,
-                        rxn_subset.loc[i, "id"],
+                        rxn_subset.loc[i, "rxn_id"],
                         rxn_subset.loc[i, "smarts"],
                         rxn_subset.loc[i, "am_smarts"],
                         rxn_subset.loc[i, "reaction_center"],
                         v.aidxs.tolist(),
-                        rc_to_str(sep_sg_idxs),
+                        rc_to_str([sep_sg_idxs, [[]]]),
                     ]
                 )
     
@@ -85,7 +86,7 @@ def main(cfg: DictConfig):
     np.save("bfm.npy", bfm)
 
     # Vary frequency lower bound and crossref mechanistic subgraphs
-    if cfg.frequency_lb_scl:
+    if cfg.xref:
         # TODO: this is another messy thing resulting from keeping n_node subgraphs separate... maybe not worth it?
         tmp = defaultdict(lambda: defaultdict(tuple))
         for rxn_id, n_sgs in sg_idx_lut.items():
@@ -95,23 +96,22 @@ def main(cfg: DictConfig):
 
         sg_idx_lut = tmp
 
-        # TODO: cfg.rule_id -> actual rule_id, subselect rxn_subset from src file. May need to reset index of df?
-        decarb_rule = '[#6:1]-[#6:2]-[#8:3]>>[#6:1].[#6:2]=[#8:3]'
+        # Load mapped and mech labeled reactions
         mm = pd.read_parquet(
         Path(cfg.filepaths.raw_data) / "mapped_mech_labeled_reactions.parquet"
         )
-        mcsa_decarbs = mm.loc[mm['rule'] == decarb_rule]
-        # TODO: switch generation of mech input to rc_to_str/rc_to_nest and delete this helper
-        to_nested_lists = lambda x: [[arr.tolist() for arr in side] for side in x]
+        mm = mm.loc[mm['rule_id'] == cfg.rule_id].reset_index(drop=True)
+        mm["reaction_center"] = mm["reaction_center"].apply(rc_to_nest)
+        mm["mech_atoms"] = mm["mech_atoms"].apply(rc_to_nest)
         
         # TODO: Messy. Push into new RectantGraph class method or utility function
         # Construct ReacantGraphs for mechanistic subgraphs
         mech_rgs = []
-        for _, elt in mcsa_decarbs.iterrows():
+        for _, elt in mm.iterrows():
             rcts = elt["smarts"].split(">>")[0]
-            rc = to_nested_lists(elt["reaction_center"])[0]
+            rc = elt["reaction_center"][0]
             rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc)
-            mech_atoms = [elt["mech_atoms"][0].tolist()] # TODO: this will change with new rc_to + multi rcts
+            mech_atoms = elt["mech_atoms"][0]
             nidxs = []
             for i, ma in enumerate(mech_atoms):
                 for saidx in ma:
@@ -135,12 +135,12 @@ def main(cfg: DictConfig):
         mech_cov_data = []
         summary_stats_data = []
 
-        for scl_lb in cfg.frequency_lb_scl:
+        for scl_lb in np.arange(1, n_rxns, cfg.ds):
             rxn_ct = 0
             # Extract inferred subgraphs = union of subgraphs with frequency > lb
             # on per-reaction basis
             inferred_subgraphs = {}
-            lb = scl_lb / bfm.shape[0]
+            lb = scl_lb / n_rxns
             for rxn_id, gb in sg_insts.groupby(by="rxn_id"):
 
                 nidxs = set()
