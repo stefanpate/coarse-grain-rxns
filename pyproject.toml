@@ -17,6 +17,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "rdkit>=2024.9.6",
     "scipy>=1.15.2",
+    "tqdm>=4.67.1",
 ]
 
 [dependency-groups]

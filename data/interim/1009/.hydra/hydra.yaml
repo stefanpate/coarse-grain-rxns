@@ -2,8 +2,8 @@ hydra:
   run:
     dir: ${filepaths.interim_data}/${...rule_id}
   sweep:
-    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
-    subdir: ${hydra.job.num}
+    dir: ${filepaths.interim_data}
+    subdir: ${...rule_id}
   launcher:
     _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
   sweeper:
@@ -87,7 +87,7 @@ hydra:
     version: 1
     formatters:
       simple:
-        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+        format: '[%(levelname)s] - %(message)s'
     handlers:
       console:
         class: logging.StreamHandler
@@ -111,13 +111,11 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task:
-    - ds=2
-    - rule_id=1009
+    task: []
   job:
     name: infer_mechanistic_subgraphs
     chdir: true
-    override_dirname: ds=2,rule_id=1009
+    override_dirname: ''
     id: ???
     num: ???
     config_name: infer_mech_subgraphs
@@ -147,7 +145,7 @@ hydra:
       filepaths: filepaths
       hydra/env: default
       hydra/callbacks: null
-      hydra/job_logging: default
+      hydra/job_logging: custom
       hydra/hydra_logging: default
       hydra/hydra_help: default
       hydra/help: default

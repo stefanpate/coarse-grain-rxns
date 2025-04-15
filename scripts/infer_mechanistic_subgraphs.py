@@ -7,10 +7,14 @@ import pandas as pd
 from itertools import accumulate
 from collections import defaultdict
 from ergochemics.mapping import rc_to_nest, rc_to_str
-import json
+import logging
+from time import perf_counter
+from tqdm import tqdm
 
 def bayesian_freq(ct: int, N_i: int, N_avg: int) -> float:
     pass
+
+log = logging.getLogger(__name__)
 
 @hydra.main(version_base=None, config_path='../configs', config_name='infer_mech_subgraphs')
 def main(cfg: DictConfig):    
@@ -18,7 +22,11 @@ def main(cfg: DictConfig):
     rxn_subset = rxn_subset.loc[rxn_subset['rule_id'] == cfg.rule_id].reset_index(drop=True)
     mol_featurizer = MolFeaturizer(atom_featurizer_v2)
 
+    log.info(f"Processing {len(rxn_subset)} reactions mapped to rule {cfg.rule_id}")
+
     # Decompose reactions into subgraphs
+    tic = perf_counter()
+    log.info("Decomposing reactions into subgraphs...")
     n_subgraphs = [{} for _ in range(cfg.max_n)] # Subgraphs of size n at index n - 1
     subgraph_decomp = []
     sg_idx_lut = defaultdict(lambda : [{} for _ in range(cfg.max_n)])  # {rxn_id: {sg_id: sidxs}}
@@ -56,6 +64,11 @@ def main(cfg: DictConfig):
 
         subgraph_decomp.append(decomp_rxn)
 
+    toc = perf_counter()
+    log.info(f"Decomposing reactions took {toc - tic:.2f} seconds")
+
+    tic = perf_counter()
+    log.info("Constructing binary feature matrix and subgraph instances...")
     # Construct & binary feature matrix & subgraph instances
     sgid_offsets = [0] + list(accumulate([len(elt) for elt in n_subgraphs]))
     bfm = np.zeros(shape=(len(subgraph_decomp), sgid_offsets[-1])) # Binary feature matrix
@@ -80,12 +93,17 @@ def main(cfg: DictConfig):
     
     # Outputs subgraph indices both for the multi-reactant graph (sg_idxs) and for separate single reactant graphs (sep_sg_idxs)
     sg_insts = pd.DataFrame(tmp, columns=["subgraph_id", "rxn_id", "smarts", "am_smarts", "reaction_center", "sg_idxs", "sep_sg_idxs"])
+
+    toc = perf_counter()
+    log.info(f"Constructing binary feature matrix and subgraph instances took {toc - tic:.2f} seconds")
     
     # Save
+    print("Saving data...")
     sg_insts.to_parquet("subgraph_instances.parquet")
     np.save("bfm.npy", bfm)
 
     # Vary frequency lower bound and crossref mechanistic subgraphs
+    log.info("Cross-referencing known reactions & mechanistic subgraphs...")
     if cfg.xref:
         # TODO: this is another messy thing resulting from keeping n_node subgraphs separate... maybe not worth it?
         tmp = defaultdict(lambda: defaultdict(tuple))
@@ -135,7 +153,9 @@ def main(cfg: DictConfig):
         mech_cov_data = []
         summary_stats_data = []
 
-        for scl_lb in np.arange(1, n_rxns, cfg.ds):
+
+        tic = perf_counter()
+        for scl_lb in tqdm(np.arange(1, n_rxns, cfg.ds)):
             rxn_ct = 0
             # Extract inferred subgraphs = union of subgraphs with frequency > lb
             # on per-reaction basis
@@ -204,19 +224,15 @@ def main(cfg: DictConfig):
                         ]
                     )
 
-            summary_stats_data.append([scl_lb, len(novels), len(inferred_subgraphs), rxn_ct / n_rxns])
+            rxn_cov_frac = rxn_ct / n_rxns
+            summary_stats_data.append([scl_lb, len(novels), len(inferred_subgraphs), rxn_cov_frac])
 
-            # # More finegrained stuff could be saved
-            # with open(f"mcs_scl_lb_{scl_lb}.json", 'w') as f:
-            #     json.dump(mcs, f)
-
-            # if not Path(f"inferred_subgraphs_scl_lb_{scl_lb}").exists():
-            #     Path(f"inferred_subgraphs_scl_lb_{scl_lb}").mkdir()
-            
-            # for i, subgraph in inferred_subgraphs.items():
-            #     subgraph.save(
-            #         Path(f"inferred_subgraphs_scl_lb_{scl_lb}") / f"inf_sg_{i}.npz",
-            #     )
+            if rxn_cov_frac == 0:
+                toc = perf_counter()
+                log.info(f"Halted at scl_lb {scl_lb} with rxn_cov_frac = 0")
+                log.info(f"Time taken: {toc - tic:.2f} seconds")
+                log.info(f"{scl_lb / (toc - tic):.2f} it/s")
+                break
 
         # Save summary stats
         coverage_df = pd.DataFrame(mech_cov_data, columns=mech_cov_cols)
