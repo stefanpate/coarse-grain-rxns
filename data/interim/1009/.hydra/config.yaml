@@ -12,4 +12,4 @@ rule_id: 1009
 src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
 input_path: ${filepaths.raw_data}/${src_file}
 xref: true
-ds: 2
+ds: 10
