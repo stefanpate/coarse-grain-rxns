@@ -8,7 +8,7 @@ filepaths:
 k: 3
 max_n: 50
 N_ave: 22
-rule_id: 1009
+rule_id: 837
 src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
 input_path: ${filepaths.raw_data}/${src_file}
 xref: true

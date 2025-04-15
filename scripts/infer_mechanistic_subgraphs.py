@@ -157,7 +157,7 @@ def main(cfg: DictConfig):
         tic = perf_counter()
         for scl_lb in tqdm(np.arange(1, n_rxns, cfg.ds)):
             rxn_ct = 0
-            # Extract inferred subgraphs = union of subgraphs with frequency > lb
+            # Extract inferred subgraphs = union of subgraphs with frequency >= lb
             # on per-reaction basis
             inferred_subgraphs = {}
             lb = scl_lb / n_rxns
@@ -166,7 +166,7 @@ def main(cfg: DictConfig):
                 nidxs = set()
                 for _, row in gb.iterrows():
                     sg_id = row['subgraph_id']
-                    if p1[sg_id] > lb:
+                    if p1[sg_id] >= lb:
                         nidxs.update(sg_idx_lut[rxn_id][sg_id])
 
                 rg = full_rgs[rxn_id]

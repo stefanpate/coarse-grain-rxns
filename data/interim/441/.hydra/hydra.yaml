@@ -112,12 +112,12 @@ hydra:
     hydra:
     - hydra.mode=RUN
     task:
-    - rule_id=1009
+    - rule_id=441
     - ds=1
   job:
     name: infer_mechanistic_subgraphs
     chdir: true
-    override_dirname: ds=1,rule_id=1009
+    override_dirname: ds=1,rule_id=441
     id: ???
     num: ???
     config_name: infer_mech_subgraphs
@@ -142,7 +142,7 @@ hydra:
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /home/stef/cgr/data/interim/1009
+    output_dir: /home/stef/cgr/data/interim/441
     choices:
       filepaths: filepaths
       hydra/env: default
