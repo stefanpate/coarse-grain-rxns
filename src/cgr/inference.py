@@ -7,7 +7,6 @@ from itertools import accumulate, chain, permutations, product
 from functools import reduce
 from pathlib import Path
 from collections import defaultdict
-from copy import deepcopy
 
 class MolFeaturizer:
     def __init__(self, atom_featurizer: Callable[[Chem.Atom], list[int | float]]):
@@ -29,7 +28,8 @@ class MolFeaturizer:
         
         Notes
         -----
-        Distance to reaction center are always the last n features where n is number of reaction center atoms.
+        1. Distance to reaction center are always the last n features where n is number of reaction center atoms.
+        2. If atom is not connected to an rc atom, distance is set to -1.
         '''
         fts = []
         for atom in mol.GetAtoms():
@@ -157,7 +157,7 @@ class ReactantGraph(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
-    def from_smiles(cls, rcts: str, featurizer: MolFeaturizer, rc: Iterable[Iterable[int]] = []):
+    def from_smiles(cls, rcts: str, featurizer: MolFeaturizer, rc: Iterable[Iterable[int]] = [], exclude: Iterable[int] = []):
         '''
         Create a ReactantGraph object from a SMILES string of reactants.
         
@@ -181,26 +181,41 @@ class ReactantGraph(BaseModel):
             A ReactantGraph object containing the adjacency matrix and feature vector.       
         '''
         sep_mols = [Chem.MolFromSmiles(s) for s in rcts.split('.')]
-        aidx_offset = list(accumulate([mol.GetNumAtoms() for mol in sep_mols]))
+        aidx_offset = [0] + list(accumulate([mol.GetNumAtoms() for mol in sep_mols]))
 
         if type(rc) is not list:
             rc = list(rc)
 
         # Translate reaction center indices to combined molecule indices
         for i, mol_rc in enumerate(rc):
-            if i == 0:
-                rc[i] = list(mol_rc)
-            else:
-                rc[i] = [idx + aidx_offset[i-1] for idx in mol_rc]
+            rc[i] = [idx + aidx_offset[i] for idx in mol_rc]
 
         rc = tuple(chain(*rc)) if len(rc) > 0 else tuple()
+        
+        # Featurize
         rcts = reduce(Chem.CombineMols, sep_mols)
         A = Chem.GetAdjacencyMatrix(rcts, useBO=True)
         V = featurizer.featurize(rcts, rc)
-        aidxs = np.arange(V.shape[0], dtype=np.int32)
-        sep_aidxs = np.concatenate([np.arange(mol.GetNumAtoms(), dtype=np.int32) for mol in sep_mols])
-        rct_idxs = np.concatenate([np.zeros(shape=(mol.GetNumAtoms()), dtype=np.int32) + i for i, mol in enumerate(sep_mols)])
+        
+        # Compile indices
+        sep_aidxs = []
+        rct_idxs = []
+        aidxs = []
+        for i, mol in enumerate(sep_mols):
+            if i not in exclude:
+                sep_aidxs.append(np.arange(mol.GetNumAtoms(), dtype=np.int32))
+                aidxs.append(np.arange(mol.GetNumAtoms(), dtype=np.int32) + aidx_offset[i])
+                rct_idxs.append(np.zeros(shape=(mol.GetNumAtoms()), dtype=np.int32) + i)
 
+        aidxs = np.concatenate(aidxs)
+        sep_aidxs = np.concatenate(sep_aidxs)
+        rct_idxs = np.concatenate(rct_idxs)
+
+        # Exclude atoms from V and A
+        if len(exclude) > 0:
+            V = V[aidxs]
+            A = A[aidxs, :][:, aidxs]        
+        
         return cls(V=V, A=A, aidxs=aidxs, sep_aidxs=sep_aidxs, rct_idxs=rct_idxs, n_rcts=len(sep_mols), rcsz=len(rc))
     
     @classmethod
@@ -289,6 +304,8 @@ class ReactantGraph(BaseModel):
         : ReactantGraph
             The subgraph
         '''
+        if type(node_idxs) is tuple:
+            node_idxs = list(node_idxs)
         
         V = self.V[node_idxs]
         A = self.A[node_idxs, :][:, node_idxs]
@@ -471,6 +488,47 @@ def _get_matching_node_pairs(node_labels: tuple[dict[int, int], dict[int, int]])
                 matches.add((i, j))
     return matches
 
+def get_stereotypical_molecules(smarts_subset: list[str]) -> tuple[tuple[int], tuple[int]]:
+    '''
+    Identify stereotypical molecules from reactions, i.e.,
+    those that are always there.
+
+    Args
+    ----
+    smarts_subset: list
+        SMARTS strings of the reactions to be filtered. They must have 
+        reactants and products aligned to the roles in their shared minimal rule.
+
+    Returns
+    -------
+    : tuple[tuple[int], tuple[int]]
+        Indices of stereotypical rcts and pdts 
+    '''
+    lhs_unique = defaultdict(set)
+    rhs_unique = defaultdict(set)
+    for j, smarts in enumerate(smarts_subset):
+        rcts, pdts = [side.split('.') for side in smarts.split('>>')]
+
+        n_rcts, n_pdts = len(rcts), len(pdts)
+
+        if j == 0:
+            last_n_rcts, last_n_pdts = n_rcts, n_pdts
+
+        if n_rcts != last_n_rcts or n_pdts != last_n_pdts:
+            raise(ValueError("All reactions must have the same number of reactants and products"))
+
+        for i, rct in enumerate(rcts):
+            lhs_unique[i].add(rct)
+
+        for i, pdt in enumerate(pdts):
+            rhs_unique[i].add(pdt)
+
+        last_n_rcts, last_n_pdts = n_rcts, n_pdts
+
+    lhs_stereotypical = tuple(i for i, rcts in lhs_unique.items() if len(rcts) == 1)
+    rhs_stereotypical = tuple(i for i, pdts in rhs_unique.items() if len(pdts) == 1)
+
+    return (lhs_stereotypical, rhs_stereotypical)
     
 if __name__ == '__main__':
     smi = 'OC(=O)CCC(N)C(=O)O'
@@ -522,3 +580,9 @@ if __name__ == '__main__':
 
     assert rg0 == rg1
     assert rg0 != rg2
+
+
+    smi2 = "OC(=O)C(N)CCC(=O)O.CCO"
+    rc2 = [(0, 1, 3), (0, 1)]
+    rg2 = ReactantGraph.from_smiles(smi2, mol_featurizer, rc2, exclude=[0])
+    print(rg2)

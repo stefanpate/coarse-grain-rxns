@@ -112,8 +112,8 @@ hydra:
     hydra:
     - hydra.mode=RUN
     task:
-    - rule_id=837
     - ds=1
+    - rule_id=837
   job:
     name: infer_mechanistic_subgraphs
     chdir: true

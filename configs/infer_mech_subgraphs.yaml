@@ -6,11 +6,11 @@ defaults:
 k: 3 # Max k for k-hop subgraph collecting
 max_n: 50 # Number atoms in largest subgraph
 N_ave: 22 # Average # rxns mapped by min op
-rule_id: 1009
+rule_id: 441
 src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
 input_path: ${filepaths.raw_data}/${src_file}
 xref: True # Whether to cross-reference w/ mechanistic
-ds: 10 # Downsample factor
+ds: 1 # Downsample factor
 
 hydra:
   run:

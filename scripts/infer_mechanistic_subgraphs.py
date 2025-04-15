@@ -1,6 +1,5 @@
 import hydra
 from omegaconf import DictConfig
-from cgr.inference import ReactantGraph, MolFeaturizer, atom_featurizer_v2
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -10,6 +9,12 @@ from ergochemics.mapping import rc_to_nest, rc_to_str
 import logging
 from time import perf_counter
 from tqdm import tqdm
+from cgr.inference import (
+    ReactantGraph,
+    MolFeaturizer,
+    atom_featurizer_v2,
+    get_stereotypical_molecules
+) 
 
 def bayesian_freq(ct: int, N_i: int, N_avg: int) -> float:
     pass
@@ -21,6 +26,8 @@ def main(cfg: DictConfig):
     rxn_subset = pd.read_parquet(Path(cfg.input_path))
     rxn_subset = rxn_subset.loc[rxn_subset['rule_id'] == cfg.rule_id].reset_index(drop=True)
     mol_featurizer = MolFeaturizer(atom_featurizer_v2)
+
+    lhs_exclude, _ = get_stereotypical_molecules(rxn_subset["smarts"].tolist())
 
     log.info(f"Processing {len(rxn_subset)} reactions mapped to rule {cfg.rule_id}")
 
@@ -36,7 +43,7 @@ def main(cfg: DictConfig):
         decomp_rxn = [{} for _ in range(cfg.max_n)]
         rcts = elt["smarts"].split(">>")[0]
         rc = rc_to_nest(elt["reaction_center"])[0]
-        rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc)
+        rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc, exclude=lhs_exclude)
         full_rgs[rxn_id] = rg
         subgraph_idxs = rg.k_hop_subgraphs(cfg.k)
 
@@ -121,6 +128,8 @@ def main(cfg: DictConfig):
         mm = mm.loc[mm['rule_id'] == cfg.rule_id].reset_index(drop=True)
         mm["reaction_center"] = mm["reaction_center"].apply(rc_to_nest)
         mm["mech_atoms"] = mm["mech_atoms"].apply(rc_to_nest)
+
+        mm_lhs_exclude, _ = get_stereotypical_molecules(mm["smarts"].tolist())
         
         # TODO: Messy. Push into new RectantGraph class method or utility function
         # Construct ReacantGraphs for mechanistic subgraphs
@@ -128,10 +137,13 @@ def main(cfg: DictConfig):
         for _, elt in mm.iterrows():
             rcts = elt["smarts"].split(">>")[0]
             rc = elt["reaction_center"][0]
-            rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc)
+            rg = ReactantGraph.from_smiles(rcts=rcts, featurizer=mol_featurizer, rc=rc, exclude=mm_lhs_exclude)
             mech_atoms = elt["mech_atoms"][0]
             nidxs = []
             for i, ma in enumerate(mech_atoms):
+                if i in mm_lhs_exclude:
+                    continue
+
                 for saidx in ma:
                     nidx = np.argwhere(
                         (rg.sep_aidxs == saidx) & (rg.rct_idxs == i)
@@ -155,7 +167,7 @@ def main(cfg: DictConfig):
 
 
         tic = perf_counter()
-        for scl_lb in tqdm(np.arange(1, n_rxns, cfg.ds)):
+        for scl_lb in tqdm(np.arange(1, n_rxns + 1, cfg.ds)):
             rxn_ct = 0
             # Extract inferred subgraphs = union of subgraphs with frequency >= lb
             # on per-reaction basis
@@ -163,6 +175,7 @@ def main(cfg: DictConfig):
             lb = scl_lb / n_rxns
             for rxn_id, gb in sg_insts.groupby(by="rxn_id"):
 
+                # Take union of subgraphs with frequency >= lb
                 nidxs = set()
                 for _, row in gb.iterrows():
                     sg_id = row['subgraph_id']
