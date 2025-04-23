@@ -5,4 +5,4 @@ filepaths:
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
-src_file: mapped_mech_labeled_reactions.parquet
+src_file: distilled_mech_reactions.parquet

@@ -5,7 +5,4 @@ filepaths:
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
-rule_id: decarb
-subgraph_instances: subgraph_instances.parquet
-binary_feature_matrix: bfm.npy
-frequency_lb_scl: 10
+src_file: distilled_mech_reactions.parquet
