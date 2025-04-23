@@ -2,10 +2,10 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-src_file: mapped_mech_labeled_reactions.parquet
+src_file: distilled_mech_reactions.parquet
 
 hydra:
   run:
-    dir: ${filepaths.interim_data}
+    dir: ${filepaths.processed_data}
   job:
     chdir: True
