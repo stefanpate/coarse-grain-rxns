@@ -111,12 +111,11 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task:
-    - ds=1
+    task: []
   job:
     name: infer_mechanistic_subgraphs
     chdir: true
-    override_dirname: ds=1
+    override_dirname: ''
     id: ???
     num: ???
     config_name: infer_mech_subgraphs
