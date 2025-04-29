@@ -158,13 +158,10 @@ def main(cfg: DictConfig):
         n_rxns = bfm.shape[0]
         rcsz = full_rgs[list(full_rgs.keys())[0]].rcsz
 
-        # coverage is the ratio of MCS size to mechanistic subgraph size
-        # atom_ratio is the ratio of inferred subgraph size to mechanistic subgraph size
         mech_cov_cols = ["scl_lb", "mech_id", "inf_id", "coverage", "atom_ratio"]
         summary_stats_cols = ["scl_lb", "n_novel_subgraphs", "n_total_inferred", "rxn_cov_frac"]
         mech_cov_data = []
         summary_stats_data = []
-
 
         tic = perf_counter()
         for scl_lb in tqdm(np.arange(1, n_rxns + 1, cfg.ds)):
@@ -224,6 +221,8 @@ def main(cfg: DictConfig):
                     if len(M) == mech_n_atoms:
                         novels.discard(i) 
 
+                    # coverage is the ratio of MCS size to mechanistic subgraph size
+                    # atom_ratio is the ratio of inferred subgraph size to mechanistic subgraph size
                     coverage = len(M) / mech_n_atoms
                     atom_ratio = inf_n_atoms / mech_n_atoms
 
