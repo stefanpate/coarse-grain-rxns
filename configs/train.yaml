@@ -1,0 +1,14 @@
+defaults:
+  - filepaths: filepaths
+  - override hydra/job_logging: custom
+  - training: training
+  - _self_
+
+hydra:
+  run:
+    dir: ${filepaths.artifacts}/models
+  job:
+    chdir: True
+  sweep:
+    dir: ${filepaths.artifacts}
+    subdir: models
