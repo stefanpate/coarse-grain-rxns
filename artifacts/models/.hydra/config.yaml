@@ -1,0 +1,13 @@
+filepaths:
+  root: /home/stef/cgr
+  data: ${.root}/data
+  artifacts: ${.root}/artifacts
+  raw_data: ${.data}/raw
+  processed_data: ${.data}/processed
+  interim_data: ${.data}/interim
+training:
+  warmup_epochs: 2
+  max_epochs: 25
+  init_lr: 0.0001
+  max_lr: 0.001
+  final_lr: 0.0001
