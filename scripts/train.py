@@ -1,13 +1,21 @@
 import lightning as L
-from cgr.model import GNN, FFNPredictor, LinearPredictor
 from chemprop import nn, data, featurizers
 import hydra
 from omegaconf import DictConfig
 from pathlib import Path
 import pandas as pd
-from ergochemics import rc_to_nest
+from ergochemics.mapping import rc_to_nest
+from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
+from cgr.ml import (
+    GNN,
+    FFNPredictor,
+    LinearPredictor,
+    collate_batch,
+    sep_aidx_to_bin_label,
+)
 
-current_dir = Path(__file__).parent.resolve()
+current_dir = Path(__file__).parent.parent.resolve()
 
 @hydra.main(version_base=None, config_path=str(current_dir / "configs"), config_name="train")
 def main(cfg: DictConfig):
@@ -19,19 +27,31 @@ def main(cfg: DictConfig):
     )
     
     # Featurize data
+    print("Featurizing")
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
-    train_data = [data.ReactionDatapoint.from_smi(smi) for smi in smis]
+    df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.reaction_center), axis=1) # Convert aidxs to binary labels for block mol
+    ys = [elt[0] for elt in df["binary_label"]]
+
+    X, y = zip(*[(data.ReactionDatapoint.from_smi(smi), y) for smi, y in zip(smis, ys)])
+
+    # Split
+    train_val_X, test_X, train_val_y, test_y = train_test_split(X, y)
+    train_X, val_X, train_y, val_y = train_test_split(train_val_X, train_val_y)
+
     featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_="PROD_DIFF", atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
-    train_dataset = data.ReactionDataset(train_data, featurizer=featurizer)
-    train_dataloader = data.build_dataloader(train_dataset, shuffle=False)
+    train_dataset = list(zip(data.ReactionDataset(train_X, featurizer=featurizer), train_y))
+    val_dataset = list(zip(data.ReactionDataset(val_X, featurizer=featurizer), val_y))
+    train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=collate_batch)
+    val_dataloader = DataLoader(val_dataset, batch_size=64, shuffle=False, collate_fn=collate_batch)
 
     # Construct model
+    print("Constructing model")
     mp = nn.BondMessagePassing(d_v=featurizer.atom_fdim, d_e=featurizer.bond_fdim)
     pred_head = LinearPredictor(input_dim=mp.output_dim, output_dim=1)
     model = GNN(
         message_passing=mp,
-        predictor=,
+        predictor=pred_head,
         metrics=[],
         batch_norm=True,
         warmup_epochs=cfg.training.warmup_epochs,
@@ -41,10 +61,9 @@ def main(cfg: DictConfig):
     )
 
     # Train
-    trainer = L.Trainer()
-    trainer.fit(model=model, train_dataloaders=train_dataloader)
-
-    # Save model
-
+    print("Training model")
+    trainer = L.Trainer(max_epochs=cfg.training.max_epochs)
+    trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
+    
 if __name__ == "__main__":
     main()

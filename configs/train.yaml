@@ -1,7 +1,7 @@
 defaults:
   - filepaths: filepaths
+  - training: base
   - override hydra/job_logging: custom
-  - training: training
   - _self_
 
 hydra:
