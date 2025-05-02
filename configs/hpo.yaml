@@ -1,0 +1,18 @@
+defaults:
+  - filepaths: filepaths
+  - training: base
+  - data: random_split
+  - override hydra/job_logging: custom
+  - _self_
+
+n_trials: 10
+timeout: 60
+
+hydra:
+  run:
+    dir: ${filepaths.artifacts}/models
+  job:
+    chdir: True
+  sweep:
+    dir: ${filepaths.artifacts}
+    subdir: models
