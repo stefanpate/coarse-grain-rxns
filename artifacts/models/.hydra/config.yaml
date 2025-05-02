@@ -5,9 +5,10 @@ filepaths:
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
+  mlruns: ${.artifacts}/mlruns
 training:
   warmup_epochs: 2
-  max_epochs: 10
+  max_epochs: 5
   init_lr: 0.0001
   max_lr: 0.001
   final_lr: 0.0001
@@ -26,3 +27,4 @@ data:
   split_strategy: random_split
 n_trials: 10
 timeout: 60
+experiment_name: test

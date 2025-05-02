@@ -6,6 +6,7 @@ from chemprop.data import ReactionDatapoint, BatchMolGraph
 from typing import Iterable
 import lightning
 import torch.nn.functional as F
+import torcheval.metrics.functional as MF
 import numpy as np
 from itertools import accumulate
 from rdkit import Chem
@@ -43,8 +44,6 @@ class GNN(lightning.LightningModule):
         self,
         message_passing: MessagePassing,
         predictor: nn.Module,
-        metrics: list[str] | None = None,
-        batch_norm: bool = True,
         warmup_epochs: int = 2,
         init_lr: float = 1e-4,
         max_lr: float = 1e-3,
@@ -95,13 +94,43 @@ class GNN(lightning.LightningModule):
         self.log("train_loss", loss, prog_bar=True)
         return loss
     
-    def validation_step(self, batch: tuple[BatchMolGraph, Tensor | None], batch_idx: int) -> Tensor:
+    def validation_step(self, batch: tuple[BatchMolGraph, Tensor], batch_idx: int) -> Tensor:
         bmg, y = batch
         H = self.message_passing(bmg)
         logits = self.predictor(H)
         val_loss = self.loss_fn(logits, y)
+        probas = F.sigmoid(logits).squeeze()
+        y = y.squeeze().to(torch.int)
+        acc = MF.binary_accuracy(probas, y)
+        rec = MF.binary_recall(probas, y)
+        prec = MF.binary_precision(probas, y)
+        auroc = MF.binary_auroc(probas, y)
+        auprc = MF.binary_auprc(probas, y)
         self.log("val_loss", val_loss, prog_bar=True, batch_size=len(bmg))
-        return val_loss
+        self.log("val_acc", acc, prog_bar=True, batch_size=len(bmg))
+        self.log("val_recall", rec, prog_bar=True, batch_size=len(bmg))
+        self.log("val_precision", prec, prog_bar=True, batch_size=len(bmg))
+        self.log("val_auroc", auroc, prog_bar=True, batch_size=len(bmg))
+        self.log("val_auprc", auprc, prog_bar=True, batch_size=len(bmg))
+
+    def test_step(self, batch: tuple[BatchMolGraph, Tensor], batch_idx: int) -> Tensor:
+        bmg, y = batch
+        H = self.message_passing(bmg)
+        logits = self.predictor(H)
+        loss = self.loss_fn(logits, y)
+        probas = F.sigmoid(logits).squeeze()
+        y = y.squeeze().to(torch.int)
+        acc = MF.binary_accuracy(probas, y)
+        rec = MF.binary_recall(probas, y)
+        prec = MF.binary_precision(probas, y)
+        auroc = MF.binary_auroc(probas, y)
+        auprc = MF.binary_auprc(probas, y)
+        self.log("test_loss", loss, prog_bar=True, batch_size=len(bmg))
+        self.log("test_acc", acc, prog_bar=True, batch_size=len(bmg))
+        self.log("test_recall", rec, prog_bar=True, batch_size=len(bmg))
+        self.log("test_precision", prec, prog_bar=True, batch_size=len(bmg))
+        self.log("test_auroc", auroc, prog_bar=True, batch_size=len(bmg))
+        self.log("test_auprc", auprc, prog_bar=True, batch_size=len(bmg))
 
 '''
 Auxiliary
