@@ -1,6 +1,0 @@
-metrics: []
-batch_norm: true
-warmup_epochs: 2
-init_lr: 0.0001
-max_lr: 0.001
-final_lr: 0.0001

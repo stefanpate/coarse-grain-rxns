@@ -7,6 +7,8 @@ defaults:
 
 n_trials: 10
 timeout: 60
+experiment_name: test
+
 
 hydra:
   run:
