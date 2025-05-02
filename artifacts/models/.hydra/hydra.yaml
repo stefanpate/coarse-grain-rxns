@@ -111,15 +111,14 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task:
-    - training.max_epochs=25
+    task: []
   job:
-    name: train
+    name: hpo
     chdir: true
-    override_dirname: training.max_epochs=25
+    override_dirname: ''
     id: ???
     num: ???
-    config_name: train
+    config_name: hpo
     env_set: {}
     env_copy: []
     config:
@@ -143,6 +142,7 @@ hydra:
       provider: schema
     output_dir: /home/stef/cgr/artifacts/models
     choices:
+      data: random_split
       training: base
       filepaths: filepaths
       hydra/env: default

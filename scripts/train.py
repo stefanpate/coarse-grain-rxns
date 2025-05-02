@@ -22,12 +22,12 @@ def main(cfg: DictConfig):
     pass
 
     # Load data
+    print("Loading & preparing data")
     df = pd.read_parquet(
     Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    )
+    ).iloc[:500] # TODO remove post dev
     
-    # Featurize data
-    print("Featurizing")
+    # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.reaction_center), axis=1) # Convert aidxs to binary labels for block mol
@@ -39,6 +39,7 @@ def main(cfg: DictConfig):
     train_val_X, test_X, train_val_y, test_y = train_test_split(X, y)
     train_X, val_X, train_y, val_y = train_test_split(train_val_X, train_val_y)
 
+    # Featurize
     featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_="PROD_DIFF", atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
     train_dataset = list(zip(data.ReactionDataset(train_X, featurizer=featurizer), train_y))
     val_dataset = list(zip(data.ReactionDataset(val_X, featurizer=featurizer), val_y))

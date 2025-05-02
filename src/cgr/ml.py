@@ -10,6 +10,10 @@ import numpy as np
 from itertools import accumulate
 from rdkit import Chem
 
+'''
+Model components
+'''
+
 class FFNPredictor(nn.Module):
     def __init__(self, input_dim: int, output_dim: int, hidden_dims: list[int], activation: str = 'relu'):
         super().__init__()
@@ -98,7 +102,11 @@ class GNN(lightning.LightningModule):
         val_loss = self.loss_fn(logits, y)
         self.log("val_loss", val_loss, prog_bar=True, batch_size=len(bmg))
         return val_loss
-    
+
+'''
+Auxiliary
+'''
+
 def collate_batch(batch: Iterable[tuple[ReactionDatapoint, np.ndarray]]) -> tuple[BatchMolGraph, Tensor | None]:
     '''
     Custom collate function concatenates datapoints for torch DataLoader

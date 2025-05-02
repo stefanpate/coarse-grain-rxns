@@ -1,5 +1,5 @@
 warmup_epochs: 2
-max_epochs: 3
+max_epochs: 10
 init_lr: 1e-4
 max_lr: 1e-3
 final_lr: 1e-4
