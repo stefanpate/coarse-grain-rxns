@@ -261,6 +261,7 @@ dependencies = [
     { name = "networkx" },
     { name = "numpy" },
     { name = "optuna" },
+    { name = "optuna-integration" },
     { name = "pandas" },
     { name = "pyarrow" },
     { name = "pydantic" },
@@ -282,6 +283,7 @@ requires-dist = [
     { name = "networkx", specifier = ">=3.4.2" },
     { name = "numpy", specifier = ">=2.2.4" },
     { name = "optuna", specifier = ">=4.3.0" },
+    { name = "optuna-integration", specifier = ">=4.3.0" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pyarrow", specifier = ">=19.0.1" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -1628,6 +1630,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/82/d9/33ebab3060148134655f09f42592e7f7999f7b9e94e139df29bce54b2992/optuna-4.3.0.tar.gz", hash = "sha256:b3866842a84bc0bbb9906363bd846cfc39d09d3196265354bfdfda6a2f123b84", size = 457906 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d9/dd/0b593d1a5ee431b33a1fdf4ddb5911c312ed3bb598ef9e17457af2ee7b34/optuna-4.3.0-py3-none-any.whl", hash = "sha256:0ea1a01c99c09cbdf3e2dcd9af01dea86778d9fa20ca26f0238a98e7462d8dcb", size = 386567 },
+]
+
+[[package]]
+name = "optuna-integration"
+version = "4.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "optuna" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bd/0d/cef182fc1629f5ee902e349b5129924d2b4f37c4ea17ee6ead092b43b3fc/optuna_integration-4.3.0.tar.gz", hash = "sha256:3f7038f3cba84f00e9229078f0ea8dca8983fa2079e1d0457d5082d034829ff9", size = 85870 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c6/9b/70808bac453d37fc630e4dbdcb2d4d543673438b8a7b15146e936b89bcce/optuna_integration-4.3.0-py3-none-any.whl", hash = "sha256:c4d0c955fd2fc11b2dd32eb33d1ded0c0f23ad52232e31592620671ece2f08a8", size = 98468 },
 ]
 
 [[package]]

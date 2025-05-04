@@ -1,0 +1,47 @@
+filepaths:
+  root: /home/stef/cgr
+  data: ${.root}/data
+  artifacts: ${.root}/artifacts
+  raw_data: ${.data}/raw
+  processed_data: ${.data}/processed
+  interim_data: ${.data}/interim
+  mlruns: ${.artifacts}/mlruns
+training:
+  warmup_epochs: 2
+  max_epochs: 5
+  hpo_max_epochs: 3
+  init_lr: 0.0001
+  max_lr: 0.001
+  final_lr: 0.0001
+data:
+  outer_splitter:
+    _target_: sklearn.model_selection.KFold
+    n_splits: 5
+    shuffle: true
+    random_state: 1234
+  inner_splitter:
+    _target_: sklearn.model_selection.KFold
+    n_splits: 3
+    shuffle: true
+    random_state: 1234
+  outer_split_idx: 0
+  split_strategy: random_split
+n_trials: 10
+timeout: 60
+experiment_name: test
+hp_bounds:
+  mp_d_h:
+  - 25
+  - 500
+  mp_depth:
+  - 1
+  - 5
+  pred_head_d_h:
+  - 25
+  - 500
+  pred_head_depth:
+  - 1
+  - 3
+  batch_size:
+  - 32
+  - 256

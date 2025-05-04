@@ -11,6 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "cwd": "${fileDirname}",
+            "justMyCode": false,
             "env": {
                 "HYDRA_FULL_ERROR": "1",
             },
