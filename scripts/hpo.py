@@ -1,6 +1,6 @@
 import lightning as L
 from lightning.pytorch.loggers import MLFlowLogger
-from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping
 from chemprop import nn, data, featurizers
 from chemprop.data import ReactionDatapoint
 import hydra
@@ -11,6 +11,7 @@ import pandas as pd
 from ergochemics.mapping import rc_to_nest
 from torch.utils.data import DataLoader
 import optuna
+from optuna.integration import PyTorchLightningPruningCallback
 import numpy as np
 from functools import partial
 import mlflow
@@ -58,9 +59,13 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
             final_lr=cfg.training.final_lr
         )
 
-
         # Train
-        trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=False, enable_checkpointing=False)
+        trainer = L.Trainer(
+            max_epochs=cfg.training.hpo_max_epochs, 
+            logger=False, 
+            enable_checkpointing=False,
+            callbacks=[PyTorchLightningPruningCallback(trial, monitor="val_loss")]
+        )
         trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
 
         # Evaluate
@@ -136,9 +141,12 @@ def main(cfg: DictConfig):
         final_lr=cfg.training.final_lr,
     )
 
-
-
-    # saves top-K checkpoints based on "val_loss" metric
+    # Callbacks
+    early_stopping_callback = EarlyStopping(
+        monitor="val_loss",
+        mode="min",
+        check_on_train_epoch_end=False,
+    )
     checkpoint_callback = ModelCheckpoint(
         save_top_k=1,
         monitor="val_loss",
@@ -146,6 +154,7 @@ def main(cfg: DictConfig):
         filename="best-{epoch:02d}-{val_loss:.2f}.ckpt",
     )
 
+    # Logger
     logger = MLFlowLogger(
         experiment_name=cfg.experiment_name,
         tracking_uri="file:" + cfg.filepaths.mlruns,
@@ -164,8 +173,13 @@ def main(cfg: DictConfig):
         mlflow.log_params(study.best_trial.params)
 
         # Train and test
-        trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger,
-            callbacks=[checkpoint_callback]
+        trainer = L.Trainer(
+            max_epochs=cfg.training.max_epochs,
+            logger=logger,
+            callbacks=[
+                checkpoint_callback,
+                early_stopping_callback,
+            ]
         )
         trainer.fit(model=model, train_dataloaders=train_val_dataloader)
         test_metrics = trainer.test(model=model, dataloaders=test_dataloader)

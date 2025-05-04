@@ -8,13 +8,17 @@ defaults:
 n_trials: 10
 timeout: 60
 experiment_name: test
-
+hp_bounds:
+  mp_d_h: [25, 500]
+  mp_depth: [1, 5]
+  pred_head_d_h: [25, 500]
+  pred_head_depth: [1, 3]
+  batch_size: [32, 256]
 
 hydra:
   run:
-    dir: ${filepaths.artifacts}/models
+    dir: ${filepaths.mlruns}/hpo_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.artifacts}
-    subdir: models
+    dir: ${filepaths.mlruns}/hpo_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}

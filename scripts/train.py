@@ -1,4 +1,6 @@
 import lightning as L
+from lightning.pytorch.loggers import MLFlowLogger
+from lightning.pytorch.callbacks import ModelCheckpoint
 from chemprop import nn, data, featurizers
 import hydra
 from omegaconf import DictConfig
@@ -25,7 +27,7 @@ def main(cfg: DictConfig):
     print("Loading & preparing data")
     df = pd.read_parquet(
     Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    ).iloc[:500] # TODO remove post dev
+    ).iloc[::50] # TODO remove post dev
     
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
@@ -53,18 +55,31 @@ def main(cfg: DictConfig):
     model = GNN(
         message_passing=mp,
         predictor=pred_head,
-        metrics=[],
-        batch_norm=True,
         warmup_epochs=cfg.training.warmup_epochs,
         init_lr=cfg.training.init_lr,
         max_lr=cfg.training.max_lr,
         final_lr=cfg.training.final_lr
     )
 
+    logger = MLFlowLogger(
+        experiment_name="test",
+        tracking_uri="file:" + cfg.filepaths.mlruns,
+        log_model=True,
+    )
+
+    # # saves top-K checkpoints based on "val_loss" metric
+    # checkpoint_callback = ModelCheckpoint(
+    #     save_top_k=1,
+    #     monitor="val_loss",
+    #     mode="min",
+    #     filename="best-{epoch:02d}-{val_loss:.2f}.ckpt",
+    # )
+
     # Train
     print("Training model")
-    trainer = L.Trainer(max_epochs=cfg.training.max_epochs)
+    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger)
     trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
+    print(trainer.log_dir)
     
 if __name__ == "__main__":
     main()

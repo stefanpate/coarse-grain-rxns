@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/770105027132891136/2ed7e15dbda54bd09681123dab3d68ba/artifacts
+end_time: 1746401717791
+entry_point_name: ''
+experiment_id: '770105027132891136'
+lifecycle_stage: active
+run_id: 2ed7e15dbda54bd09681123dab3d68ba
+run_name: enthused-elk-669
+run_uuid: 2ed7e15dbda54bd09681123dab3d68ba
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746401717319
+status: 4
+tags: []
+user_id: stef

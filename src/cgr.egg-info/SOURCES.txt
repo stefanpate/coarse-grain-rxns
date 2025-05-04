@@ -3,6 +3,7 @@ pyproject.toml
 src/cgr/__init__.py
 src/cgr/cheminfo.py
 src/cgr/inference.py
+src/cgr/ml.py
 src/cgr/template.py
 src/cgr.egg-info/PKG-INFO
 src/cgr.egg-info/SOURCES.txt

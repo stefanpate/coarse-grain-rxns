@@ -1,5 +1,6 @@
 warmup_epochs: 2
-max_epochs: 5
+max_epochs: 5 # 100
+hpo_max_epochs: 3 # 30
 init_lr: 1e-4
 max_lr: 1e-3
 final_lr: 1e-4
