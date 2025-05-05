@@ -3,6 +3,7 @@ defaults:
   - training: base
   - data: random_split
   - override hydra/job_logging: custom
+  - override hydra/launcher: quest_gpu
   - _self_
 
 n_trials: 100
