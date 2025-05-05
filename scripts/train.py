@@ -1,5 +1,5 @@
 import lightning as L
-from lightning.pytorch.loggers import MLFlowLogger
+from lightning.pytorch.loggers import MLFlowLogger, CSVLogger
 from lightning.pytorch.callbacks import ModelCheckpoint
 from chemprop import nn, data, featurizers
 import hydra
@@ -67,18 +67,10 @@ def main(cfg: DictConfig):
         log_model=True,
     )
 
-    # # saves top-K checkpoints based on "val_loss" metric
-    # checkpoint_callback = ModelCheckpoint(
-    #     save_top_k=1,
-    #     monitor="val_loss",
-    #     mode="min",
-    #     filename="best-{epoch:02d}-{val_loss:.2f}.ckpt",
-    # )
-
     # Train
     print("Training model")
-    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger)
-    trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
+    trainer = L.Trainer(max_epochs=4, logger=logger)
+    trainer.fit(model=model, train_dataloaders=train_dataloader)
     print(trainer.log_dir)
     
 if __name__ == "__main__":
