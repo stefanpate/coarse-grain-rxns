@@ -5,20 +5,23 @@ defaults:
   - override hydra/job_logging: custom
   - _self_
 
-n_trials: 10
-timeout: 60
-experiment_name: test
+n_trials: 100
+timeout: 600
+seed: 1234
 hp_bounds:
   mp_d_h: [25, 500]
   mp_depth: [1, 5]
+  pred_head_name: ['linear', 'ffn']
   pred_head_d_h: [25, 500]
   pred_head_depth: [1, 3]
   batch_size: [32, 256]
+  featurizer_mode: ["PROD_DIFF", "REAC_PROD"]
+  max_epochs: [10, 50]
 
 hydra:
   run:
-    dir: ${filepaths.mlruns}/hpo_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: ${filepaths.artifacts}/hpo_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.mlruns}/hpo_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: ${filepaths.artifacts}/hpo_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}

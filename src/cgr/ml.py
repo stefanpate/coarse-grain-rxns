@@ -16,11 +16,11 @@ Model components
 '''
 
 class FFNPredictor(nn.Module):
-    def __init__(self, input_dim: int, output_dim: int, hidden_dims: list[int], activation: str = 'relu'):
+    def __init__(self, input_dim: int, output_dim: int, d_hs: list[int], activation: str = 'ReLU'):
         super().__init__()
         layers = []
         current_dim = input_dim
-        for hidden_dim in hidden_dims:
+        for hidden_dim in d_hs:
             layers.append(nn.Linear(current_dim, hidden_dim))
             layers.append(getattr(nn, activation)())
             current_dim = hidden_dim
@@ -91,7 +91,7 @@ class GNN(lightning.LightningModule):
         H = self.message_passing(bmg)
         logits = self.predictor(H)
         loss = self.loss_fn(logits, y)
-        self.log("train_loss", loss, prog_bar=True)
+        self.log("train_loss", loss, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
         return loss
     
     def validation_step(self, batch: tuple[BatchMolGraph, Tensor], batch_idx: int) -> Tensor:
@@ -106,12 +106,12 @@ class GNN(lightning.LightningModule):
         prec = MF.binary_precision(probas, y)
         auroc = MF.binary_auroc(probas, y)
         auprc = MF.binary_auprc(probas, y)
-        self.log("val_loss", val_loss, prog_bar=True, batch_size=len(bmg))
-        self.log("val_acc", acc, prog_bar=True, batch_size=len(bmg))
-        self.log("val_recall", rec, prog_bar=True, batch_size=len(bmg))
-        self.log("val_precision", prec, prog_bar=True, batch_size=len(bmg))
-        self.log("val_auroc", auroc, prog_bar=True, batch_size=len(bmg))
-        self.log("val_auprc", auprc, prog_bar=True, batch_size=len(bmg))
+        self.log("val_loss", val_loss, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
+        self.log("val_acc", acc, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
+        self.log("val_recall", rec, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
+        self.log("val_precision", prec, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
+        self.log("val_auroc", auroc, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
+        self.log("val_auprc", auprc, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
 
     def test_step(self, batch: tuple[BatchMolGraph, Tensor], batch_idx: int) -> Tensor:
         bmg, y = batch
