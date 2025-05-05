@@ -14,6 +14,7 @@ Requires-Dist: mlflow>=2.22.0
 Requires-Dist: networkx>=3.4.2
 Requires-Dist: numpy>=2.2.4
 Requires-Dist: optuna>=4.3.0
+Requires-Dist: optuna-integration>=4.3.0
 Requires-Dist: pandas>=2.2.3
 Requires-Dist: pyarrow>=19.0.1
 Requires-Dist: pydantic>=2.10.6
