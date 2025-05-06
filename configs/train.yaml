@@ -1,14 +1,16 @@
 defaults:
   - filepaths: filepaths
   - training: base
+  - data: random_split
   - override hydra/job_logging: custom
   - _self_
 
+model: ???
+
 hydra:
   run:
-    dir: ${filepaths.artifacts}/models
+    dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.artifacts}
-    subdir: models
+    dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}

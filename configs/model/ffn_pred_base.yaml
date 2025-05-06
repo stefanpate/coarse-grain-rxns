@@ -1,0 +1,6 @@
+mp_d_h: 300
+mp_depth: 3
+pred_head_name: 'ffn'
+pred_head_d_hs: [300]
+batch_size: 64
+featurizer_mode: "PROD_DIFF"
