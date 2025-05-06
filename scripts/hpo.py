@@ -99,7 +99,7 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
                 inner_split_idx=i,
             )
         )
-        trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
+        trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader, accelerator="auto", devices=1)
 
         # Evaluate
         metrics.append(trainer.callback_metrics["val_loss"].item())
@@ -208,8 +208,8 @@ def main(cfg: DictConfig):
 
         # Train and test
         trainer = L.Trainer(max_epochs=best_hps['max_epochs'], logger=logger)
-        trainer.fit(model=model, train_dataloaders=train_val_dataloader)
-        trainer.test(model=model, dataloaders=test_dataloader)
+        trainer.fit(model=model, train_dataloaders=train_val_dataloader, accelerator="auto", devices=1)
+        trainer.test(model=model, dataloaders=test_dataloader, accelerator="auto", devices=1)
     
 if __name__ == "__main__":
     main()

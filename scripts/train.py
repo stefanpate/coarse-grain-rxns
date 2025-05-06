@@ -26,7 +26,7 @@ def main(cfg: DictConfig):
     print("Loading & preparing data")
     df = pd.read_parquet(
     Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    ).iloc[::50]
+    )
     
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
@@ -85,8 +85,8 @@ def main(cfg: DictConfig):
         mlflow.log_params(flat_resolved_cfg)
         
     trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger)
-    trainer.fit(model=model, train_dataloaders=train_dataloader)
-    trainer.test(model=model, dataloaders=test_dataloader)
+    trainer.fit(model=model, train_dataloaders=train_dataloader, accelerator="auto", devices=1)
+    trainer.test(model=model, dataloaders=test_dataloader, accelerator="auto", devices=1)
     
 if __name__ == "__main__":
     main()

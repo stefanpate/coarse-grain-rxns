@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/440769810419849909/3e83255235e34c939a5ecb8b895670ec/artifacts
+end_time: 1746556255496
+entry_point_name: ''
+experiment_id: '440769810419849909'
+lifecycle_stage: active
+run_id: 3e83255235e34c939a5ecb8b895670ec
+run_name: exultant-fawn-121
+run_uuid: 3e83255235e34c939a5ecb8b895670ec
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746555148990
+status: 3
+tags: []
+user_id: stef

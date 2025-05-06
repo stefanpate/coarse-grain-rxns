@@ -1,0 +1,34 @@
+filepaths:
+  root: /home/stef/cgr
+  data: ${.root}/data
+  artifacts: ${.root}/artifacts
+  raw_data: ${.data}/raw
+  processed_data: ${.data}/processed
+  interim_data: ${.data}/interim
+  mlruns: ${.artifacts}/mlruns
+training:
+  warmup_epochs: 2
+  init_lr: 0.0001
+  max_lr: 0.001
+  final_lr: 0.0001
+  max_epochs: 40
+  batch_size: 64
+data:
+  outer_splitter:
+    _target_: sklearn.model_selection.GroupKFold
+    n_splits: 5
+    shuffle: true
+    random_state: 1234
+  inner_splitter:
+    _target_: sklearn.model_selection.GroupKFold
+    n_splits: 3
+    shuffle: true
+    random_state: 1234
+  outer_split_idx: 0
+  split_strategy: random_rule_split
+model:
+  mp_d_h: 300
+  mp_depth: 3
+  pred_head_name: linear
+  batch_size: 64
+  featurizer_mode: PROD_DIFF

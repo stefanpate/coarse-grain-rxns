@@ -1,0 +1,6 @@
+artifact_location: file:///home/stef/cgr/artifacts/mlruns/440769810419849909
+creation_time: 1746552515599
+experiment_id: '440769810419849909'
+last_update_time: 1746552515599
+lifecycle_stage: active
+name: outer_splits

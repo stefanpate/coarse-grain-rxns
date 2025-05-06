@@ -171,3 +171,4 @@ cython_debug/
 .pypirc
 configs/filepaths/
 artifacts/250227_skeleton_proposal.txt
+scripts/nohup.out

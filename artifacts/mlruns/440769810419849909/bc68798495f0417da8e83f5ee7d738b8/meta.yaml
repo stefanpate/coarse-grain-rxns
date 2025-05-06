@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/440769810419849909/bc68798495f0417da8e83f5ee7d738b8/artifacts
+end_time: 1746553257830
+entry_point_name: ''
+experiment_id: '440769810419849909'
+lifecycle_stage: active
+run_id: bc68798495f0417da8e83f5ee7d738b8
+run_name: peaceful-hog-146
+run_uuid: bc68798495f0417da8e83f5ee7d738b8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746552515807
+status: 3
+tags: []
+user_id: stef

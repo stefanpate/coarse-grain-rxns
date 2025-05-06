@@ -1,0 +1,2 @@
+- +model=ffn_pred_base
+- data=random_rule_split
