@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/440769810419849909/16310d5cedaa4f7abba5837f5e3ebe15/artifacts
+end_time: 1746555121798
+entry_point_name: ''
+experiment_id: '440769810419849909'
+lifecycle_stage: active
+run_id: 16310d5cedaa4f7abba5837f5e3ebe15
+run_name: calm-fox-474
+run_uuid: 16310d5cedaa4f7abba5837f5e3ebe15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746554203405
+status: 3
+tags: []
+user_id: stef
