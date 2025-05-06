@@ -1,11 +1,10 @@
 import lightning as L
 from lightning.pytorch.loggers import MLFlowLogger
-from lightning.pytorch import seed_everything
 from chemprop import nn, data, featurizers
 from chemprop.data import ReactionDatapoint
 import hydra
 from hydra.utils import instantiate
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
@@ -15,7 +14,6 @@ from optuna.integration import PyTorchLightningPruningCallback
 import numpy as np
 from functools import partial
 import mlflow
-from omegaconf import OmegaConf
 from cgr.ml import (
     GNN,
     FFNPredictor,
@@ -110,7 +108,6 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
 
 @hydra.main(version_base=None, config_path=str(current_dir / "configs"), config_name="hpo")
 def main(cfg: DictConfig):
-    seed_everything(cfg.seed)
     
     # Load data
     print("Loading & preparing data")
@@ -123,7 +120,7 @@ def main(cfg: DictConfig):
     smis = df["am_smarts"].tolist()
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.reaction_center), axis=1) # Convert aidxs to binary labels for block mol
     ys = [elt[0] for elt in df["binary_label"]]
-    groups = df["rule_id"].tolist() if cfg.data.split_strategy != "split_random" else None
+    groups = df["rule_id"].tolist() if cfg.data.split_strategy != "random_split" else None
     X, y = zip(*[(data.ReactionDatapoint.from_smi(smi), y) for smi, y in zip(smis, ys)])
 
     # Split
@@ -158,7 +155,6 @@ def main(cfg: DictConfig):
     for key, value in trial.params.items():
         print(f"    {key}: {value}")
 
-
     # Train final model with best hyperparameters
     best_hps = study.best_trial.params
 
@@ -187,18 +183,21 @@ def main(cfg: DictConfig):
 
     # Logging
     to_log = [
-        "data/outer_split_idx"
+        "data/outer_split_idx",
+        "data/split_strategy",
     ]
 
     logger = MLFlowLogger(
         experiment_name="outer_splits",
         tracking_uri="file:" + cfg.filepaths.mlruns,
         log_model=False,
+        tags={"source": "hpo.py"},
     )
 
     mlflow.set_experiment(experiment_id=logger.experiment_id)
 
     # Train
+    print("Training model")
     with mlflow.start_run(run_id=logger.run_id):
         flat_resolved_cfg = pd.json_normalize(
             {k: v for k,v in OmegaConf.to_container(cfg, resolve=True).items() if k != 'filepaths'}, # Resolved interpolated values
@@ -208,10 +207,7 @@ def main(cfg: DictConfig):
         mlflow.log_params(study.best_trial.params)
 
         # Train and test
-        trainer = L.Trainer(
-            max_epochs=best_hps['max_epochs'],
-            logger=logger,
-        )
+        trainer = L.Trainer(max_epochs=best_hps['max_epochs'], logger=logger)
         trainer.fit(model=model, train_dataloaders=train_val_dataloader)
         trainer.test(model=model, dataloaders=test_dataloader)
     

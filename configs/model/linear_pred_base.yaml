@@ -1,0 +1,5 @@
+mp_d_h: 300
+mp_depth: 3
+pred_head_name: 'linear'
+batch_size: 64
+featurizer_mode: "PROD_DIFF"

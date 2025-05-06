@@ -1,14 +1,14 @@
 import lightning as L
-from lightning.pytorch.loggers import MLFlowLogger, CSVLogger
-from lightning.pytorch.callbacks import ModelCheckpoint
+import mlflow
+from lightning.pytorch.loggers import MLFlowLogger
 from chemprop import nn, data, featurizers
 import hydra
-from omegaconf import DictConfig
+from hydra.utils import instantiate
+from omegaconf import DictConfig, OmegaConf
 from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
 from torch.utils.data import DataLoader
-from sklearn.model_selection import train_test_split
 from cgr.ml import (
     GNN,
     FFNPredictor,
@@ -21,57 +21,72 @@ current_dir = Path(__file__).parent.parent.resolve()
 
 @hydra.main(version_base=None, config_path=str(current_dir / "configs"), config_name="train")
 def main(cfg: DictConfig):
-    pass
 
     # Load data
     print("Loading & preparing data")
     df = pd.read_parquet(
     Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    ).iloc[::50] # TODO remove post dev
+    ).iloc[::50]
     
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.reaction_center), axis=1) # Convert aidxs to binary labels for block mol
     ys = [elt[0] for elt in df["binary_label"]]
-
+    groups = df["rule_id"].tolist() if cfg.data.split_strategy != "random_split" else None
     X, y = zip(*[(data.ReactionDatapoint.from_smi(smi), y) for smi, y in zip(smis, ys)])
 
     # Split
-    train_val_X, test_X, train_val_y, test_y = train_test_split(X, y)
-    train_X, val_X, train_y, val_y = train_test_split(train_val_X, train_val_y)
+    outer_splitter = instantiate(cfg.data.outer_splitter)
+    train_val_idx, test_idx = list(outer_splitter.split(X, y, groups=groups))[cfg.data.outer_split_idx]
+    train_X, train_y = [X[i] for i in train_val_idx], [y[i] for i in train_val_idx]
+    test_X, test_y = [X[i] for i in test_idx], [y[i] for i in test_idx]
 
     # Featurize
-    featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_="PROD_DIFF", atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
+    featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_=cfg.model.featurizer_mode, atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
     train_dataset = list(zip(data.ReactionDataset(train_X, featurizer=featurizer), train_y))
-    val_dataset = list(zip(data.ReactionDataset(val_X, featurizer=featurizer), val_y))
-    train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=collate_batch)
-    val_dataloader = DataLoader(val_dataset, batch_size=64, shuffle=False, collate_fn=collate_batch)
+    test_dataset = list(zip(data.ReactionDataset(test_X, featurizer=featurizer), test_y))
+    train_dataloader = DataLoader(train_dataset, batch_size=cfg.training.batch_size, shuffle=True, collate_fn=collate_batch)
+    test_dataloader = DataLoader(test_dataset, batch_size=64, shuffle=False, collate_fn=collate_batch)
 
     # Construct model
-    print("Constructing model")
-    mp = nn.BondMessagePassing(d_v=featurizer.atom_fdim, d_e=featurizer.bond_fdim)
-    pred_head = LinearPredictor(input_dim=mp.output_dim, output_dim=1)
+    mp = nn.BondMessagePassing(d_v=featurizer.atom_fdim, d_e=featurizer.bond_fdim, d_h=cfg.model.mp_d_h, depth=cfg.model.mp_depth)
+    if cfg.model.pred_head_name == 'linear':
+        pred_head = LinearPredictor(input_dim=cfg.model.mp_d_h, output_dim=1)
+    elif cfg.model.pred_head_name == 'ffn':
+        pred_head = FFNPredictor(input_dim=cfg.model.mp_d_h, output_dim=1, d_hs=cfg.model.pred_head_d_hs)
+
     model = GNN(
         message_passing=mp,
         predictor=pred_head,
         warmup_epochs=cfg.training.warmup_epochs,
         init_lr=cfg.training.init_lr,
         max_lr=cfg.training.max_lr,
-        final_lr=cfg.training.final_lr
+        final_lr=cfg.training.final_lr,
     )
 
+    # Logging
     logger = MLFlowLogger(
-        experiment_name="test",
+        experiment_name="outer_splits",
         tracking_uri="file:" + cfg.filepaths.mlruns,
-        log_model=True,
+        log_model=False,
+        tags={"source": "train.py"},
     )
+
+    mlflow.set_experiment(experiment_id=logger.experiment_id)
 
     # Train
     print("Training model")
-    trainer = L.Trainer(max_epochs=4, logger=logger)
+    with mlflow.start_run(run_id=logger.run_id):
+        flat_resolved_cfg = pd.json_normalize(
+            {k: v for k,v in OmegaConf.to_container(cfg, resolve=True).items() if k != 'filepaths'}, # Resolved interpolated values
+            sep='/'
+        ).to_dict(orient='records')[0]
+        mlflow.log_params(flat_resolved_cfg)
+        
+    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger)
     trainer.fit(model=model, train_dataloaders=train_dataloader)
-    print(trainer.log_dir)
+    trainer.test(model=model, dataloaders=test_dataloader)
     
 if __name__ == "__main__":
     main()
