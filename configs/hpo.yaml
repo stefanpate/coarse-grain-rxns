@@ -3,12 +3,12 @@ defaults:
   - training: base
   - data: random_rule_split
   - override hydra/job_logging: custom
-  - override hydra/launcher: quest_gpu
+  - override hydra/launcher: quest_cpu
   - _self_
 
-n_trials: 3
-timeout: 60
+n_trials: 1000
 seed: 1234
+timeout: 18000
 study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_val_loss"
 
 hp_bounds:
