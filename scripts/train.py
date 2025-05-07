@@ -10,6 +10,7 @@ from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
 from torch.utils.data import DataLoader
+import logging
 from cgr.ml import (
     GNN,
     FFNPredictor,
@@ -19,6 +20,7 @@ from cgr.ml import (
 )
 
 current_dir = Path(__file__).parent.parent.resolve()
+log = logging.getLogger(__name__)
 
 @hydra.main(version_base=None, config_path=str(current_dir / "configs"), config_name="train")
 def main(cfg: DictConfig):
@@ -44,10 +46,10 @@ def main(cfg: DictConfig):
         cfg.model.pred_head_d_hs = pred_head_d_hs
 
     # Load data
-    print("Loading & preparing data")
+    log.info("Loading & preparing data")
     df = pd.read_parquet(
         Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    ).iloc[::50]
+    )
     
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
@@ -97,7 +99,7 @@ def main(cfg: DictConfig):
     mlflow.set_experiment(experiment_id=logger.experiment_id)
 
     # Train
-    print("Training model")
+    log.info("Training model")
     with mlflow.start_run(run_id=logger.run_id):
         flat_resolved_cfg = pd.json_normalize(
             {k: v for k,v in OmegaConf.to_container(cfg, resolve=True).items() if k != 'filepaths'}, # Resolved interpolated values

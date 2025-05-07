@@ -26,6 +26,7 @@ from cgr.ml import (
 
 current_dir = Path(__file__).parent.parent.resolve()
 optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
+log = logging.getLogger(__name__)
 
 def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], train_val_y: list[np.ndarray], cfg: DictConfig, train_val_groups: list[int] = []) -> float:
     special = [
@@ -61,7 +62,7 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
     metrics = []
     inner_splitter = instantiate(cfg.data.inner_splitter)
     for i, (train_idx, val_idx) in enumerate(inner_splitter.split(train_val_X, train_val_y, groups=train_val_groups)):
-        print(f"Inner split {i + 1}/{cfg.data.inner_splitter.n_splits}")
+        log.info(f"Inner split {i + 1}/{cfg.data.inner_splitter.n_splits}")
         
         # Featurize
         featurizer = featurizers.CondensedGraphOfReactionFeaturizer(
@@ -115,10 +116,10 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
 def main(cfg: DictConfig):
     
     # Load data
-    print("Loading & preparing data")
+    log.info("Loading & preparing data")
     df = pd.read_parquet(
     Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    ).iloc[::50] # TODO: Remove this line to use full dataset
+    )
     
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
@@ -135,7 +136,7 @@ def main(cfg: DictConfig):
     train_val_groups = [groups[i] for i in train_val_idx] if groups else None
 
     # Optimize hyperparameters
-    print("Optimizing hyperparameters")
+    log.info("Optimizing hyperparameters")
     _objective = partial(
         objective,
         train_val_X=train_val_X,
@@ -146,10 +147,10 @@ def main(cfg: DictConfig):
     sampler_path = Path(cfg.filepaths.hpo_studies) / f"{cfg.study_name}_sampler.pkl"
     
     if sampler_path.exists():
-        print(f"Loading sampler from {sampler_path}")
+        log.info(f"Loading sampler from {sampler_path}")
         sampler = pickle.load(open(sampler_path, "rb"))
     else:
-        print(f"Creating new sampler seeded with {cfg.seed}")
+        log.info(f"Creating new sampler seeded with {cfg.seed}")
         sampler = optuna.samplers.TPESampler(seed=cfg.seed)
 
     study = optuna.create_study(
@@ -160,16 +161,20 @@ def main(cfg: DictConfig):
         storage=f"sqlite:///{cfg.filepaths.hpo_studies}/{cfg.study_name}.db",
         load_if_exists=True
     )
-    study.optimize(_objective, n_trials=cfg.n_trials, timeout=cfg.timeout)
+    study.optimize(
+        _objective,
+        n_trials=cfg.n_trials,
+        timeout=cfg.timeout # seconds
+    )
 
-    print("Best trial:")
+    log.info("Best trial:")
     trial = study.best_trial
 
-    print(f"  Val loss: {trial.value}")
+    log.info(f"  Val loss: {trial.value}")
 
-    print("  Params: ")
+    log.info("  Params: ")
     for key, value in trial.params.items():
-        print(f"    {key}: {value}")
+        log.info(f"    {key}: {value}")
 
     with open(sampler_path, "wb") as f:
         pickle.dump(study.sampler, f)
