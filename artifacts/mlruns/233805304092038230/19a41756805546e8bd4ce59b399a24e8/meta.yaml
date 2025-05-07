@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/19a41756805546e8bd4ce59b399a24e8/artifacts
+end_time: 1746634265506
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 19a41756805546e8bd4ce59b399a24e8
+run_name: ambitious-hare-476
+run_uuid: 19a41756805546e8bd4ce59b399a24e8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746634264528
+status: 4
+tags: []
+user_id: stef

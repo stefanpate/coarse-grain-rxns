@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/6e992be20d75494f83a830416c27a16d/artifacts
+end_time: 1746633060254
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 6e992be20d75494f83a830416c27a16d
+run_name: invincible-hog-135
+run_uuid: 6e992be20d75494f83a830416c27a16d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746633059094
+status: 3
+tags: []
+user_id: stef

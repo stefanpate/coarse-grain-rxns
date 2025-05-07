@@ -5,6 +5,7 @@ from chemprop import nn, data, featurizers
 import hydra
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
+import optuna
 from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
@@ -22,11 +23,31 @@ current_dir = Path(__file__).parent.parent.resolve()
 @hydra.main(version_base=None, config_path=str(current_dir / "configs"), config_name="train")
 def main(cfg: DictConfig):
 
+    # Override config with best trial from hpo
+    if cfg.use_study:
+        study = optuna.load_study(
+            study_name=cfg.study_name,
+            storage=f"sqlite:///{cfg.filepaths.hpo_studies}/{cfg.study_name}.db"
+        )
+
+        pred_head_d_hs = []
+        for k, v in study.best_trial.params.items():
+            group, hp_name = k.split('/')
+            if group == "model" and hp_name.startswith("pred_head_d_h_"):
+                pred_head_d_hs.append((int(hp_name.split('_')[-1]), v))
+
+            if group in cfg.keys() and hp_name in cfg[group].keys():
+                cfg[group][hp_name] = v
+
+        pred_head_d_hs = sorted(pred_head_d_hs, key=lambda x: x[0])
+        pred_head_d_hs = [v for _, v in pred_head_d_hs]
+        cfg.model.pred_head_d_hs = pred_head_d_hs
+
     # Load data
     print("Loading & preparing data")
     df = pd.read_parquet(
-    Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
-    )
+        Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
+    ).iloc[::50]
     
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
@@ -84,9 +105,9 @@ def main(cfg: DictConfig):
         ).to_dict(orient='records')[0]
         mlflow.log_params(flat_resolved_cfg)
         
-    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger)
-    trainer.fit(model=model, train_dataloaders=train_dataloader, accelerator="auto", devices=1)
-    trainer.test(model=model, dataloaders=test_dataloader, accelerator="auto", devices=1)
+    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger, accelerator="auto", devices=1)
+    trainer.fit(model=model, train_dataloaders=train_dataloader)
+    trainer.test(model=model, dataloaders=test_dataloader)
     
 if __name__ == "__main__":
     main()

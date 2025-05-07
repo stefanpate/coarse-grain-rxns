@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/bdc9177a5a2f47b4afc3366a7e8b884d/artifacts
+end_time: 1746634149330
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: bdc9177a5a2f47b4afc3366a7e8b884d
+run_name: fearless-shrimp-166
+run_uuid: bdc9177a5a2f47b4afc3366a7e8b884d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746634148831
+status: 3
+tags: []
+user_id: stef

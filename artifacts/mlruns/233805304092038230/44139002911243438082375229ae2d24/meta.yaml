@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/44139002911243438082375229ae2d24/artifacts
+end_time: 1746634147489
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 44139002911243438082375229ae2d24
+run_name: casual-shrew-211
+run_uuid: 44139002911243438082375229ae2d24
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746634146695
+status: 3
+tags: []
+user_id: stef

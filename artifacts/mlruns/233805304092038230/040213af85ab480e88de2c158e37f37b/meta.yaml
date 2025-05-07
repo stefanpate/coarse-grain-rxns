@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/040213af85ab480e88de2c158e37f37b/artifacts
+end_time: 1746633062278
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 040213af85ab480e88de2c158e37f37b
+run_name: resilient-cow-889
+run_uuid: 040213af85ab480e88de2c158e37f37b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746633061779
+status: 3
+tags: []
+user_id: stef

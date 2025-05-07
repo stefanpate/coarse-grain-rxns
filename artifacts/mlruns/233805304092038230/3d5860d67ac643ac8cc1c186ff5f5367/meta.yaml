@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/3d5860d67ac643ac8cc1c186ff5f5367/artifacts
+end_time: 1746634156197
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 3d5860d67ac643ac8cc1c186ff5f5367
+run_name: rambunctious-hen-733
+run_uuid: 3d5860d67ac643ac8cc1c186ff5f5367
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746634155686
+status: 3
+tags: []
+user_id: stef
