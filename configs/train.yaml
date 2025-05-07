@@ -2,10 +2,12 @@ defaults:
   - filepaths: filepaths
   - training: base
   - data: random_split
+  - model: linear_pred_base
   - override hydra/job_logging: custom
   - _self_
 
-model: ???
+study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_val_loss"
+use_study: False
 
 hydra:
   run:

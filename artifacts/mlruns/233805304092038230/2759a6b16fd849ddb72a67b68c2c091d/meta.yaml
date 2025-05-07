@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/2759a6b16fd849ddb72a67b68c2c091d/artifacts
+end_time: 1746634148391
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 2759a6b16fd849ddb72a67b68c2c091d
+run_name: stylish-worm-844
+run_uuid: 2759a6b16fd849ddb72a67b68c2c091d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746634147928
+status: 3
+tags: []
+user_id: stef

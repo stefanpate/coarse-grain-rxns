@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/557cb5a91eef41d69f5cc5eebb6846c9/artifacts
+end_time: 1746634228654
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 557cb5a91eef41d69f5cc5eebb6846c9
+run_name: carefree-skunk-499
+run_uuid: 557cb5a91eef41d69f5cc5eebb6846c9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746634227963
+status: 3
+tags: []
+user_id: stef

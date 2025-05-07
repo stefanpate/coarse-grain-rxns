@@ -172,3 +172,5 @@ cython_debug/
 configs/filepaths/
 artifacts/250227_skeleton_proposal.txt
 scripts/nohup.out
+**/hpo_conf
+**/train_conf

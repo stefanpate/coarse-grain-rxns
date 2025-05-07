@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/46a0898ab86142eea2c9cb07f94b2388/artifacts
+end_time: 1746633061338
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: 46a0898ab86142eea2c9cb07f94b2388
+run_name: ambitious-grub-100
+run_uuid: 46a0898ab86142eea2c9cb07f94b2388
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746633060809
+status: 3
+tags: []
+user_id: stef

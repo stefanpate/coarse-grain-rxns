@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/233805304092038230/dd16fdef253f48318214eb6b5e307d7a/artifacts
+end_time: 1746633053679
+entry_point_name: ''
+experiment_id: '233805304092038230'
+lifecycle_stage: active
+run_id: dd16fdef253f48318214eb6b5e307d7a
+run_name: puzzled-tern-134
+run_uuid: dd16fdef253f48318214eb6b5e307d7a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746633052929
+status: 3
+tags: []
+user_id: stef

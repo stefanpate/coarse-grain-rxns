@@ -6,18 +6,38 @@ defaults:
   - override hydra/launcher: quest_gpu
   - _self_
 
-n_trials: 10
+n_trials: 3
 timeout: 60
 seed: 1234
+study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_val_loss"
+
 hp_bounds:
-  mp_d_h: [25, 500]
-  mp_depth: [1, 5]
-  pred_head_name: ['linear', 'ffn']
-  pred_head_d_h: [25, 500]
-  pred_head_depth: [1, 3]
-  batch_size: [32, 256]
-  featurizer_mode: ["PROD_DIFF", "REAC_PROD"]
-  max_epochs: [4, 5]
+  model:
+    mp_d_h: 
+      values: [25, 500]
+      type: int_log
+    mp_depth:
+      values: [1, 5]
+      type: int
+    pred_head_name:
+      values: ['linear', 'ffn']
+      type: categorical
+    pred_head_d_h:
+      values: [25, 500]
+      type: int_log
+    pred_head_depth:
+      values: [1, 3]
+      type: int
+    featurizer_mode:
+      values: ["PROD_DIFF", "REAC_PROD"]
+      type: categorical
+  training:
+    batch_size:
+      values: [32, 256]
+      type: int_log
+    max_epochs:
+      values: [4, 5]
+      type: int
 
 hydra:
   run:
