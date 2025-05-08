@@ -4,5 +4,5 @@ defaults:
 timeout_min: 350
 account: b1039
 partition: b1039
-mem_gb: 64
-tasks_per_node: 10
+mem_gb: 32
+tasks_per_node: 1
