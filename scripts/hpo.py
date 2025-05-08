@@ -47,6 +47,10 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
                 hyperparams[combined_key] = trial.suggest_int(combined_key, hp['values'][0], hp['values'][1])
             elif hp['type'] == "int_log":
                 hyperparams[combined_key] = trial.suggest_int(combined_key, hp['values'][0], hp['values'][1], log=True)
+            elif hp['type'] == "float":
+                hyperparams[combined_key] = trial.suggest_float(combined_key, hp['values'][0], hp['values'][1])
+            elif hp['type'] == "float_log":
+                hyperparams[combined_key] = trial.suggest_float(combined_key, hp['values'][0], hp['values'][1], log=True)
 
     # Special hyperparameters ~ compositional
     if hyperparams["model/pred_head_name"] == 'linear':
@@ -90,16 +94,10 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
             final_lr=cfg.training.final_lr
         )
 
-        logger = MLFlowLogger(
-            experiment_name="inner_splits",
-            tracking_uri="file:" + cfg.filepaths.mlruns,
-            log_model=False,
-        )
-
         # Train
         trainer = L.Trainer(
             max_epochs=hyperparams["training/max_epochs"], 
-            logger=logger,
+            logger=False,
             enable_checkpointing=False,
             callbacks=[PyTorchLightningPruningCallback(trial, monitor="val_loss")],
             accelerator="auto",
