@@ -44,6 +44,7 @@ class GNN(lightning.LightningModule):
         self,
         message_passing: MessagePassing,
         predictor: nn.Module,
+        pos_weight: float = 1.0,
         warmup_epochs: int = 2,
         init_lr: float = 1e-4,
         max_lr: float = 1e-3,
@@ -51,14 +52,20 @@ class GNN(lightning.LightningModule):
     ):
         super().__init__()
         self.save_hyperparameters(ignore=["message_passing", "predictor"])
-        
         self.predictor = predictor
+        self.pos_weight = torch.Tensor([pos_weight]).reshape(1, 1)
         self.message_passing = message_passing
-        self.loss_fn = F.binary_cross_entropy_with_logits
         self.warmup_epochs = warmup_epochs
         self.init_lr = init_lr
         self.max_lr = max_lr
         self.final_lr = final_lr
+
+    def loss_fn(self, logits: Tensor, y: Tensor) -> float:
+        return F.binary_cross_entropy_with_logits(
+            input=logits,
+            target=y,
+            pos_weight=self.pos_weight,
+        )
 
     def configure_optimizers(self):
         opt = optim.Adam(self.parameters(), self.init_lr)
@@ -106,10 +113,12 @@ class GNN(lightning.LightningModule):
         prec = MF.binary_precision(probas, y)
         auroc = MF.binary_auroc(probas, y)
         auprc = MF.binary_auprc(probas, y)
+        f1 = MF.binary_f1_score(probas, y)
         self.log("val_loss", val_loss, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
         self.log("val_acc", acc, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
         self.log("val_recall", rec, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
         self.log("val_precision", prec, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
+        self.log("val_f1", f1, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
         self.log("val_auroc", auroc, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
         self.log("val_auprc", auprc, prog_bar=True, on_epoch=True, on_step=False, batch_size=len(bmg))
 
@@ -164,3 +173,14 @@ def sep_aidx_to_bin_label(smarts: str, aidxs: tuple[tuple[tuple[int]], tuple[tup
         ys.append(y)
 
     return tuple(ys)
+
+def calc_bce_pos_weight(y: list[np.ndarray], pw_scl: float) -> float:
+    '''
+    Calculate the positive weight for BCE loss based on the ratio of positive to negative samples
+    '''
+    npos = sum([np.sum(elt) for elt in y])
+    ntot = sum([elt.shape[0] for elt in y])
+    nneg = ntot - npos
+    pos_weight = (nneg / npos) * pw_scl
+    
+    return pos_weight

@@ -14,6 +14,7 @@ import logging
 import sys
 from optuna.integration import PyTorchLightningPruningCallback
 import numpy as np
+from scipy.stats import hmean
 from functools import partial
 import pickle
 from cgr.ml import (
@@ -22,6 +23,7 @@ from cgr.ml import (
     LinearPredictor,
     collate_batch,
     sep_aidx_to_bin_label,
+    calc_bce_pos_weight
 )
 
 current_dir = Path(__file__).parent.parent.resolve()
@@ -88,6 +90,7 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
         model = GNN(
             message_passing=mp,
             predictor=pred_head,
+            pos_weight=calc_bce_pos_weight(train_y, hyperparams["training/pw_scl"]),
             warmup_epochs=cfg.training.warmup_epochs,
             init_lr=cfg.training.init_lr,
             max_lr=cfg.training.max_lr,
@@ -99,16 +102,16 @@ def objective(trial: optuna.trial.Trial, train_val_X: list[ReactionDatapoint], t
             max_epochs=hyperparams["training/max_epochs"], 
             logger=False,
             enable_checkpointing=False,
-            callbacks=[PyTorchLightningPruningCallback(trial, monitor="val_loss")],
+            callbacks=[PyTorchLightningPruningCallback(trial, monitor=cfg.objective)],
             accelerator="auto",
             devices=1
         )
         trainer.fit(model=model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
 
         # Evaluate
-        metrics.append(trainer.callback_metrics["val_loss"].item())
+        metrics.append(trainer.callback_metrics[cfg.objective].item())
 
-    return np.mean(metrics)
+    return hmean(metrics)
 
 @hydra.main(version_base=None, config_path=str(current_dir / "configs"), config_name="hpo")
 def main(cfg: DictConfig):
@@ -116,7 +119,7 @@ def main(cfg: DictConfig):
     # Load data
     log.info("Loading & preparing data")
     df = pd.read_parquet(
-    Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
+        Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
     )
     
     # Prep data
@@ -152,7 +155,7 @@ def main(cfg: DictConfig):
         sampler = optuna.samplers.TPESampler(seed=cfg.seed)
 
     study = optuna.create_study(
-        direction="minimize",
+        direction=cfg.direction,
         sampler=sampler,
         pruner=optuna.pruners.HyperbandPruner(),
         study_name=cfg.study_name,
@@ -168,7 +171,7 @@ def main(cfg: DictConfig):
     log.info("Best trial:")
     trial = study.best_trial
 
-    log.info(f"  Val loss: {trial.value}")
+    log.info(f"  {cfg.objective}: {trial.value}")
 
     log.info("  Params: ")
     for key, value in trial.params.items():
