@@ -17,6 +17,7 @@ from cgr.ml import (
     LinearPredictor,
     collate_batch,
     sep_aidx_to_bin_label,
+    calc_bce_pos_weight
 )
 
 current_dir = Path(__file__).parent.parent.resolve()
@@ -82,6 +83,7 @@ def main(cfg: DictConfig):
     model = GNN(
         message_passing=mp,
         predictor=pred_head,
+        pos_weight=calc_bce_pos_weight(train_y, cfg.training.pw_scl),
         warmup_epochs=cfg.training.warmup_epochs,
         init_lr=cfg.training.init_lr,
         max_lr=cfg.training.max_lr,

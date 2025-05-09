@@ -4,3 +4,4 @@ max_lr: 1e-3
 final_lr: 1e-4
 max_epochs: 40
 batch_size: 64
+pw_scl: 1.0
