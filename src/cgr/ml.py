@@ -158,6 +158,19 @@ def sep_aidx_to_bin_label(smarts: str, aidxs: tuple[tuple[tuple[int]], tuple[tup
     '''
     Convert atom indices for separate molecules into a binary label based on block molecules
     i.e., all the molecules in a single mol object.
+
+    Args
+    ----
+    smarts: str
+        SMILES string of the reaction
+    aidxs: tuple[tuple[tuple[int]], tuple[tuple[int]]]
+        Indices of atoms belonging to the positive class for each molecule
+        for each side of the reaction
+    Returns
+    -------
+    ys: tuple[np.ndarray, np.ndarray]
+        Binary labels for each side of the reaction ordered according to the order
+        of atoms on each side of the reaction
     '''
     ys = []
     smiles = [elt.split(".") for elt in smarts.split(">>")]
