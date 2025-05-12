@@ -8,6 +8,7 @@ from omegaconf import DictConfig, OmegaConf
 import optuna
 from pathlib import Path
 import pandas as pd
+import numpy as np
 from ergochemics.mapping import rc_to_nest
 from torch.utils.data import DataLoader
 import logging
@@ -51,7 +52,7 @@ def main(cfg: DictConfig):
     df = pd.read_parquet(
         Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechanistic_rules.parquet"
     )
-    
+
     # Prep data
     df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
@@ -65,6 +66,7 @@ def main(cfg: DictConfig):
     train_val_idx, test_idx = list(outer_splitter.split(X, y, groups=groups))[cfg.data.outer_split_idx]
     train_X, train_y = [X[i] for i in train_val_idx], [y[i] for i in train_val_idx]
     test_X, test_y = [X[i] for i in test_idx], [y[i] for i in test_idx]
+    test_rxn_ids = [df.iloc[i]["rxn_id"] for i in test_idx]
 
     # Featurize
     featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_=cfg.model.featurizer_mode, atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
@@ -94,7 +96,7 @@ def main(cfg: DictConfig):
     logger = MLFlowLogger(
         experiment_name="outer_splits",
         tracking_uri="file:" + cfg.filepaths.mlruns,
-        log_model=False,
+        log_model=True,
         tags={"source": "train.py"},
     )
 
@@ -103,15 +105,38 @@ def main(cfg: DictConfig):
     # Train
     log.info("Training model")
     with mlflow.start_run(run_id=logger.run_id):
+        trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger, accelerator="auto", devices=1)
+        trainer.fit(model=model, train_dataloaders=train_dataloader)
+        trainer.test(model=model, dataloaders=test_dataloader)
+        test_output = trainer.predict(model=model, dataloaders=test_dataloader)
+
+        # Format preds
+        y_pred = np.vstack([batch.cpu().numpy() for batch in test_output])
+        aidxs = np.vstack([np.arange(elt.shape[0]).reshape(-1, 1) for elt in test_y], dtype=np.int32)
+        y = np.vstack(test_y)
+        df_rxn_ids = []
+        for i in range(len(test_y)):
+            df_rxn_ids.extend([test_rxn_ids[i]] * test_y[i].shape[0])
+        df_rxn_ids = np.array(df_rxn_ids, dtype=np.int32).reshape(-1, 1)
+
+        pred_df = pd.DataFrame(
+            data={
+                "rxn_id": df_rxn_ids.flatten(),
+                "aidx": aidxs.flatten(),
+                "y": y.flatten(),
+                "y_pred": y_pred.flatten()
+            }
+        )
+
+        # Save and log artifacts & params
         flat_resolved_cfg = pd.json_normalize(
             {k: v for k,v in OmegaConf.to_container(cfg, resolve=True).items() if k != 'filepaths'}, # Resolved interpolated values
             sep='/'
         ).to_dict(orient='records')[0]
         mlflow.log_params(flat_resolved_cfg)
-        
-    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=logger, accelerator="auto", devices=1)
-    trainer.fit(model=model, train_dataloaders=train_dataloader)
-    trainer.test(model=model, dataloaders=test_dataloader)
-    
+        pred_df.to_parquet(Path(mlflow.get_artifact_uri().removeprefix("file:")) / "predictions.parquet", index=False)
+        mlflow.log_artifact(Path(mlflow.get_artifact_uri().removeprefix("file:")) / "predictions.parquet")
+        mlflow.log_artifact(Path(".hydra/config.yaml"))
+
 if __name__ == "__main__":
     main()
