@@ -1,7 +1,7 @@
 defaults:
   - submitit_slurm
 
-timeout_min: 350
+timeout_min: 615
 account: b1039
 partition: b1039
 mem_gb: 32

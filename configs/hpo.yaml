@@ -6,40 +6,40 @@ defaults:
   - override hydra/launcher: quest_cpu
   - _self_
 
-n_trials: 50
+n_trials: 100
 seed: 1234
-timeout: 18000
+timeout: 36000
 study_version: 0
-objective: val_f1
+objective: val_auprc
 direction: maximize # maximize | minimize
 study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
 
 hp_bounds:
   model:
     mp_d_h: 
-      values: [200, 400]
-      type: int_log
+      values: [200, 300]
+      type: int
     mp_depth:
-      values: [1, 4]
+      values: [3, 4]
       type: int
     pred_head_name:
-      values: ['linear', "ffn"]
+      values: ['linear', 'ffn']
       type: categorical
     pred_head_d_h:
-      values: [50, 300]
-      type: int_log
+      values: [100, 200]
+      type: int
     pred_head_depth:
-      values: [1, 3]
+      values: [2, 3]
       type: int
     featurizer_mode:
-      values: ["REAC_PROD", "REAC_DIFF", "PROD_DIFF"]
+      values: ["PROD_DIFF"]
       type: categorical
   training:
     batch_size:
-      values: [64, 128]
-      type: int_log
+      values: [100, 120]
+      type: int
     max_epochs:
-      values: [25, 50]
+      values: [5, 40]
       type: int
     init_lr:
       values: [0.0001, 0.0001]
@@ -51,7 +51,7 @@ hp_bounds:
       values: [0.0001, 0.0001]
       type: float
     pw_scl:
-      values: [0.33, 3]
+      values: [0.1, 2.0]
       type: float
 
 hydra:
