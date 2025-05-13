@@ -10,7 +10,7 @@ n_trials: 100
 seed: 1234
 timeout: 36000
 study_version: 0
-objective: val_auprc
+objective: val_f1
 direction: maximize # maximize | minimize
 study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
 

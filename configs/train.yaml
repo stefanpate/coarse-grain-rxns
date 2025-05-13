@@ -9,7 +9,7 @@ defaults:
 
 use_study: False
 study_version: 0
-objective: val_f1
+objective: val_auprc
 study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
 
 hydra:

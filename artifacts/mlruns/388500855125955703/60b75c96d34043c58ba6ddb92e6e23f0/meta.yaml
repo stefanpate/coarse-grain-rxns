@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/388500855125955703/60b75c96d34043c58ba6ddb92e6e23f0/artifacts
+end_time: 1747165985685
+entry_point_name: ''
+experiment_id: '388500855125955703'
+lifecycle_stage: active
+run_id: 60b75c96d34043c58ba6ddb92e6e23f0
+run_name: fearless-snail-539
+run_uuid: 60b75c96d34043c58ba6ddb92e6e23f0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747165877603
+status: 3
+tags: []
+user_id: stef
