@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/388500855125955703/908740039b134126b48aaf4ff36bebdd/artifacts
+end_time: 1747165659343
+entry_point_name: ''
+experiment_id: '388500855125955703'
+lifecycle_stage: active
+run_id: 908740039b134126b48aaf4ff36bebdd
+run_name: big-gnat-580
+run_uuid: 908740039b134126b48aaf4ff36bebdd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747165547637
+status: 3
+tags: []
+user_id: stef

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/388500855125955703/8d73277818814a8196325f21bf8d69d5/artifacts
+end_time: 1747167780281
+entry_point_name: ''
+experiment_id: '388500855125955703'
+lifecycle_stage: active
+run_id: 8d73277818814a8196325f21bf8d69d5
+run_name: valuable-fish-315
+run_uuid: 8d73277818814a8196325f21bf8d69d5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747167662370
+status: 3
+tags: []
+user_id: stef
