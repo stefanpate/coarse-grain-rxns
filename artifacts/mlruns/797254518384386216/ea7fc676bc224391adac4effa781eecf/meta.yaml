@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/797254518384386216/ea7fc676bc224391adac4effa781eecf/artifacts
+end_time: 1747241217102
+entry_point_name: ''
+experiment_id: '797254518384386216'
+lifecycle_stage: active
+run_id: ea7fc676bc224391adac4effa781eecf
+run_name: brawny-hawk-294
+run_uuid: ea7fc676bc224391adac4effa781eecf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747240979104
+status: 3
+tags: []
+user_id: spn1560
