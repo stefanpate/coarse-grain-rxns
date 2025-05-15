@@ -1,0 +1,214 @@
+Class 1	Class 2	Smiles 1	Smiles 2	Name 1	Name 2
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	ATP	AMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	dATP	dAMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)n1	Nc1ccn(C2OC(COP(=O)(O)O)C(O)C2O)c(=O)n1	CTP	CMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1	GTP	GMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(COP(=O)(O)O)C(O)C2O)c(=O)[nH]1	UTP	UMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(CO)C(O)C1O	ADP	adenosine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=P(O)(O)OCC1OC(OP(=O)(O)OP(=O)(O)O)C(O)C1O	O=P(O)(O)OCC1OC(O)C(O)C1O	5-phospho-alpha-D-ribose 1-diphosphate	D-ribose 5-phosphate
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	ITP	IMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]c1=O	dTTP	dTMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	guanosine 3'-diphosphate 5'-triphosphate	GTP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)n1	Nc1ccn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)n1	dCTP	dCMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]1	O=c1ccn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]1	dUTP	dUMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	guanosine 3',5'-bis(diphosphate)	GDP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1	dGTP	dGMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2[nH]c(=O)n(C3CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2[nH]c(=O)n(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1	8-oxo-dGTP	8-oxo-dGMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	adenosine 3'-diphosphate,5'-diphosphate	ADP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1	O=c1[nH]cnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	dITP	dIMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1OP(=O)(O)CP(=O)(O)O	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O		ITP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	adenosine 3'-diphosphate,5'-triphosphate	ATP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2[nH]c(=O)n(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2[nH]c(=O)n(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1	8-oxo-GTP	8-oxo-GMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)n1	Nc1ccn(C2OC(CO)C(O)C2O)c(=O)n1	CDP	cytidine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(CO)C(O)C2O)c(=O)[nH]1	UDP	uridine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1OP(=O)(O)CP(=O)(O)O	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O		IMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1[nH]c(=O)nc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1[nH]c(=O)nc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	2-oxo-ATP	2-oxo-AMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)n(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)cc1CO	Nc1nc(=O)n(C2CC(O)C(COP(=O)(O)O)O2)cc1CO		5-hydroxymethyl-dCMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1nnn2C1OC(COP([O])(=O)OP([O])(=O)OP([O])([O])=O)C(O)C1O	Nc1ncnc2c1nnn2C1OC(COP(=O)(O)O)C(O)C1O		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2[nH]c(=O)n(C3CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2[nH]c(=O)n(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1	8-oxo-dGTP	8-oxo-dGMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1[nH]c(=O)n2C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1	O=c1[nH]cnc2c1[nH]c(=O)n2C1CC(O)C(COP(=O)(O)O)O1	8-oxo-dATP	
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1	GDP	guanosine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	*C1OC(COP([O])(=O)O)C(OP([O])(=O)O)C1*	a ribonucleoside 5'-triphosphate	
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1[nH]c(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	O=c1[nH]c(=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1	XTP	XMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	adenosine 3'-diphosphate,5'-phosphate	AMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)O)O1	Nc1ncnc2c1ncn2C1CC(O)C(CO)O1	dADP	2'-deoxyadenosine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)n1	Nc1ccn(C2CC(O)C(CO)O2)c(=O)n1	dCDP	2'-deoxycytidine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(CO)O2)c(=O)[nH]c1=O	dTDP	thymidine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]1	O=c1ccn(C2CC(O)C(CO)O2)c(=O)[nH]1		2'-deoxyuridine
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C3O)c2[nH]1	CC(C)=CCCC(C)=CCOP(=O)(O)OP(=O)(O)O	guanosine 3',5'-bis(diphosphate)	(2E)-geranyl diphosphate;neryl diphosphate;(2E)-geranyl diphosphate
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1		GMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2[nH]c(=O)n(C3CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2[nH]c(=O)n(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1	8-oxo-dGTP	8-oxo-dGMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1*	*C1OC(COP(=O)(O)O)C(O)C1*		a nucleoside 5'-phosphate
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)n(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)cc1O	Nc1nc(=O)n(C2OC(COP(=O)(O)O)C(O)C2O)cc1O		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)O)C(OP(=O)(O)OP(=O)(O)O)C1O	*C1OC(COP(=O)(O)O)C(O)C1*		a nucleoside 5'-phosphate
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(N)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(N)C1O		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	CC(=Nc1ccc(CC(O)C(O)C(O)COC2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)cc1)C1Nc2c([nH]c(N)nc2=O)NC1C	CC(=Nc1ccc(CC(O)C(O)C(O)COC2OC(COP(=O)(O)O)C(O)C2O)cc1)C1Nc2c([nH]c(N)nc2=O)NC1C		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1[nH]c(=O)nc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1	Nc1[nH]c(=O)nc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	2-oxo-dATP	2-oxo-dAMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	CC(=O)NCP(=O)(O)OC1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	CC(=O)NCP(=O)(O)OC1OC(COP(=O)(O)O)C(O)C1O		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	O=C(O)CNCP(=O)(O)OC1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	O=C(O)CNCP(=O)(O)OC1OC(COP(=O)(O)O)C(O)C1O		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	CP(=O)(O)OC1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	CP(=O)(O)OC1OC(COP(=O)(O)O)C(O)C1O	alpha-D-ribose 1-methylphosphonate 5-triphosphate	alpha-D-ribose 1-methylphosphonate 5-phosphate
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	C[n+]1cn(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)c2[nH]c(N)nc(=O)c21	C[n+]1cn(C2OC(COP(=O)(O)O)C(O)C2O)c2[nH]c(N)nc(=O)c21	N(7)-methyl-GTP	N(7)-methyl-GMP
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	N=c1c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2ncn1C1OC(COP(=O)(O)O)C(O)C1O	N=c1c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2ncn1C1OC(COP(=O)(O)O)C(O)C1O	1-(5-phospho-beta-D-ribosyl)-ATP	1-(5-phospho-beta-D-ribosyl)-5'-AMP
+FAD_CoF	FADH2_CoF	Cc1cc2nc3c(=O)[nH]c(=O)nc-3n(CC(O)C(O)C(O)COP(=O)(O)OP(=O)(O)OCC3OC(n4cnc5c(N)ncnc54)C(O)C3O)c2cc1C	Cc1cc2c(cc1C)N(CC(O)C(O)C(O)COP(=O)(O)OP(=O)(O)OCC1OC(n3cnc4c(N)ncnc43)C(O)C1O)c1[nH]c(=O)[nH]c(=O)c1N2	FAD	FADH2
+FAD_CoF	FADH2_CoF	*n1c2nc(=O)[nH]c(=O)c-2nc2cc(C)c(C)cc21	*N1c2cc(C)c(C)cc2Nc2c1[nH]c(=O)[nH]c2=O	an oxidized flavin	a reduced flavin
+FAD_CoF	FADH2_CoF	Cc1cc2nc3c(=O)[nH]c(=O)nc-3n(CC(O)C(O)C(O)COP(=O)(O)O)c2cc1C	Cc1cc2c(cc1C)N(CC(O)C(O)C(O)COP(=O)(O)O)c1[nH]c(=O)[nH]c(=O)c1N2	FMN	FMNH2
+FAD_CoF	FADH2_CoF	*Cn1c2nc(=O)[nH]c(=O)c-2nc2cc(C)c(C)cc21	*CN1c2cc(C)c(C)cc2Nc2c1[nH]c(=O)[nH]c2=O		
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	ATP	ADP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	GTP	GDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)[nH]1	UTP	UDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)n1	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)n1	CTP	CDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	ADP	AMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	ITP	IDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)O)O1	dATP	dADP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(CO)C(O)C1O	AMP	adenosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=P(O)(O)OP(=O)(O)O	O=P(O)(O)O	diphosphate	phosphate
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	dTTP	dTDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)n1	Nc1ccn(C2OC(COP(=O)(O)O)C(O)C2O)c(=O)n1	CDP	CMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)n1	Nc1ccn(C2CC(O)C(CO)O2)c(=O)n1	dCMP	2'-deoxycytidine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(CO)O2)c(=O)[nH]c1=O	dTMP	thymidine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)n1	Nc1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)n1	dCTP	dCDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	dGTP	dGDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2OC(COP(=O)(O)O)C(O)C2O)c(=O)n1	Nc1ccn(C2OC(CO)C(O)C2O)c(=O)n1	CMP	cytidine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2ncn(C3CC(O)C(CO)O3)c2[nH]1	dGMP	2'-deoxyguanosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2OC(COP(=O)(O)O)C(O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(CO)C(O)C2O)c(=O)[nH]1	UMP	uridine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=P(O)(O)OCC1OC(O)(CO)C(O)C1O	OCC1OC(O)(CO)C(O)C1O	beta-D-fructose 6-phosphate;D-fructose 6-phosphate;beta-D-fructose 6-phosphate;D-tagatofuranose 6-phosphate;D-fructose 6-phosphate;beta-D-fructose 6-phosphate	beta-D-fructose;D-fructose
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1	GMP	guanosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	a ribonucleoside 5'-triphosphate	a ribonucleoside 5'-diphosphate
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(COP(=O)(O)O)C(O)C2O)c(=O)[nH]1	UDP	UMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=P(O)(O)OCC1OC(O)C(O)C1O	OCC1OC(O)C(O)C1O	D-ribose 5-phosphate	beta-D-ribofuranose;beta-L-arabinofuranose;D-ribose;D-xylofuranose
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	O=c1[nH]cnc2c1ncn2C1OC(CO)C(O)C1O	IMP	inosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1	GDP	GMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	Nc1ncnc2c1ncn2C1CC(O)C(CO)O1	dAMP	2'-deoxyadenosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]c1=O	dTDP	dTMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(CO)C(OP(=O)(O)O)C1O	Nc1ncnc2c1ncn2C1OC(CO)C(O)C1O	3'-AMP	adenosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]1	O=c1ccn(C2CC(O)C(CO)O2)c(=O)[nH]1	dUMP	2'-deoxyuridine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	O=c1[nH]cnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	IDP	IMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]c(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	O=c1[nH]c(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	XTP	XDP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]1	O=c1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]1	dUTP	
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)O)O1	Nc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	dADP	dAMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)OP(=O)(O)O)O3)c2[nH]1	Nc1nc(=O)c2ncn(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1	dGDP	dGMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)n1	Nc1ccn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)n1	dCDP	dCMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	O=c1[nH]cnc2c1ncn2C1CC(O)C(CO)O1	dIMP	2'-deoxyinosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]c(=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1	O=c1[nH]c(=O)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1	XMP	xanthosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2OC(CO)C(OP(=O)(O)O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(CO)C(O)C2O)c(=O)[nH]1		uridine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(CO)C(O)C1OP(=O)(O)O	Nc1ncnc2c1ncn2C1OC(CO)C(O)C1O	adenosine 2'-phosphate	adenosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(CO)C(OP(=O)(O)O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1	3'-GMP	guanosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2OC(CO)C(OP(=O)(O)O)C2O)c(=O)n1	Nc1ccn(C2OC(CO)C(O)C2O)c(=O)n1	3'-CMP	cytidine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	*C1OC(COP([O])(=O)O)C(OP([O])(=O)O)C1*	a ribonucleoside 5'-diphosphate	
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]1	O=c1ccn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]1		dUMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1*	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1*		
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1CC(O)C(COP(=O)(O)O)O1	*C1CC(O)C(CO)O1	a 2'-deoxyribonucleoside 5'-phosphate	a 2'-deoxyribonucleoside
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1ncc(C[n+]2csc(CCOP(=O)(O)OP(=O)(O)O)c2C)c(N)n1	Cc1cn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)[nH]c1=O	thiamine diphosphate	dTMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(CO)C(OP(=O)(O)O)C1*	*C1OC(CO)C(O)C1*		
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1*	*C1OC(COP(=O)(O)O)C(O)C1*		a nucleoside 5'-phosphate
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)O)C(O)C1*	*C1OC(CO)C(O)C1*	a nucleoside 5'-phosphate	
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	Cc1ncc(C[n+]2csc(CCOP(=O)(O)OP(=O)(O)O)c2C)c(N)n1	dTTP	thiamine diphosphate
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(CO)C(O)C1OP(=O)(O)O	*C1OC(CO)C(O)C1O	a nucleoside 2'-phosphate	a ribonucleoside
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(CO)C(OP(=O)(O)O)C1O	*C1OC(CO)C(O)C1O	a ribonucleoside 3'-phosphate;a nucleoside 3'-phosphate	a ribonucleoside
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*OP(=O)(O)OC1CC(*)OC1COP(=O)(O)O	*OP(=O)(O)OC1CC(*)OC1CO		
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(N)C1O	Nc1ncnc2c1ncn2C1OC(CO)C(N)C1O		
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OCC2OC(OP(=O)(O)O)C(O)C2O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OCC2OC(O)C(O)C2O)C(O)C1O	ADP-alpha-D-ribose 1''-phosphate	ADP-D-ribose
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)nc1N	Cc1cn(C2CC(O)C(COP(=O)(O)O)O2)c(=O)nc1N		
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	adenosine 5'-pentaphosphate	adenosine 5'-tetraphosphate
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(CO)C(O)C3OP(=O)(O)O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1	guanosine 2'-phosphate	guanosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3CC(OP(=O)(O)O)C(CO)O3)c2[nH]1	Nc1nc(=O)c2ncn(C3CC(O)C(CO)O3)c2[nH]1		2'-deoxyguanosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1CC(OP(=O)(O)O)C(CO)O1	Nc1ncnc2c1ncn2C1CC(O)C(CO)O1		2'-deoxyadenosine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ccn(C2CC(OP(=O)(O)O)C(CO)O2)c(=O)n1	Nc1ccn(C2CC(O)C(CO)O2)c(=O)n1		2'-deoxycytidine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1ccn(C2CC(OP(=O)(O)O)C(CO)O2)c(=O)[nH]1	O=c1ccn(C2CC(O)C(CO)O2)c(=O)[nH]1		2'-deoxyuridine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Cc1cn(C2CC(OP(=O)(O)O)C(CO)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(CO)O2)c(=O)[nH]c1=O		thymidine
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C1O	adenosine 5'-tetraphosphate	ATP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=c1[nH]cnc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)O)O1	O=c1[nH]cnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	dIDP	dIMP
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1CC(OP(=O)(O)O)C(CO)O1	*C1CC(O)C(CO)O1	a 2'-deoxyribonucleoside 3'-phosphate	a 2'-deoxyribonucleoside
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1CC(O)C(COP(=O)(O)OP(=O)(O)O)O1	*C1CC(O)C(COP(=O)(O)O)O1	a 2'-deoxyribonucleoside 5'-diphosphate	a 2'-deoxyribonucleoside 5'-phosphate
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	*C1OC(COP(=O)(O)O)C(O)C1O	*C1OC(CO)C(O)C1O	a ribonucleoside 5'-phosphate	a ribonucleoside
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=C(C(O)CO)C(O)COP(=O)(O)O	O=C(C(O)CO)C(O)CO	L-ribulose 5-phosphate;L-xylulose 5-phosphate;D-xylulose 5-phosphate;D-ribulose 5-phosphate;D-ribulose 5-phosphate;L-xylulose 5-phosphate;aldehydo-D-ribose 5-phosphate;D-arabinose 5-phosphate;D-ribulose 1-phosphate;D-xylulose 5-phosphate	D-xylulose;D-ribulose;L-xylulose;L-ribulose;D-ribulose;L-xylulose;L-ribulose;D-xylulose;L-xylulose;D-ribulose;D-ribulose;D-xylulose;L-xylulose;L-ribulose
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	NC(=O)c1ccc[n+](C2OC(COP(=O)(O)O)C(O)C2O)c1	NC(=O)c1ccc[n+](C2OC(CO)C(O)C2O)c1	beta-nicotinamide D-ribonucleotide	beta-nicotinamide D-riboside
+PHOSPHATE_DONOR_CoF	PHOSPHATE_ACCEPTOR_CoF	O=P(O)(O)OP(=O)(O)OP(=O)(O)O	O=P(O)(O)OP(=O)(O)O	triphosphate	diphosphate
+NAD_CoF	NADH_CoF	NC(=O)c1ccc[n+](C2OC(COP(=O)(O)OP(=O)(O)OCC3OC(n4cnc5c(N)ncnc54)C(OP(=O)(O)O)C3O)C(O)C2O)c1	NC(=O)C1=CN(C2OC(COP(=O)(O)OP(=O)(O)OCC3OC(n4cnc5c(N)ncnc54)C(OP(=O)(O)O)C3O)C(O)C2O)C=CC1	NADP(+)	NADPH
+NAD_CoF	NADH_CoF	NC(=O)c1ccc[n+](C2OC(COP(=O)(O)OP(=O)(O)OCC3OC(n4cnc5c(N)ncnc54)C(O)C3O)C(O)C2O)c1	NC(=O)C1=CN(C2OC(COP(=O)(O)OP(=O)(O)OCC3OC(n4cnc5c(N)ncnc54)C(O)C3O)C(O)C2O)C=CC1	NAD(+);NAD(+);alpha-NAD(+)	NADH
+NAD_CoF	NADH_CoF	*OC1C(O)C(COP(=O)(O)OP(=O)(O)OCC2OC([n+]3cccc(C(N)=O)c3)C(O)C2O)OC1n1cnc2c(N)ncnc21	*OC1C(O)C(COP(=O)(O)OP(=O)(O)OCC2OC(N3C=CCC(C(N)=O)=C3)C(O)C2O)OC1n1cnc2c(N)ncnc21		
+SULFATE_DONOR_CoF	SULFATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OS(=O)(=O)O)C(OP(=O)(O)O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(OP(=O)(O)O)C1O	3'-phosphoadenylyl sulfate	adenosine 3',5'-bisphosphate
+SULFATE_DONOR_CoF	SULFATE_ACCEPTOR_CoF	O=[N+]([O-])c1ccc(OS(=O)(=O)O)cc1	O=[N+]([O-])c1ccc(O)cc1	4-nitrophenyl sulfate	4-nitrophenol
+SULFATE_DONOR_CoF	SULFATE_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OS(=O)(=O)O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O	adenosine 5'-phosphosulfate	AMP
+METHYL_DONOR_CoF	METHYL_ACCEPTOR_CoF	C[S+](CCC(N)C(=O)O)CC1OC(n2cnc3c(N)ncnc32)C(O)C1O	Nc1ncnc2c1ncn2C1OC(CSCCC(N)C(=O)O)C(O)C1O	S-adenosyl-L-methionine;(S)-S-adenosyl-L-methionine;(R)-S-adenosyl-L-methionine	S-adenosyl-L-homocysteine
+METHYL_DONOR_CoF	METHYL_ACCEPTOR_CoF	C[S+](C)CCC(N)C(=O)O	CSCCC(N)C(=O)O	S-methyl-L-methionine	L-methionine;L-methionine;D-methionine
+METHYL_DONOR_CoF	METHYL_ACCEPTOR_CoF	C=C[S+](C)CC	C=CSCC		
+METHYL_DONOR_CoF	METHYL_ACCEPTOR_CoF	C[S+](C)C	CSC	trimethylsulfonium	dimethyl sulfide
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)OC3OC(CO)C(O)C(O)C3O)C(O)C2O)c(=O)[nH]1	O=c1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)[nH]1	UDP-alpha-D-galactose;UDP-alpha-D-glucose;UDP-alpha-D-glucose;UDP-alpha-D-galactose	UDP
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OC4OC(CO)C(O)C(O)C4O)C(O)C3O)c2[nH]1	Nc1nc(=O)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1	GDP-alpha-D-mannose;GDP-D-glucose;GDP-alpha-D-mannose;GDP-beta-L-galactose;GDP-alpha-D-glucose;GDP-alpha-D-mannose;GDP-alpha-D-glucose;GDP-alpha-D-glucose	GDP
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)OC2OC(CO)C(O)C(O)C2O)C(O)C1O	Nc1ncnc2c1ncn2C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	ADP-alpha-D-glucose	ADP
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)OC3OC(CO)C(O)C(O)C3O)O2)c(=O)[nH]c1=O	Cc1cn(C2CC(O)C(COP(=O)(O)OP(=O)(O)O)O2)c(=O)[nH]c1=O	dTDP-alpha-D-glucose	dTDP
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)OC3OC(CO)C(O)C(O)C3O)C(O)C2O)c(=O)n1	Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2O)c(=O)n1	CDP-D-glucose;CDP-alpha-D-glucose	CDP
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)OC2OC(CO)C(O)C(O)C2O)C(O)C1O	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O	an NDP-alpha-D-glucose	a ribonucleoside 5'-diphosphate
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	*OP(=O)(O)OP(=O)(O)OCC1OC(*)C(*)C1O	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O		a ribonucleoside 5'-diphosphate
+GLUCOSYL_DONOR_CoF	GLUCOSYL_ACCEPTOR_CoF	*C1OC(COP(=O)(O)OP(=O)(O)OC2OC(CO)C(O)C(O)C2O)C(O)C1*	*C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1*		
+Ubiquinols_CoF	Ubiquinones_CoF	Oc1ccc(O)cc1	O=C1C=CC(=O)C=C1	hydroquinone	1,4-benzoquinone
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)C)c(O)c1OC	C=C(C)C=Cc1c(C)c(O)c(OC)c(OC)c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1cc(O)c2ccccc2c1O	CC1=CC(=O)c2ccccc2C1=O	menadiol	menadione
+Ubiquinols_CoF	Ubiquinones_CoF	CC(C)=CCCC(C)=CCc1c(C)c(O)c2ccccc2c1O	CC(C)=CCC=C(C)C=Cc1c(C)c(O)c2ccccc2c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	O=S(=O)(O)c1ccc2c(O)c3cc(S(=O)(=O)O)ccc3c(O)c2c1	O=C1c2ccc(S(=O)(=O)O)cc2C(=O)c2ccc(S(=O)(=O)O)cc21		
+Ubiquinols_CoF	Ubiquinones_CoF	CCCCCCCCCCc1c(C)c(O)c(OC)c(OC)c1O	CCCCCCC=CCCc1c(C)c(O)c(OC)c(OC)c1O	6-decylubiquinol	6-decylubiquinone
+Ubiquinols_CoF	Ubiquinones_CoF	Oc1ccc(O)c2ccccc12	O=C1C=CC(=O)c2ccccc21		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)cc(C)c(O)c1OC	COC1=C(OC)C(=O)C(C)=CC1=O	ubiquinol-0	ubiquinone-0
+Ubiquinols_CoF	Ubiquinones_CoF	CCCCCCCCCCc1cc(O)c(C)c(C)c1O	CCCCCCC=CCCc1cc(O)c(C)c(C)c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	Oc1ccc(O)c2c(O)cccc12	O=C1C=CC(=O)c2c(O)cccc21		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)CCC=C(C)C)c(O)c1OC	COc1c(O)c(C)c(C=CC(C)=CCC=C(C)C)c(O)c1OC		
+Ubiquinols_CoF	Ubiquinones_CoF	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCC=C(C)CCc1cc(O)c(C)c(C)c1O	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1cc(O)c(C)c(C)c1O	plastoquinol-9	
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1c(C)c(O)c2ccccc2c1O	CC1=C(C)C(=O)c2ccccc2C1=O		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC	COc1c(O)c(C)c(C=CC(C)=CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC	COc1c(O)c(C)c(C=CC(C)=CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC	ubiquinol-8	ubiquinone-8
+Ubiquinols_CoF	Ubiquinones_CoF	CC(=CCc1c(C)c(O)c2ccccc2c1O)CCCC(C)CCCC(C)CCCC(C)C	CC(C=Cc1c(C)c(O)c2ccccc2c1O)=CCCC(C)CCCC(C)CCCC(C)C	phylloquinol	phylloquinone
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1cc(O)cc(C)c1O	CC1=CC(=O)C=C(C)C1=O		
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1cc(O)ccc1O	CC1=CC(=O)C=CC1=O		
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1cc(O)c2c(O)cccc2c1O	CC1=CC(=O)c2c(O)cccc2C1=O		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC	COc1c(O)c(C)c(C=CC(C)=CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC		
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1c(O)c(Br)c(C(C)C)c(O)c1Br	C=C(C)c1c(O)c(Br)c(C)c(O)c1Br		
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1cc(O)c(C)cc1O	C=c1cc(O)c(=C)cc1O		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1cc(O)ccc1O	COC1=CC(=O)C=CC1=O		
+Ubiquinols_CoF	Ubiquinones_CoF	CSc1c(CCC(C)CCCC(C)CCCC(C)CCCC(C)CCCC(C)CCCC(C)C)c(O)c2sccc2c1O	CSc1c(C=CC(C)CCCC(C)CCCC(C)CCCC(C)CCCC(C)CCCC(C)C)c(O)c2sccc2c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	Cc1c(C)c(O)c(C)c(C)c1O	C=c1c(C)c(O)c(=C)c(C)c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	CCCCCCCCCc1c(C)c(O)c(OC)c(OC)c1O	CCCCCC=CCCc1c(C)c(O)c(OC)c(OC)c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	*c1c(*)c(O)c(*)c(*)c1O	*C1=C(*)C(=O)C(*)=C(*)C1=O	a quinol	a quinone
+Ubiquinols_CoF	Ubiquinones_CoF	*CC(C)=CCc1c(C)c(O)c2ccccc2c1O	*CC(=C)C=Cc1c(C)c(O)c2ccccc2c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	*CC(C)=CCc1c(C)c(O)c(OC)c(OC)c1O	*CC(=C)C=Cc1c(C)c(O)c(OC)c(OC)c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	Oc1cc(O)c2cccc(O)c2c1O	O=C1CC(=O)c2cccc(O)c2C1=O		
+Ubiquinols_CoF	Ubiquinones_CoF	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCc1c(C)c(O)c2ccccc2c1O	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1c(C)c(O)c2ccccc2c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCc1cc(O)c2ccccc2c1O	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1cc(O)c2ccccc2c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)CCC=C(C)C)c(O)c1OC	C=C(C)C=Cc1c(C)c(O)c(OC)c(OC)c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	COc1c(O)c(C)c(C=CC(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC	COc1c(O)c(C)c(C=CC(C)=CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)CCC=C(C)C)c(O)c1OC	ubiquinol-10	ubiquinone-10
+Ubiquinols_CoF	Ubiquinones_CoF	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCc1c(C)c(O)c2ccccc2c1O	CC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1c(C)c(O)c2ccccc2c1O		
+Ubiquinols_CoF	Ubiquinones_CoF	CC(=CCc1cc(O)c2ccccc2c1O)CCCC(C)CCCC(C)CCCC(C)C	CC(C=Cc1cc(O)c2ccccc2c1O)=CCCC(C)CCCC(C)CCCC(C)C	demethylphylloquinol	demethylphylloquinone
+PRENYL_DONOR_CoF	PRENYL_ACCEPTOR_CoF	CC(C)=CCOP(=O)(O)OP(=O)(O)O	O=P(O)(O)OP(=O)(O)O	dimethylallyl diphosphate	diphosphate
+PRENYL_DONOR_CoF	PRENYL_ACCEPTOR_CoF	CC(C)=CCOP(=O)(O)O	O=P(O)(O)O	dimethylallyl phosphate	phosphate
+CARBONYL_CoF	AMINO_CoF	O=C(O)CCC(=O)C(=O)O	NC(CCC(=O)O)C(=O)O	2-oxoglutarate	D-glutamate;D-glutamate;L-glutamate;L-glutamate;L-glutamate;D-glutamate
+CARBONYL_CoF	AMINO_CoF	CC(=O)C(=O)O	CC(N)C(=O)O	pyruvate	D-alanine;L-alanine;L-alanine;D-alanine
+CARBONYL_CoF	AMINO_CoF	O=CC(=O)O	NCC(=O)O	glyoxylate	glycine
+CARBONYL_CoF	AMINO_CoF	CSCCC(=O)C(=O)O	CSCCC(N)C(=O)O	4-methylsulfanyl-2-oxobutanoate	L-methionine;L-methionine;D-methionine
+CARBONYL_CoF	AMINO_CoF	O=C(O)CC(=O)C(=O)O	NC(CC(=O)O)C(=O)O	oxaloacetate	D-aspartate;L-aspartate;L-aspartate
+CARBONYL_CoF	AMINO_CoF	CC(C)CC(=O)C(=O)O	CC(C)CC(N)C(=O)O	4-methyl-2-oxopentanoate	L-leucine
+CARBONYL_CoF	AMINO_CoF	CC(C)C(=O)C(=O)O	CC(C)C(N)C(=O)O	3-methyl-2-oxobutanoate	L-valine
+CARBONYL_CoF	AMINO_CoF	CCC(=O)C(=O)O	CCC(N)C(=O)O	2-oxobutanoate	(2S)-2-aminobutanoate
+CARBONYL_CoF	AMINO_CoF	NC(=O)CC(=O)C(=O)O	NC(=O)CC(N)C(=O)O	2-oxosuccinamate	L-asparagine
+CARBONYL_CoF	AMINO_CoF	O=C(O)C(=O)CO	NC(CO)C(=O)O	2-hydroxy-3-oxopropanoate;2-hydroxy-3-oxopropanoate;3-hydroxypyruvate;3-hydroxypyruvate	L-serine;D-serine;L-serine
+CARBONYL_CoF	AMINO_CoF	CCC(C)C(=O)C(=O)O	CCC(C)C(N)C(=O)O	(S)-3-methyl-2-oxopentanoate	L-alloisoleucine;L-isoleucine
+CARBONYL_CoF	AMINO_CoF	CCCC(=O)C(=O)O	CCCC(N)C(=O)O	2-oxopentanoate	L-2-aminopentanoate
+CARBONYL_CoF	AMINO_CoF	CCCCC(=O)C(=O)O	CCCCC(N)C(=O)O	2-oxohexanoate	L-2-aminohexanoate
+CARBONYL_CoF	AMINO_CoF	*C(=O)C(=O)O	*C(N)C(=O)O	an aromatic oxo-acid;a 2-oxocarboxylate;an aromatic oxo-acid;a 2-oxocarboxylate	a D-alpha-amino acid;an aromatic L-alpha-amino acid;an L-alpha-amino acid;a D-alpha-amino acid;an alpha-amino acid;an L-alpha-amino acid;a D-alpha-amino acid;an aromatic L-alpha-amino acid;an L-alpha-amino acid;a polar amino acid;an aromatic L-alpha-amino acid;an L-alpha-amino acid
+CARBONYL_CoF	AMINO_CoF	CSCCCC(=O)C(=O)O	CSCCCC(N)C(=O)O		
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	CSCCC(NC=O)C(=O)O	CSCCC(N)C(=O)O		L-methionine;L-methionine;D-methionine
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	O=CNCC(=O)NC1OC(COP(=O)(O)O)C(O)C1O	NCC(=O)NC1OC(COP(=O)(O)O)C(O)C1O	N(2)-formyl-N(1)-(5-phospho-beta-D-ribosyl)glycinamide	N(1)-(5-phospho-beta-D-ribosyl)glycinamide
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	NC(=O)c1ncn(C2OC(COP(=O)(O)O)C(O)C2O)c1NC=O	NC(=O)c1ncn(C2OC(COP(=O)(O)O)C(O)C2O)c1N	5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide	5-amino-1-(5-phospho-beta-D-ribosyl)imidazole-4-carboxamide
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	O=CNCc1cc(COc2ccc(CCNC(=O)CCC(NC(=O)CCC(NC(=O)CCC(C(=O)O)C(CCC(=O)O)C(=O)O)C(=O)O)C(=O)O)cc2)co1	NCc1cc(COc2ccc(CCNC(=O)CCC(NC(=O)CCC(NC(=O)CCC(C(=O)O)C(CCC(=O)O)C(=O)O)C(=O)O)C(=O)O)cc2)co1	N-formylmethanofuran	methanofuran
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	Nc1nc(=O)c2c([nH]1)N=CC(CN(C=O)c1ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc1)N2	Nc1nc(=O)c2c([nH]1)N=CC(CNc1ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc1)N2	10-formyldihydrofolate	7,8-dihydrofolate
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	Nc1nc(=O)c2cc(CN(C=O)c3ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc3)ccc2[nH]1	Nc1nc(=O)c2cc(CNc3ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc3)ccc2[nH]1		
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	Nc1nc(=O)c2nc(CN(C=O)c3ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc3)cnc2[nH]1	Nc1nc(=O)c2nc(CNc3ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc3)cnc2[nH]1		folate
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	Nc1nc(=O)c2c([nH]1)NCC(CN(C=O)c1ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc1)N2	Nc1nc(=O)c2c([nH]1)NCC(CNc1ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc1)N2	(6R)-10-formyltetrahydrofolate	(6S)-5,6,7,8-tetrahydrofolate
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	CC(Nc1ccc(CC(O)C(O)C(O)COC2OC(COP(=O)(O)OC(CCC(=O)O)C(=O)O)C(O)C2O)cc1)C1C(C)Nc2[nH]c(N)nc(=O)c2N1C=O	CC(Nc1ccc(CC(O)C(O)C(O)COC2OC(COP(=O)(O)OC(CCC(=O)O)C(=O)O)C(O)C2O)cc1)C1Nc2c([nH]c(N)nc2=O)NC1C	N(5)-formyl-5,6,7,8-tetrahydromethanopterin	5,6,7,8-tetrahydromethanopterin
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	*C(=O)CCC(NC(=O)c1ccc(N(C=O)CC2CNc3[nH]c(N)nc(=O)c3N2)cc1)C(=O)O	*C(=O)CCC(NC(=O)c1ccc(NCC2CNc3[nH]c(N)nc(=O)c3N2)cc1)C(=O)O		
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	*NC(CCC(=O)NC(CCC(=O)NCCc1ccc(OCc2coc(CNC=O)c2)cc1)C(=O)O)C(=O)O	*NC(CCC(=O)NC(CCC(=O)NCCc1ccc(OCc2coc(CN)c2)cc1)C(=O)O)C(=O)O		
+FORMYL_DONOR_CoF	FORMYL_ACCEPTOR_CoF	NC(CC(=O)c1ccccc1NC=O)C(=O)O	Nc1ccccc1C(=O)CC(N)C(=O)O	N-formyl-L-kynurenine;N-formyl-L-kynurenine;N-formyl-D-kynurenine	L-kynurenine
+ASCORBATE_RADICAL_CoF	ASCORBATE_CoF	OCC(O)c1oc(O)c(O)c1O	OCC(O)c1oc(O)c(O)c1O	L-ascorbate	L-ascorbate
+Oxidized-Factor-F420_CoF	Reduced-Factor-F420_CoF	CC(OP(=O)(O)OCC(O)C(O)C(O)Cn1c2nc(=O)[nH]c(=O)c-2cc2ccc(O)cc21)C(=O)NC(CCC(=O)NC(CCC(=O)O)C(=O)O)C(=O)O	CC(OP(=O)(O)OCC(O)C(O)C(O)CN1c2cc(O)ccc2Cc2c1[nH]c(=O)[nH]c2=O)C(=O)NC(CCC(=O)NC(CCC(=O)O)C(=O)O)C(=O)O	oxidized coenzyme F420-2	
+Oxidized-Factor-F420_CoF	Reduced-Factor-F420_CoF	*C(=O)C(C)OP(=O)(O)OCC(O)C(O)C(O)Cn1c2nc(=O)[nH]c(=O)c-2cc2ccc(O)cc21	*C(=O)C(C)OP(=O)(O)OCC(O)C(O)C(O)CN1c2cc(O)ccc2Cc2c1[nH]c(=O)[nH]c2=O		
+PYROPHOSPHATE_DONOR_CoF	PYROPHOSPHATE_ACCEPTOR_CoF	Nc1[nH]c(=O)nc2c1ncn2C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1	Nc1[nH]c(=O)nc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1	2-oxo-dATP	2-oxo-dAMP
+FAD_CoF	FADH2_CoF	Cc1cc2nc3c(=O)[nH]c(=O)nc-3n(CC(O)C(O)C(O)CO)c2cc1C	Cc1cc2c(cc1C)N(CC(O)C(O)C(O)CO)c1[nH]c(=O)[nH]c(=O)c1N2	riboflavin	reduced riboflavin
