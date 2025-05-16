@@ -3,7 +3,7 @@ hydra:
     dir: ${filepaths.processed_data}
   sweep:
     dir: ${filepaths.processed_data}
-    subdir: ${hydra.job.num}
+    subdir: .
   launcher:
     _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
   sweeper:
@@ -104,20 +104,20 @@ hydra:
       - file
     disable_existing_loggers: false
   env: {}
-  mode: RUN
+  mode: MULTIRUN
   searchpath: []
   callbacks: {}
   output_subdir: .hydra
   overrides:
     hydra:
-    - hydra.mode=RUN
+    - hydra.mode=MULTIRUN
     task: []
   job:
     name: write_rcr_rules
     chdir: true
     override_dirname: ''
-    id: ???
-    num: ???
+    id: '0'
+    num: 0
     config_name: write_rcr_rules
     env_set: {}
     env_copy: []
