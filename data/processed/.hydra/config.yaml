@@ -5,4 +5,9 @@ filepaths:
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
-src_file: distilled_mech_reactions.parquet
+  mlruns: ${.artifacts}/mlruns
+  hpo_studies: ${.artifacts}/hpo_studies
+  coreactants: ${.artifacts}/coreactants
+  rules: ${.artifacts}/rules
+src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
+R: 1

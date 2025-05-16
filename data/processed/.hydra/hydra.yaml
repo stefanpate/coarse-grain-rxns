@@ -2,7 +2,7 @@ hydra:
   run:
     dir: ${filepaths.processed_data}
   sweep:
-    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: ${filepaths.processed_data}
     subdir: ${hydra.job.num}
   launcher:
     _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
@@ -113,12 +113,12 @@ hydra:
     - hydra.mode=RUN
     task: []
   job:
-    name: extract_mechanistic
+    name: write_rcr_rules
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: extract_mechanistic
+    config_name: write_rcr_rules
     env_set: {}
     env_copy: []
     config:
