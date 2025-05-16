@@ -1,0 +1,14 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
+R: 1
+
+hydra:
+  run:
+    dir: ${filepaths.processed_data}
+  job:
+    chdir: True
+  sweep:
+    dir: ${filepaths.processed_data}

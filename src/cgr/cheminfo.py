@@ -1,3 +1,8 @@
+'''
+TODO: Scavenge useful stuff into newer modules and delete this
+
+'''
+
 from rdkit import Chem
 from rdkit.Chem import rdFMCS, rdFingerprintGenerator
 import re
