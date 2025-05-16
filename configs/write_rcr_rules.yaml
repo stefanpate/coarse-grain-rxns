@@ -12,3 +12,4 @@ hydra:
     chdir: True
   sweep:
     dir: ${filepaths.processed_data}
+    subdir: .
