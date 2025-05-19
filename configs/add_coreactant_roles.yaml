@@ -2,11 +2,13 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-rule_fn: .csv
-mapped_rxns_fn: .parquet
+mapped_rxns_fn: mapped_sprhea_240310_v3_no_subunits_x_rc_plus_2_rules.parquet
 
 hydra:
   run:
     dir: ${filepaths.processed_data}
   job:
     chdir: True
+  sweep:
+    dir: ${filepaths.processed_data}
+    subdir: .

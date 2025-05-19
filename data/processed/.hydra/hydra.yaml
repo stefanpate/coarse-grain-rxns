@@ -111,14 +111,15 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=MULTIRUN
-    task: []
+    task:
+    - mapped_rxns_fn=mapped_sprhea_240310_v3_no_subunits_x_rc_plus_0_rules.parquet
   job:
-    name: write_rcr_rules
+    name: add_coreactant_roles
     chdir: true
-    override_dirname: ''
-    id: '0'
-    num: 0
-    config_name: write_rcr_rules
+    override_dirname: mapped_rxns_fn=mapped_sprhea_240310_v3_no_subunits_x_rc_plus_0_rules.parquet
+    id: '3'
+    num: 3
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
