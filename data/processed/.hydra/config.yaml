@@ -9,5 +9,4 @@ filepaths:
   hpo_studies: ${.artifacts}/hpo_studies
   coreactants: ${.artifacts}/coreactants
   rules: ${.artifacts}/rules
-src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
-R: 1
+mapped_rxns_fn: mapped_sprhea_240310_v3_no_subunits_x_rc_plus_0_rules.parquet

@@ -111,14 +111,15 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=MULTIRUN
-    task: []
+    task:
+    - mapped_rxns_fn=mapped_sprhea_240310_v3_no_subunits_x_rc_plus_2_rules.parquet,mapped_sprhea_240310_v3_no_subunits_x_rc_plus_3_rules.parquet,mapped_sprhea_240310_v3_no_subunits_x_rc_plus_4_rules.parquet,mapped_sprhea_240310_v3_no_subunits_x_rc_plus_0_rules.parquet
   job:
-    name: write_rcr_rules
+    name: add_coreactant_roles
     chdir: true
-    override_dirname: ''
+    override_dirname: mapped_rxns_fn=mapped_sprhea_240310_v3_no_subunits_x_rc_plus_2_rules.parquet,mapped_sprhea_240310_v3_no_subunits_x_rc_plus_3_rules.parquet,mapped_sprhea_240310_v3_no_subunits_x_rc_plus_4_rules.parquet,mapped_sprhea_240310_v3_no_subunits_x_rc_plus_0_rules.parquet
     id: ???
     num: ???
-    config_name: write_rcr_rules
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
@@ -164,5 +165,4 @@ filepaths:
   hpo_studies: ${.artifacts}/hpo_studies
   coreactants: ${.artifacts}/coreactants
   rules: ${.artifacts}/rules
-src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
-R: 1
+mapped_rxns_fn: mapped_sprhea_240310_v3_no_subunits_x_rc_plus_2_rules.parquet
