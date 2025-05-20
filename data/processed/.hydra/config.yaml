@@ -9,4 +9,4 @@ filepaths:
   hpo_studies: ${.artifacts}/hpo_studies
   coreactants: ${.artifacts}/coreactants
   rules: ${.artifacts}/rules
-mapped_rxns_fn: mapped_sprhea_240310_v3_no_subunits_x_rc_plus_0_rules.parquet
+mapped_rxns_fn: mapped_sprhea_240310_v3_no_subunits_x_mechinformed_rules.parquet
