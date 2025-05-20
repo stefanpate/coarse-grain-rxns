@@ -1,6 +1,7 @@
 import hydra
 from omegaconf import DictConfig
 from cgr.rule_writing import extract_reaction_template
+from cgr.rxn_analysis import get_rc_r_hop_aidxs
 from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
@@ -10,17 +11,6 @@ import numpy as np
 from rdkit import Chem
 
 log = logging.getLogger(__name__)
-
-def get_atoms_to_include(rxn: str, lhs_rc: tuple[tuple[int]],  R: int) -> list[tuple[int]]:
-    lhs_mols = [Chem.MolFromSmiles(smi) for smi in rxn.split('>>')[0].split('.')]
-    atoms_to_include = []
-    for mol, rc in zip(lhs_mols, lhs_rc):
-        rc = np.array(rc)
-        D = Chem.GetDistanceMatrix(mol)
-        incl_mask = np.any(D[rc] <= R, axis=0)
-        ati = np.where(incl_mask)[0]
-        atoms_to_include.append(tuple([int(i) for i in ati]))
-    return atoms_to_include
 
 @hydra.main(version_base=None, config_path='../configs', config_name='write_rcr_rules')
 def main(cfg: DictConfig):
@@ -35,7 +25,8 @@ def main(cfg: DictConfig):
     for _, row in min_mapped.iterrows():
         rc = rc_to_nest(row['template_aidxs'])
         am_smarts = row['am_smarts']
-        atoms_to_include = get_atoms_to_include(am_smarts, rc[0], cfg.R)
+        lhs_mols = [Chem.MolFromSmiles(smi) for smi in am_smarts.split('>>')[0].split('.')]
+        atoms_to_include = get_rc_r_hop_aidxs(lhs_mols, rc[0], cfg.R)
         try:
             template = extract_reaction_template(rxn=am_smarts, atoms_to_include=atoms_to_include, reaction_center=rc[0])
         except Exception as e:

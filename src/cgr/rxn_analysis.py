@@ -2,117 +2,12 @@ import networkx as nx
 from rdkit import Chem
 from pydantic import BaseModel, BeforeValidator, PlainSerializer, ConfigDict
 import numpy as np
-from typing import Iterable, Callable, Annotated, Any
+from typing import Iterable, Annotated, Any
 from itertools import accumulate, chain, permutations, product
 from functools import reduce
 from pathlib import Path
 from collections import defaultdict
-
-class MolFeaturizer:
-    def __init__(self, atom_featurizer: Callable[[Chem.Atom], list[int | float]]):
-        self.atom_featurizer = atom_featurizer
-
-    def featurize(self, mol: Chem.Mol, rc: Iterable[int] = []):
-        '''
-        Args
-        ----
-        mol: Chem.Mol
-            RDKit molecule object
-        rc: Iterable[int] (optional)
-            List of atom indices corresponding to reaction center
-
-        Returns
-        -------
-        fts: np.ndarray
-            Node feature matrix of shape (num_atoms, num_features)
-        
-        Notes
-        -----
-        1. Distance to reaction center are always the last n features where n is number of reaction center atoms.
-        2. If atom is not connected to an rc atom, distance is set to -1.
-        '''
-        fts = []
-        for atom in mol.GetAtoms():
-            aidx = atom.GetIdx()
-            local_fts = self.atom_featurizer(atom)
-            spls = [
-                len(Chem.GetShortestPath(mol, aidx, rcidx)) - 1 if aidx != rcidx else 0
-                for rcidx in rc
-            ]
-            fts.append(local_fts + spls)
-
-        fts = np.array(fts)
-        return fts
-
-def atom_featurizer_v0(atom: Chem.Atom) -> list[int | float]:
-    atomic_invariants = [
-        atom.GetDegree(),
-        atom.GetTotalValence() - atom.GetTotalNumHs(),
-        atom.GetAtomicNum(),
-        atom.GetFormalCharge(),
-        int(atom.IsInRing()),
-        int(atom.GetIsAromatic()),
-        _get_non_aromatic_c_ox_state(atom)
-    ]
-
-    return atomic_invariants
-
-def atom_featurizer_v1(atom: Chem.Atom) -> list[int | float]:
-    atomic_invariants = [
-        atom.GetDegree(),
-        atom.GetTotalValence() - atom.GetTotalNumHs(),
-        atom.GetAtomicNum(),
-        atom.GetFormalCharge(),
-        int(atom.IsInRing()),
-        int(atom.GetIsAromatic()),
-        amphoteros_ox_state(atom)
-    ]
-
-    return atomic_invariants
-
-def atom_featurizer_v2(atom: Chem.Atom) -> list[int | float]:
-    atomic_invariants = [
-        atom.GetDegree(),
-        atom.GetTotalValence(),
-        atom.GetTotalNumHs(),
-        atom.GetAtomicNum(),
-        atom.GetFormalCharge(),
-        int(atom.IsInRing()),
-        int(atom.GetIsAromatic()),
-        amphoteros_ox_state(atom)
-    ]
-
-    return atomic_invariants
-
-def _get_non_aromatic_c_ox_state(atom: Chem.Atom) -> float:
-    if atom.GetAtomicNum() != 6 or atom.GetIsAromatic(): # Non-aromatic-C get constant outside range
-        return -1.0
-    else: # Count heteroatom neighbors, scl by bond degree, sum
-        d_oxes = [
-            bond.GetBondTypeAsDouble() for bond in atom.GetBonds()
-            if bond.GetOtherAtom(atom).GetAtomicNum() != 6
-        ]
-        return sum(d_oxes)
-    
-def amphoteros_ox_state(atom: Chem.Atom) -> float:
-    '''
-    Returns
-    -------
-    : float
-        -1 if atom is not carbon
-        + (# pi bonds + # heteroatom neighbors) otherwise
-
-    Notes
-    -----
-    https://amphoteros.com/2013/10/22/counting-oxidation-states/
-    '''
-    if atom.GetAtomicNum() != 6:
-        return -1.0
-    else:
-        return sum(
-            (bond.GetBondTypeAsDouble() - 1.0) + float(bond.GetOtherAtom(atom).GetAtomicNum() != 6)
-            for bond in atom.GetBonds()
-        )
+from .featurize import MolFeaturizer
 
 def ndarray_before_validator(v):
     if not isinstance(v, np.ndarray):
@@ -530,7 +425,40 @@ def get_stereotypical_molecules(smarts_subset: list[str]) -> tuple[tuple[int], t
 
     return (lhs_stereotypical, rhs_stereotypical)
     
+def get_rc_r_hop_aidxs(mols: list[Chem.Mol], rc: Iterable[tuple[int]], R: int) -> list[tuple[int]]:
+    '''
+    Get the indices of atoms that are within R hops of the reaction center.
+
+    Args
+    ----
+    mols: list[Chem.Mol]
+        List of RDKit molecule objects
+    rc: Iterable[tuple[int]]
+        Atom indices corresponding to reaction centers in each
+        reactant
+    R: int
+        Number of hops to consider
+    
+    Returns
+    -------
+    : list[tuple[int]]
+        A list of tuples where each tuple contains the indices of atoms that are
+        within R hops of the reaction center in each reactant.
+    '''
+    if len(mols) != len(rc):
+        raise ValueError("Number of molecules and reaction center tuples must match")
+
+    atoms_to_include = []
+    for mol, rc in zip(mols, rc):
+        rc = np.array(rc)
+        D = Chem.GetDistanceMatrix(mol)
+        incl_mask = np.any(D[rc] <= R, axis=0)
+        ati = np.where(incl_mask)[0]
+        atoms_to_include.append(tuple([int(i) for i in ati]))
+    return atoms_to_include
+
 if __name__ == '__main__':
+    from .featurize import atom_featurizer_v1
     smi = 'OC(=O)CCC(N)C(=O)O'
     rc = [(9, 7, 5)]
     mol_featurizer = MolFeaturizer(atom_featurizer_v1)
