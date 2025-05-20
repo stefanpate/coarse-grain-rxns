@@ -9,7 +9,7 @@ from ergochemics.mapping import rc_to_nest, rc_to_str
 import logging
 from time import perf_counter
 from tqdm import tqdm
-from cgr.inference import (
+from cgr.rxn_analysis import (
     ReactantGraph,
     MolFeaturizer,
     atom_featurizer_v2,
