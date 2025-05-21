@@ -187,6 +187,46 @@ def sep_aidx_to_bin_label(smarts: str, aidxs: tuple[tuple[tuple[int]], tuple[tup
 
     return tuple(ys)
 
+def bin_label_to_sep_aidx(bin_label: np.ndarray, am_smarts: str) -> tuple[tuple[tuple[int]], tuple[tuple[int]]]:
+    """
+    Convert a binary label to a tuple of tuples of atom indices.
+
+    Args
+    ----
+    bin_label : np.ndarray
+        Binary array of shape (n_tot_atoms_in_reaction,) indicating
+        which atoms are a part of the rule / mechanism.
+    am_smarts : str
+        Atom-mapped reaction smarts
+
+    Returns
+    -------
+    tuple[tuple[tuple[int]], tuple[tuple[int]]]
+        Tuple of tuples of atom indices for the lhs and rhs of the reaction.
+        Each tuple contains a list of atom indices for each molecule in the
+        reaction. The first tuple corresponds to the lhs and the second to the
+        rhs.
+    """
+    block_indices = np.flatnonzero(bin_label)
+    lhs_mols, rhs_mols = [[Chem.MolFromSmiles(smi) for smi in side.split('.')] for side in am_smarts.split('>>')]
+    n_atoms = [mol.GetNumAtoms() for mol in lhs_mols]
+    acc = np.array([0] + list(accumulate(n_atoms)))
+    lhs_aidxs = [[] for _ in range(len(lhs_mols))]
+    rhs_aidxs = [[] for _ in range(len(rhs_mols))]
+    rhs_amn_to_midx_aidx = {atom.GetAtomMapNum(): (i, atom.GetIdx()) for i, mol in enumerate(rhs_mols) for atom in mol.GetAtoms()}
+
+    for block_idx in block_indices:
+        mask = (acc <= block_idx)
+        mol_idx = np.argmin(mask) - 1 # In case of multiple occurrences, argmin returns first. True will always precede False by construction
+        sep_aidx = int(block_idx - acc[mol_idx])
+        lhs_aidxs[mol_idx].append(sep_aidx)
+
+        lhs_amn = lhs_mols[mol_idx].GetAtomWithIdx(sep_aidx).GetAtomMapNum()
+        rhs_midx, rhs_aidx = rhs_amn_to_midx_aidx[lhs_amn]
+        rhs_aidxs[rhs_midx].append(int(rhs_aidx))
+
+    return tuple(tuple(elt) for elt in lhs_aidxs), tuple(tuple(elt) for elt in rhs_aidxs)
+
 def calc_bce_pos_weight(y: list[np.ndarray], pw_scl: float) -> float:
     '''
     Calculate the positive weight for BCE loss based on the ratio of positive to negative samples
@@ -197,3 +237,8 @@ def calc_bce_pos_weight(y: list[np.ndarray], pw_scl: float) -> float:
     pos_weight = (nneg / npos) * pw_scl
     
     return pos_weight
+
+if __name__ == "__main__":
+    smarts = '[C:1][C:2].[C:3]>>[C:1][C:2][C:3]'
+    bin_label = np.array([1, 0, 1])
+    bin_label_to_sep_aidx(bin_label, smarts)
