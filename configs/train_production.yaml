@@ -1,0 +1,21 @@
+defaults:
+  - filepaths: filepaths
+  - full: outer_split_0
+  - override hydra/job_logging: custom
+  - override hydra/launcher: quest_cpu
+  - _self_
+
+training: ${full.training}
+data: ${full.data}
+model: ${full.model}
+
+hydra:
+  run:
+    dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    chdir: True
+  sweep:
+    dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweeper:
+    params:
+      full: outer_split_0,outer_split_1,outer_split_2,outer_split_3,outer_split_4
