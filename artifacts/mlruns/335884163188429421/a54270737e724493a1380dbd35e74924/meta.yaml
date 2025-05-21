@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/335884163188429421/a54270737e724493a1380dbd35e74924/artifacts
+end_time: 1747855798012
+entry_point_name: ''
+experiment_id: '335884163188429421'
+lifecycle_stage: active
+run_id: a54270737e724493a1380dbd35e74924
+run_name: fun-vole-15
+run_uuid: a54270737e724493a1380dbd35e74924
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747855542459
+status: 3
+tags: []
+user_id: spn1560
