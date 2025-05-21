@@ -1,0 +1,22 @@
+data:
+  inner_splitter: true
+  outer_split_idx: 2
+  outer_splitter: true
+  split_strategy: random_rule_split
+model:
+  featurizer_mode: PROD_DIFF
+  mp_d_h: 200
+  mp_depth: 4
+  pred_head_d_hs:
+  - 130
+  - 196
+  - 104
+  pred_head_name: ffn
+training:
+  batch_size: 101
+  final_lr: 0.001
+  init_lr: 0.0001
+  max_epochs: 8
+  max_lr: 0.0001
+  pw_scl: 0.1564945312174881
+  warmup_epochs: 2
