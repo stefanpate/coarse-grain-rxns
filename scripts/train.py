@@ -54,9 +54,9 @@ def main(cfg: DictConfig):
     )
 
     # Prep data
-    df["reaction_center"] = df["reaction_center"].apply(rc_to_nest)
+    df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
-    df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.reaction_center), axis=1) # Convert aidxs to binary labels for block mol
+    df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.template_aidxs), axis=1) # Convert aidxs to binary labels for block mol
     ys = [elt[0] for elt in df["binary_label"]]
     groups = df["rule_id"].tolist() if cfg.data.split_strategy != "random_split" else None
     X, y = zip(*[(data.ReactionDatapoint.from_smi(smi), y) for smi, y in zip(smis, ys)])

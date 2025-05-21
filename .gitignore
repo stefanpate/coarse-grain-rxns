@@ -174,3 +174,4 @@ artifacts/250227_skeleton_proposal.txt
 scripts/nohup*
 **/hpo_conf
 **/train_conf
+**/pred_conf

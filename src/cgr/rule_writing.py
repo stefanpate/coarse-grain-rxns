@@ -13,9 +13,9 @@ def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]
     rxn : str
         Atom-mapped reaction string
     atoms_to_include : Iterable[Iterable[int]]
-        List of lists of atom indices to include in the template.
+        List of lists of LHS atom indices to include in the template.
     reaction_center : Iterable[Iterable[int]]
-        List of lists of atom indices that are part of the reaction center. Only
+        List of lists of LHS atom indices that are part of the reaction center. Only
         for reactants / lhs of rxn
 
     Returns

@@ -1,0 +1,23 @@
+data:
+  inner_splitter: true
+  outer_split_idx: 3
+  outer_splitter: true
+  split_strategy: random_rule_split
+model:
+  ckpt: 335884163188429421/89e373460c5a4a8f8c910901fab82798/artifacts/epoch=4-step=400/epoch=4-step=400.ckpt
+  featurizer_mode: PROD_DIFF
+  mp_d_h: 286
+  mp_depth: 4
+  pred_head_d_hs:
+  - 156
+  - 161
+  - 111
+  pred_head_name: ffn
+training:
+  batch_size: 102
+  final_lr: 0.001
+  init_lr: 0.0001
+  max_epochs: 5
+  max_lr: 0.0001
+  pw_scl: 0.2899307546477962
+  warmup_epochs: 2
