@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/335884163188429421/e3b7d9ec36374ff19b965c021c31e642/artifacts
+end_time: 1747845760032
+entry_point_name: ''
+experiment_id: '335884163188429421'
+lifecycle_stage: active
+run_id: e3b7d9ec36374ff19b965c021c31e642
+run_name: languid-grub-154
+run_uuid: e3b7d9ec36374ff19b965c021c31e642
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747845534989
+status: 3
+tags: []
+user_id: spn1560
