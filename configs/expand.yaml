@@ -1,0 +1,20 @@
+defaults:
+  - filepaths: filepaths
+  - override hydra/job_logging: custom
+  - override hydra/launcher: quest_cpu
+  - _self_
+
+starters: ccm_aa
+generations: 1
+rules: mechinferred_dt_2_rules_w_coreactants
+coreactants: metacyc_coreactants
+processes: 1
+a_plus_b: False
+
+# hydra:
+#   run:
+#     dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
+#   job:
+#     chdir: True
+#   sweep:
+#     dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}

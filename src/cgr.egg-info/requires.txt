@@ -5,6 +5,7 @@ hydra-submitit-launcher>=1.2.0
 ipykernel>=6.29.5
 ipywidgets>=8.1.5
 matplotlib>=3.10.1
+minedatabase
 mlflow>=2.22.0
 nbformat>=5.10.4
 networkx>=3.4.2
