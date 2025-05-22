@@ -2,10 +2,35 @@ hydra:
   run:
     dir: ${filepaths.interim_data}
   sweep:
-    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
-    subdir: ${hydra.job.num}
+    dir: ${filepaths.interim_data}
+    subdir: .
   launcher:
-    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+    submitit_folder: ${hydra.sweep.dir}/.submitit/%j
+    timeout_min: 120
+    cpus_per_task: null
+    gpus_per_node: null
+    tasks_per_node: 1
+    mem_gb: 32
+    nodes: 1
+    name: ${hydra.job.name}
+    stderr_to_stdout: false
+    _target_: hydra_plugins.hydra_submitit_launcher.submitit_launcher.SlurmLauncher
+    partition: b1039
+    qos: null
+    comment: null
+    constraint: null
+    exclude: null
+    gres: null
+    cpus_per_gpu: null
+    gpus_per_task: null
+    mem_per_gpu: null
+    mem_per_cpu: null
+    account: b1039
+    signal_delay_s: 120
+    max_num_timeout: 0
+    additional_parameters: {}
+    array_parallelism: 256
+    setup: null
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
@@ -87,7 +112,7 @@ hydra:
     version: 1
     formatters:
       simple:
-        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+        format: '[%(levelname)s] - %(message)s'
     handlers:
       console:
         class: logging.StreamHandler
@@ -113,12 +138,12 @@ hydra:
     - hydra.mode=RUN
     task: []
   job:
-    name: extract_mechanistic
+    name: expand
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: extract_mechanistic
+    config_name: expand
     env_set: {}
     env_copy: []
     config:
@@ -145,11 +170,11 @@ hydra:
       filepaths: filepaths
       hydra/env: default
       hydra/callbacks: null
-      hydra/job_logging: default
+      hydra/job_logging: custom
       hydra/hydra_logging: default
       hydra/hydra_help: default
       hydra/help: default
       hydra/sweeper: basic
-      hydra/launcher: basic
+      hydra/launcher: quest_cpu
       hydra/output: default
   verbose: false

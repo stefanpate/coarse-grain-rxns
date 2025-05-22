@@ -11,10 +11,11 @@ coreactants: metacyc_coreactants
 processes: 1
 a_plus_b: False
 
-# hydra:
-#   run:
-#     dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
-#   job:
-#     chdir: True
-#   sweep:
-#     dir: ${filepaths.artifacts}/train_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
+hydra:
+  run:
+    dir: ${filepaths.interim_data}
+  job:
+    chdir: True
+  sweep:
+    dir: ${filepaths.interim_data}
+    subdir: .

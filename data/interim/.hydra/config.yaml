@@ -2,7 +2,18 @@ filepaths:
   root: /home/stef/cgr
   data: ${.root}/data
   artifacts: ${.root}/artifacts
+  configs: ${.root}/configs
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
-src_file: distilled_mech_reactions.parquet
+  mlruns: ${.artifacts}/mlruns
+  hpo_studies: ${.artifacts}/hpo_studies
+  coreactants: ${.artifacts}/coreactants
+  starters: ${.artifacts}/starters
+  rules: ${.artifacts}/rules
+starters: ccm_aa
+generations: 1
+rules: mechinferred_dt_2_rules_w_coreactants
+coreactants: metacyc_coreactants
+processes: 1
+a_plus_b: false
