@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/935416590272618137/f6db007653614100b69c511fc4a2fed3/artifacts
+end_time: 1747922316859
+entry_point_name: ''
+experiment_id: '935416590272618137'
+lifecycle_stage: active
+run_id: f6db007653614100b69c511fc4a2fed3
+run_name: handsome-pug-553
+run_uuid: f6db007653614100b69c511fc4a2fed3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747922044502
+status: 3
+tags: []
+user_id: spn1560

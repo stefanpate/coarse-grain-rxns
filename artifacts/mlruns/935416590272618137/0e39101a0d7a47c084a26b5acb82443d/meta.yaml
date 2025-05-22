@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/935416590272618137/0e39101a0d7a47c084a26b5acb82443d/artifacts
+end_time: 1747922313155
+entry_point_name: ''
+experiment_id: '935416590272618137'
+lifecycle_stage: active
+run_id: 0e39101a0d7a47c084a26b5acb82443d
+run_name: trusting-rat-988
+run_uuid: 0e39101a0d7a47c084a26b5acb82443d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747922047118
+status: 3
+tags: []
+user_id: spn1560
