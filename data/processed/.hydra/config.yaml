@@ -10,11 +10,4 @@ filepaths:
   hpo_studies: ${.artifacts}/hpo_studies
   coreactants: ${.artifacts}/coreactants
   rules: ${.artifacts}/rules
-min_mapped: mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_0_rules.parquet
-mech_probas_dir: mech_probas
-decision_thresholds:
-- 0.9828168153762817
-- 0.15597158670425415
-- 0.06226504594087601
-- 0.03628593683242798
-- 0.021757207810878754
+mapped_rxns_fn: mapped_sprhea_240310_v3_mapped_no_subunits_x_mechinformed_rules.parquet
