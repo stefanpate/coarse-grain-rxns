@@ -6,7 +6,6 @@ src/cgr/featurize.py
 src/cgr/ml.py
 src/cgr/rule_writing.py
 src/cgr/rxn_analysis.py
-src/cgr/tmp.py
 src/cgr.egg-info/PKG-INFO
 src/cgr.egg-info/SOURCES.txt
 src/cgr.egg-info/dependency_links.txt
