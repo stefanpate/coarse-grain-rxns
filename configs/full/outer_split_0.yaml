@@ -1,7 +1,7 @@
 data:
   inner_splitter: true
   outer_split_idx: 0
-  outer_splitter: true
+  outer_splitter: 5
   split_strategy: random_rule_split
 model:
   featurizer_mode: PROD_DIFF
