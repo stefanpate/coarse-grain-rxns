@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/935416590272618137/1761c4a9a8b24ea684bd720a1cb12340/artifacts
+end_time: 1747922334205
+entry_point_name: ''
+experiment_id: '935416590272618137'
+lifecycle_stage: active
+run_id: 1761c4a9a8b24ea684bd720a1cb12340
+run_name: resilient-lamb-795
+run_uuid: 1761c4a9a8b24ea684bd720a1cb12340
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747922051043
+status: 3
+tags: []
+user_id: spn1560
