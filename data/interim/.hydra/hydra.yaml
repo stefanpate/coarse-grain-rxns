@@ -6,19 +6,36 @@ hydra:
     subdir: .
   launcher:
     submitit_folder: ${hydra.sweep.dir}/.submitit/%j
-    timeout_min: 120
-    cpus_per_task: 2
+    timeout_min: 360
+    cpus_per_task: 50
     gpus_per_node: null
     tasks_per_node: 1
-    mem_gb: 32
+    mem_gb: 0
     nodes: 1
     name: ${hydra.job.name}
     stderr_to_stdout: false
-    _target_: hydra_plugins.hydra_submitit_launcher.submitit_launcher.LocalLauncher
+    _target_: hydra_plugins.hydra_submitit_launcher.submitit_launcher.SlurmLauncher
+    partition: b1039
+    qos: null
+    comment: null
+    constraint: null
+    exclude: null
+    gres: null
+    cpus_per_gpu: null
+    gpus_per_task: null
+    mem_per_gpu: null
+    mem_per_cpu: null
+    account: b1039
+    signal_delay_s: 120
+    max_num_timeout: 0
+    additional_parameters: {}
+    array_parallelism: 256
+    setup: null
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params: null
+    params:
+      rules: mechinferred_dt_2_rules_w_coreactants,mechinferred_dt_3_rules_w_coreactants,mechinferred_dt_6_rules_w_coreactants
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -113,20 +130,22 @@ hydra:
       - file
     disable_existing_loggers: false
   env: {}
-  mode: MULTIRUN
+  mode: RUN
   searchpath: []
   callbacks: {}
   output_subdir: .hydra
   overrides:
     hydra:
-    - hydra.mode=MULTIRUN
-    task: []
+    - hydra.mode=RUN
+    task:
+    - processes=50
+    - rules=rc_plus_2_rules_w_coreactants
   job:
     name: expand
     chdir: true
-    override_dirname: ''
-    id: '18196'
-    num: 0
+    override_dirname: processes=50,rules=rc_plus_2_rules_w_coreactants
+    id: ???
+    num: ???
     config_name: expand
     env_set: {}
     env_copy: []
@@ -138,18 +157,18 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr/scripts
+    cwd: /gpfs/home/spn1560/coarse-grain-rxns/scripts
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /home/stef/cgr/configs
+    - path: /gpfs/home/spn1560/coarse-grain-rxns/configs
       schema: file
       provider: main
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /home/stef/cgr/data/interim
+    output_dir: /home/spn1560/coarse-grain-rxns/data/interim
     choices:
       filepaths: filepaths
       hydra/env: default
@@ -159,6 +178,6 @@ hydra:
       hydra/hydra_help: default
       hydra/help: default
       hydra/sweeper: basic
-      hydra/launcher: local_cpu
+      hydra/launcher: quest_cpu
       hydra/output: default
   verbose: false

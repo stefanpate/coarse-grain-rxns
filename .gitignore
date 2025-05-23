@@ -178,3 +178,4 @@ scripts/nohup*
 *.pk
 **/.submitit
 **/.hydra
+logs/

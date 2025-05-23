@@ -6,9 +6,9 @@ defaults:
 
 starters: ccm_aa
 generations: 2
-rules: mechinferred_dt_2_rules_w_coreactants
+rules: ???
 coreactants: metacyc_coreactants
-processes: ${hydra:launcher.cpus_per_task}
+processes: ???
 a_plus_b: True
 
 hydra:
