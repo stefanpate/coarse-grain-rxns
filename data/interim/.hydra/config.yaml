@@ -15,5 +15,5 @@ starters: ccm_aa
 generations: 1
 rules: mechinferred_dt_2_rules_w_coreactants
 coreactants: metacyc_coreactants
-processes: 1
+processes: ${hydra:launcher.cpus_per_task}
 a_plus_b: true
