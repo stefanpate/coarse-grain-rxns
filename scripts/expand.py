@@ -19,10 +19,8 @@ def main(cfg: DictConfig):
 
     pk.load_compound_set(compound_file=Path(cfg.filepaths.starters) / f"{cfg.starters}.csv")
 
-    # if cfg.a_plus_b:
-    #     known_reactions = load_json(Path(cfg.filepaths.data) / "sprhea" / "sprhea_240310_v3_mapped_no_subunits.json")
-    #     known_reactions = [{'smarts': v['smarts'], 'rules': v['imt_rules'] if v['imt_rules'] else []} for v in known_reactions.values()]
-    #     pk.set_starters_as_coreactants(known_reactions=known_reactions)
+    if cfg.a_plus_b:
+        pk.set_starters_as_coreactants()
 
     pk.transform_all(cfg.processes, cfg.generations) # Expand
 
