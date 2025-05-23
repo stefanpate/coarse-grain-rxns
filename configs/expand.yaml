@@ -5,10 +5,10 @@ defaults:
   - _self_
 
 starters: ccm_aa
-generations: 1
+generations: 2
 rules: mechinferred_dt_2_rules_w_coreactants
 coreactants: metacyc_coreactants
-processes: 1
+processes: ${hydra:launcher.cpus_per_task}
 a_plus_b: True
 
 hydra:
@@ -19,3 +19,6 @@ hydra:
   sweep:
     dir: ${filepaths.interim_data}
     subdir: .
+  sweeper:
+    params:
+      rules: mechinferred_dt_2_rules_w_coreactants,mechinferred_dt_3_rules_w_coreactants,mechinferred_dt_6_rules_w_coreactants

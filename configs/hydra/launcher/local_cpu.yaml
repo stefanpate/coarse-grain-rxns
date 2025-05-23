@@ -1,0 +1,8 @@
+defaults:
+  - submitit_local
+
+timeout_min: 120
+mem_gb: 32
+nodes: 1
+tasks_per_node: 1
+cpus_per_task: 2
