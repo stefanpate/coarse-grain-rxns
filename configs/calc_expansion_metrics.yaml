@@ -7,12 +7,11 @@ dxgb:
   cofactor_positioning: add_concat
 
 expansion_fns:
-  - 1_steps_ccm_aa_rules_mechinferred_dt_2_rules_w_coreactants_aplusb_False.pk
-  # - 2_steps_ccm_aa_rules_mechinferred_dt_2_rules_w_coreactants_aplusb_True.pk
-  # - 2_steps_ccm_aa_rules_mechinferred_dt_3_rules_w_coreactants_aplusb_True.pk
-  # - 2_steps_ccm_aa_rules_rc_plus_3_rules_w_coreactants_aplusb_True.pk
-  # - 2_steps_ccm_aa_rules_rc_plus_4_rules_w_coreactants_aplusb_True.pk
-expansion_name: test
+  - 2_steps_ccm_aa_rules_mechinferred_dt_2_rules_w_coreactants_aplusb_True.pk
+  - 2_steps_ccm_aa_rules_mechinferred_dt_3_rules_w_coreactants_aplusb_True.pk
+  - 2_steps_ccm_aa_rules_rc_plus_3_rules_w_coreactants_aplusb_True.pk
+  - 2_steps_ccm_aa_rules_rc_plus_4_rules_w_coreactants_aplusb_True.pk
+expansion_name: two_least_permissive
 
 hydra:
   run:
