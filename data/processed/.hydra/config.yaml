@@ -11,9 +11,4 @@ filepaths:
   coreactants: ${.artifacts}/coreactants
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
-dxgb:
-  _target_: DORA_XGB.DORA_XGB.feasibility_classifier
-  cofactor_positioning: add_concat
-expansion_fns:
-- 1_steps_ccm_aa_rules_mechinferred_dt_2_rules_w_coreactants_aplusb_False.pk
-expansion_name: test
+mapped_rxns_fn: mapped_sprhea_240310_v3_mapped_no_subunits_x_imt_rules.parquet

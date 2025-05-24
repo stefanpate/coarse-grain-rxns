@@ -2,7 +2,7 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-mapped_rxns_fn: mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_2_rules.parquet
+mapped_rxns_fn: mapped_sprhea_240310_v3_mapped_no_subunits_x_imt_rules.parquet
 
 hydra:
   run:

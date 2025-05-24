@@ -1,16 +1,15 @@
 import hydra
+from hydra.utils import instantiate
 from omegaconf import DictConfig
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from tqdm import tqdm
 import pandas as pd
 from minedatabase.pickaxe import Pickaxe
-from functools import partial
-from DORA_XGB import DORA_XGB
 
 def process_compounds(pk: Pickaxe) -> list[list[int, int, str, str]]:
     data = []
-    for k, v in pk.compounds.items():
+    for v in pk.compounds.values():
         
         # Only the "universal" / default currency coreactants have id start with "X"
         # Can use this to filter them out when looking at compound stats
@@ -35,11 +34,16 @@ def process_compounds(pk: Pickaxe) -> list[list[int, int, str, str]]:
 
 def is_valid_rxn(rxn: dict, starters: dict[str, str]):
     '''
+    Returns false if reaction only default currency 'X'
+    coreactants
     
-
     Args
     ----
-
+    rxn:dict
+        Pickaxe reaction entry
+    starters:dict
+        Starting compounds {_id: ID} where _id is a hash
+        id and ID is a user provided name
     '''
     in_linked = False
     out_linked = False
@@ -60,7 +64,7 @@ def is_valid_rxn(rxn: dict, starters: dict[str, str]):
 
     return in_linked and out_linked
 
-def process_reactions(pk: Pickaxe, dxgb) -> float:
+def process_reactions(pk: Pickaxe) -> float:
     starters = {}
     for v in pk.compounds.values():
         if v["Type"].startswith("Start"):
@@ -84,6 +88,10 @@ def process_reactions(pk: Pickaxe, dxgb) -> float:
 
     return data
 
+def dxgb_initializer(cfg: DictConfig):
+    global dxgb
+    dxgb = instantiate(cfg.dxgb)
+
 @hydra.main(version_base=None, config_path="../configs", config_name="calc_expansion_metrics")
 def main(cfg: DictConfig):
 
@@ -95,40 +103,38 @@ def main(cfg: DictConfig):
         )
         expansions.append(pk)
 
-    # # Process compounds
-    # with ProcessPoolExecutor(max_workers=len(expansions)) as executor:
-    #     results = list(
-    #         tqdm(
-    #             executor.map(process_compounds, expansions, chunksize=1),
-    #             total=len(expansions),
-    #             desc="Procesing compounds"
-    #         )
-    #     )
-    
-    # # Save compounds
-    # columns = ["smiles", "fan_out", "gen", "id"] 
-    # dfes = []
-    # for exp, res in zip(cfg.expansion_fns, results):
-    #     df = pd.DataFrame(data=res, columns=columns)
-    #     df["expansion"] = exp
-    #     dfes.append(df)
-
-    # full_df = pd.concat(dfes)
-    # full_df.to_parquet(f"{cfg.expansion_name}_compound_metrics.parquet")
-
-    # Process reactions
-    dxgb_ac = DORA_XGB.feasibility_classifier(cofactor_positioning='add_concat')
-    process_reactions_ = partial(process_reactions, dxgb=dxgb_ac)
+    # Process compounds
     with ProcessPoolExecutor(max_workers=len(expansions)) as executor:
         results = list(
             tqdm(
-                executor.map(process_reactions_, expansions, chunksize=1),
+                executor.map(process_compounds, expansions, chunksize=1),
+                total=len(expansions),
+                desc="Procesing compounds"
+            )
+        )
+    
+    # Save compound metrics
+    columns = ["smiles", "fan_out", "gen", "id"] 
+    dfes = []
+    for exp, res in zip(cfg.expansion_fns, results):
+        df = pd.DataFrame(data=res, columns=columns)
+        df["expansion"] = exp
+        dfes.append(df)
+
+    full_df = pd.concat(dfes)
+    full_df.to_parquet(f"{cfg.expansion_name}_compound_metrics.parquet")
+
+    # Process reactions
+    with ProcessPoolExecutor(max_workers=len(expansions), initializer=dxgb_initializer, initargs=(cfg,)) as executor:
+        results = list(
+            tqdm(
+                executor.map(process_reactions, expansions, chunksize=1),
                 total=len(expansions),
                 desc="Procesing reactions"
             )
         )
-    
-    # Save reactions
+
+    # Save reaction metrics
     columns = ["smarts", "dxgb_label", "id", "rules"] 
     dfes = []
     for exp, res in zip(cfg.expansion_fns, results):
