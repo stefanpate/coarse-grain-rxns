@@ -9,8 +9,7 @@ hydra:
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params:
-      mapped_rxns_fn: mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_0_rules.parquet,mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_1_rules.parquet,mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_2_rules.parquet,mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_3_rules.parquet,mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_4_rules.parquet,mapped_sprhea_240310_v3_mapped_no_subunits_x_mechinformed_rules.parquet
+    params: null
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -114,12 +113,12 @@ hydra:
     - hydra.mode=RUN
     task: []
   job:
-    name: add_coreactant_roles
+    name: calc_expansion_metrics
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: add_coreactant_roles
+    config_name: calc_expansion_metrics
     env_set: {}
     env_copy: []
     config:
@@ -130,18 +129,18 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr/scripts
+    cwd: /gpfs/home/spn1560/coarse-grain-rxns/scripts
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /home/stef/cgr/configs
+    - path: /gpfs/home/spn1560/coarse-grain-rxns/configs
       schema: file
       provider: main
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /home/stef/cgr/data/processed
+    output_dir: /home/spn1560/coarse-grain-rxns/data/processed
     choices:
       filepaths: filepaths
       hydra/env: default

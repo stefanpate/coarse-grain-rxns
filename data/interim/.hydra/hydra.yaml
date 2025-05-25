@@ -139,11 +139,11 @@ hydra:
     - hydra.mode=RUN
     task:
     - processes=50
-    - rules=rc_plus_2_rules_w_coreactants
+    - rules=
   job:
     name: expand
     chdir: true
-    override_dirname: processes=50,rules=rc_plus_2_rules_w_coreactants
+    override_dirname: processes=50,rules=
     id: ???
     num: ???
     config_name: expand

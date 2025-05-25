@@ -13,7 +13,7 @@ filepaths:
   rules: ${.artifacts}/rules
 starters: ccm_aa
 generations: 2
-rules: rc_plus_2_rules_w_coreactants
+rules: ''
 coreactants: metacyc_coreactants
 processes: 50
 a_plus_b: true
