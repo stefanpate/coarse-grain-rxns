@@ -12,6 +12,8 @@ filepaths:
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
 starters: ccm_aa
+generations: 2
+rules: ''
 generations: 1
 rules: rc_plus_4_rules_w_coreactants
 coreactants: metacyc_coreactants
