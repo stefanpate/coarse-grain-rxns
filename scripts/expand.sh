@@ -4,7 +4,7 @@
 #SBATCH -N 1
 #SBATCH -n 50
 #SBATCH --mem=0
-#SBATCH -t 6:00:00
+#SBATCH -t 3:00:00
 #SBATCH --job-name="expand"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
@@ -16,6 +16,8 @@
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/expand.py
 rules_sweep=(
+    "mechinformed_rules_w_coreactants"
+    "imt_rules_w_coreactants"
     "mechinferred_dt_2_rules_w_coreactants" 
     "mechinferred_dt_3_rules_w_coreactants"
     "mechinferred_dt_6_rules_w_coreactants"

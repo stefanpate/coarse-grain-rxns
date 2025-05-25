@@ -5,6 +5,7 @@ Summary: Add your description here
 Requires-Python: >=3.12
 Description-Content-Type: text/markdown
 Requires-Dist: chemprop>=2.0.2
+Requires-Dist: dora-xgb>=1.10
 Requires-Dist: ergochemics
 Requires-Dist: hydra-core>=1.3.2
 Requires-Dist: hydra-submitit-launcher>=1.2.0
