@@ -1,2 +1,3 @@
-- processes=50
-- rules=
+- generations=1
+- rules=rc_plus_4_rules_w_coreactants
+- processes=3
