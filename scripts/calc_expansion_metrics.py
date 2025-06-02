@@ -86,7 +86,9 @@ def process_reactions(pk: Pickaxe, mapped_rxn: pd.DataFrame) -> float:
             continue
 
         query_smarts = v["Operator_aligned_smarts"]
+        query_am_smarts = v["am_rxn"]
         query_lhs_mol = Chem.MolFromSmiles(query_smarts.split('>>')[0])
+        query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
 
         if query_lhs_mol is None:
             continue
@@ -102,7 +104,7 @@ def process_reactions(pk: Pickaxe, mapped_rxn: pd.DataFrame) -> float:
             mfps = np.vstack(analogues["mfp"])
             query_mfp = _fingerprint(
                 mol=query_lhs_mol,
-                reaction_center=[] # TODO: pass reaction center once pickaxe generates it
+                reaction_center=query_lhs_block_rc
             ).reshape(-1, 1)
             sims = np.matmul(mfps, query_mfp) / (np.linalg.norm(mfps, axis=1).reshape(-1, 1) * np.linalg.norm(query_mfp))
             sims = sims.reshape(-1,)
@@ -110,18 +112,18 @@ def process_reactions(pk: Pickaxe, mapped_rxn: pd.DataFrame) -> float:
             max_idx = int(np.argmax(sims))
             nearest_kr = analogues.iloc[max_idx].smarts
             nearest_krid = analogues.iloc[max_idx].rxn_id
-            # TODO: pull am smarts
 
         is_feasible = dxgb.predict_label(query_smarts)
 
         data.append(
             [
-                v["Operator_aligned_smarts"],
+                v['_id'],
+                query_smarts,
+                query_am_smarts,
                 is_feasible,
                 max_sim,
                 nearest_kr,
                 nearest_krid,
-                v['_id'],
                 list(v['Operators'])
             ]
         )
@@ -181,7 +183,6 @@ def main(cfg: DictConfig):
     full_df.to_parquet(f"{cfg.expansion_name}_compound_metrics.parquet")
 
     # Process reactions
-    expansions[0].reactions = {k: v for k, v in list(expansions[0].reactions.items())[::1000]}
     with ProcessPoolExecutor(max_workers=len(expansions), initializer=dxgb_initializer, initargs=(cfg,)) as executor:
         results = list(
             tqdm(
@@ -192,7 +193,7 @@ def main(cfg: DictConfig):
         )
 
     # Save reaction metrics
-    columns = ["smarts", "dxgb_label", "max_rxn_sim", "nearest_analogue", "nearest_analogue_id", "id", "rules"] 
+    columns = ["id", "smarts", "am_smarts", "dxgb_label", "max_rxn_sim", "nearest_analogue", "nearest_analogue_id", "rules"] 
     dfes = []
     for exp, res in zip(cfg.expansion_fns, results):
         df = pd.DataFrame(data=res, columns=columns)

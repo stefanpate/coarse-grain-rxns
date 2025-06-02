@@ -1,8 +1,8 @@
 filepaths:
-  root: /home/spn1560/coarse-grain-rxns
-  projects: /projects/p30041/spn1560/coarse-grain-rxns
+  root: /home/stef/cgr
   data: ${.root}/data
   artifacts: ${.root}/artifacts
+  configs: ${.root}/configs
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
@@ -12,8 +12,8 @@ filepaths:
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
 starters: ccm_aa
-generations: 2
-rules: ''
+generations: 1
+rules: rc_plus_4_rules_w_coreactants
 coreactants: metacyc_coreactants
-processes: 50
+processes: 3
 a_plus_b: true

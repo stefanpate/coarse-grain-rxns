@@ -20,9 +20,9 @@ mfper:
   length: 1024
   mol_featurizer:
     _target_: cgr.featurize.MolFeaturizer
-rc_dist_ub: null
+rc_dist_ub: 1
 expansion_name: test
 expansion_fns:
-- 2_steps_ccm_aa_rules_mechinformed_rules_w_coreactants_aplusb_True.pk
+- 1_steps_ccm_aa_rules_rc_plus_4_rules_w_coreactants_aplusb_True.pk
 mapped_rxns_fns:
-- mapped_sprhea_240310_v3_mapped_no_subunits_x_mechinformed_rules.parquet
+- mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_4_rules.parquet
