@@ -1,14 +1,14 @@
 #!/bin/bash
-#SBATCH -A b1039
-#SBATCH -p b1039
+#SBATCH -A p30041
+#SBATCH -p short
 #SBATCH -N 1
 #SBATCH -n 50
 #SBATCH --mem=0
-#SBATCH -t 3:00:00
+#SBATCH -t 4:00:00
 #SBATCH --job-name="expand"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
-#SBATCH --array=0-9
+#SBATCH --array=0-11
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=stefan.pate@northwestern.edu
