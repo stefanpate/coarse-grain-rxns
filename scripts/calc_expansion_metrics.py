@@ -11,6 +11,7 @@ from cgr.ml import sep_aidx_to_bin_label
 import numpy as np
 from functools import partial
 from rdkit import Chem
+import logging
 
 def process_compounds(pk: Pickaxe) -> list[list[int, int, str, str]]:
     data = []
@@ -85,12 +86,23 @@ def process_reactions(pk: Pickaxe, mapped_rxn: pd.DataFrame) -> float:
         if not is_valid_rxn(rxn=v, starters=starters):
             continue
 
+        # Important to use am smarts for mol and fp creation since this is where you
+        # get the correct reaction center from and am_smarts and Operator_aligned_smarts
+        # are not guaranteed to be the same out of Pickaxe
         query_smarts = v["Operator_aligned_smarts"]
         query_am_smarts = v["am_rxn"]
-        query_lhs_mol = Chem.MolFromSmiles(query_smarts.split('>>')[0])
-        query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
+        query_lhs_mol = Chem.MolFromSmiles(query_am_smarts.split('>>')[0])
 
         if query_lhs_mol is None:
+            # TODO: figure out logging with multiprocessing
+            # log.warning(f"Invalid query LHS molecule for reaction {v['_id']}: {query_am_smarts}")
+            continue
+
+        try:
+            query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
+        except Exception as e:
+            # TODO: figure out logging with multiprocessing
+            # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
             continue
 
         rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
@@ -141,6 +153,8 @@ def get_lhs_block_rc(am_smarts: str) -> list[int]:
     block_rc = [np.flatnonzero(elt) for elt in sep_aidx_to_bin_label(am_smarts, rc)]
     lhs_block_rc = [int(elt) for elt in block_rc[0]]
     return lhs_block_rc
+
+log = logging.getLogger(__name__)
 
 @hydra.main(version_base=None, config_path="../configs", config_name="calc_expansion_metrics")
 def main(cfg: DictConfig):

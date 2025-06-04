@@ -34,5 +34,5 @@ dependencies = [
 dev = []
 
 [tool.uv.sources]
-ergochemics = { git = "https://github.com/stefanpate/ergochemics.git" }
 minedatabase = { git = "https://github.com/stefanpate/pickaxe.git", branch = "py_upgrade" }
+ergochemics = { git = "https://github.com/stefanpate/ergochemics.git" }

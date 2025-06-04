@@ -7,15 +7,15 @@ dxgb:
   cofactor_positioning: add_concat
 
 mfper:
-  _target_: cgr.featurize.MorganFingerprinter
+  _target_: ergochemics.similarity.MorganFingerprinter
   radius: 3
   length: 1024
   mol_featurizer:
-    _target_: cgr.featurize.MolFeaturizer
+    _target_: ergochemics.similarity.MolFeaturizer
 
 rc_dist_ub: 1
 
-expansion_name: test # 2_steps_ccm_aa_aplusb_True
+expansion_name: 2_steps_ccm_aa_aplusb_True
 expansion_fns:
   - 2_steps_ccm_aa_rules_mechinformed_rules_w_coreactants_aplusb_True.pk
   - 2_steps_ccm_aa_rules_imt_rules_w_coreactants_aplusb_True.pk
