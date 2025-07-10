@@ -2,7 +2,7 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_min_rules.parquet
+src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_0_rules.parquet
 R: 1
 
 hydra:

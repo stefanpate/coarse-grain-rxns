@@ -288,7 +288,7 @@ def get_atom_smarts(
         elif formal_charge_value < 0:
             qualifiers.append(f"-{abs(formal_charge_value)}")
         else:
-            qualifiers.append("0")
+            qualifiers.append("+0")
 
     if in_ring:
         if atom.IsInRing():
