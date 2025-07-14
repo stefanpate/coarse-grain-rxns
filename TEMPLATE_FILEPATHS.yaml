@@ -1,3 +1,13 @@
-# Fill out something like this and put in configs/filepaths/ if you like
-
-key: /path/to/whatever
+root: /path/to/repo  # Modify this
+data: ${.root}/data
+artifacts: ${.root}/artifacts
+configs: ${.root}/configs
+raw_data: ${.data}/raw
+processed_data: ${.data}/processed
+interim_data: ${.data}/interim
+mlruns: ${.artifacts}/mlruns
+hpo_studies: ${.artifacts}/hpo_studies
+coreactants: ${.artifacts}/coreactants
+starters: ${.artifacts}/starters
+rules: ${.artifacts}/rules
+figures: ${.artifacts}/figures
