@@ -12,5 +12,4 @@ filepaths:
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
   figures: ${.artifacts}/figures
-src_file: mapped_sprhea_240310_v3_mapped_no_subunits_x_rc_plus_0_rules.parquet
-R: 1
+src_file: distilled_mech_reactions.parquet
