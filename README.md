@@ -9,8 +9,8 @@ We recommend using uv to manage dependencies and set up virtual environment.
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh # install uv
 uv python install 3.13 # Install uv
-git clone git@github.com:stefanpate/enz-rxn-data.git
-cd enz-rxn-data
+git clone git@github.com:stefanpate/coarse-grain-rxns.git
+cd coarse-grain-rxns
 uv sync
 ```
 
