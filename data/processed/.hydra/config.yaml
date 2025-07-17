@@ -12,4 +12,4 @@ filepaths:
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
   figures: ${.artifacts}/figures
-src_file: distilled_mech_reactions.parquet
+mapped_rxns_fn: mapped_known_reactions_x_mechinformed_rules.parquet

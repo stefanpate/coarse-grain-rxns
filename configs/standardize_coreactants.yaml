@@ -1,0 +1,14 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+# Raw coreactant roles lists
+fns:
+  - paired_coreactants_reference.tsv
+  - unpaired_coreactants_reference.tsv
+
+hydra:
+  run:
+    dir: ${filepaths.artifacts}/coreactants
+  job:
+    chdir: True

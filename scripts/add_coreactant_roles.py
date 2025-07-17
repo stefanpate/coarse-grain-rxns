@@ -1,62 +1,63 @@
 import hydra
 from omegaconf import DictConfig
-from ergochemics.standardize import standardize_smiles
-from rdkit import Chem
-from itertools import product
+from itertools import product, combinations
 from collections import defaultdict
-from typing import Iterable
-import numpy as np
-from sklearn.cluster import AgglomerativeClustering
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
 
-def make_pair_idx_combos(pair_idxs: Iterable[tuple[int]]) -> list[tuple[tuple[int]]]:
+def do_clash(this: tuple[tuple[str, str], tuple[str, str]], other: tuple[tuple[str, str], tuple[str, str]]) -> bool:
+    return len(set(this[0]).intersection(set(other[0]))) > 0
+
+def make_unclashing_pair_combos(smi_role_pairs: list[tuple[tuple[str, str], tuple[str, str]]]) -> list[tuple[tuple[str, str], tuple[str, str]]]:
     '''
-    Form all combinattions of pairs indices that use as many pairs as possible
-    without any of them clashing, i.e., having the same index in both pairs.
+    Form all k combinations of paired role assigments for k=1, ..., len(smi_role_pairs)
+    that do not clash, i.e., have the same SMILES in any of the pairs.
 
     Args
     ----
-    pair_idxs:Iterable[tuple[int]]
-        Each element contains a LHS and RHS molecule index making up a pair
-        of molecules that was mapped to a paired coreactant role.
-
+    smi_role_pairs: list[tuple[tuple[str], tuple[str]]]
+        Each element is a tuple of two tuples, where the first tuple contains
+        smiles of rct and pdt and the second tuple contains their respective roles.
     Returns
     -------
-    list[tuple[tuple[int]]]
-        Each element is a combination of index pairs, where each pair
-        therein has no overlapping indices w/ any other pair in the combination.
-
-    Example
-    -------
-    pair_idxs = [(0, 1), (1, 2), (2, 3), (4, 5), (8, 9)]
-    make_pair_idx_combos(pair_idxs)
-    Output: [((0, 1), (8, 9), (4, 5)), ((1, 2), (8, 9), (4, 5)), ((2, 3), (8, 9), (4, 5))]
+    list[tuple[tuple[str], tuple[str]]]
+        Each element is a combination of paired role assignments, with
+        first inner tuple containing smiles and second inner tuple containing roles.
     '''
+    max_k = len(smi_role_pairs)
 
-    do_clash = lambda x, y: len(set(x).intersection(set(y))) > 0
-    S = np.zeros((len(pair_idxs), len(pair_idxs)), dtype=np.int32)
-    for i, pi in enumerate(pair_idxs):
-        for j, pj in enumerate(pair_idxs):
-            if do_clash(pi, pj):
-                S[i, j] = 1
+    unclashing_combos = []
+    for k in range(1, max_k + 1):
+        if k == 1:
+            unclashing_combos.extend(smi_role_pairs)
+            continue
+        
+        k_candidates = list(combinations(smi_role_pairs, k))
+        k_combos = []
+        for candidate in k_candidates:
+            clash_found = False
+            for i, this in enumerate(candidate):
+                for other in candidate[i+1:]:
+                    if do_clash(this, other):
+                        clash_found = True
+                        break
+                if clash_found:
+                    break
+            
+            if not clash_found:
+                smi_side = []
+                role_side = []
+                for pair in candidate:
+                    smi_side.extend(pair[0])
+                    role_side.extend(pair[1])
+                
+                candidate = (tuple(smi_side), tuple(role_side))
+                k_combos.append(candidate)
 
-    D = 1 - S
-    ac = AgglomerativeClustering(
-        metric='precomputed',
-        linkage='single',
-        distance_threshold=0.1,
-        n_clusters=None,
-    )
-    ac.fit(D)
-
-    labels = ac.labels_
-    clusters = defaultdict(list)
-    for lab in np.unique(labels):
-        clusters[lab] = [pair_idxs[elt] for elt in np.where(labels == lab)[0]]
-
-    return list(product(*clusters.values()))
+        unclashing_combos.extend(k_combos)
+    
+    return unclashing_combos
 
 def get_coreactant_roles(reaction: str, unpaired_smi_to_role: dict[str, str], paired_smi_to_role: dict[tuple[str], tuple[str]]) -> list[tuple[str, str]]:
     """
@@ -84,56 +85,57 @@ def get_coreactant_roles(reaction: str, unpaired_smi_to_role: dict[str, str], pa
     """
     default_role = "Any"
 
-    rcts, pdts = [[Chem.MolFromSmiles(mol) for mol in elt.split('.')] for elt in reaction.split('>>')]
-    
-    # Ensure SMILES de-atom-mapped and standardized for lookups in smi_to_role dicts
-    for mol in rcts + pdts:
-        for atom in mol.GetAtoms():
-            atom.SetAtomMapNum(0)
+    rcts, pdts = [side.split('.') for side in reaction.split('>>')]
+    rct_pdt_pairs = list(product(rcts, pdts))
+    smi2idx = defaultdict(list)
+    for i, smi in enumerate(rcts + pdts):
+        smi2idx[smi].append(i)
+    tot = len(rcts) + len(pdts)
 
-    rcts = [standardize_smiles(Chem.MolToSmiles(mol)) for mol in rcts]
-    pdts = [standardize_smiles(Chem.MolToSmiles(mol)) for mol in pdts]
+    unpaired_roles = defaultdict(set)
+    for smi in rcts + pdts:
+        unpaired_roles[smi].add(unpaired_smi_to_role.get(smi, default_role))
 
-    up_lhs_roles = {}
-    up_rhs_roles = {}
-
-    # Do unpaired first
-    for i, rct in enumerate(rcts):
-        up_lhs_roles[i] = unpaired_smi_to_role.get(rct, default_role)
-
-    for i, pdt in enumerate(pdts):
-        up_rhs_roles[i] = unpaired_smi_to_role.get(pdt, default_role)
-
-    # Do paired second, in some cases, pairs will overwrite unpaired
-    pair_idx_candidates = []
-    for idx_pair in product(up_lhs_roles.keys(), up_rhs_roles.keys()):
-        pair = (rcts[idx_pair[0]], pdts[idx_pair[1]])
+    paired_roles = []
+    for pair in rct_pdt_pairs:
         if pair in paired_smi_to_role:
-            pair_idx_candidates.append(idx_pair)
+            paired_roles.append((pair, paired_smi_to_role[pair]))
+        
+    unclashing_paired_roles = make_unclashing_pair_combos(paired_roles)
 
-    if len(pair_idx_candidates) == 0:
-        pair_idx_combos = []
-    elif len(pair_idx_candidates) == 1:
-        pair_idx_combos = [tuple(pair_idx_candidates)]
-    else: # Get all unclashing combinations of paired role assignments
-        pair_idx_combos = make_pair_idx_combos(pair_idx_candidates)
+    # Cartesian product of roles indexed by unique smiles
+    # st role assignments for stoichiometric multiples will
+    # be tied
+    _roles = product(*unpaired_roles.values())
 
+    # Now unpack the stoich multiples
     roles = []
-    if len(pair_idx_combos) == 0:
-        lhs_roles = {k: v for k, v in up_lhs_roles.items()}
-        rhs_roles = {k: v for k, v in up_rhs_roles.items()}
-        roles.append((";".join(lhs_roles.values()), ";".join(rhs_roles.values())))
-    else:
-        for pair_idx_combo in pair_idx_combos:
-            lhs_roles = {k: v for k, v in up_lhs_roles.items()}
-            rhs_roles = {k: v for k, v in up_rhs_roles.items()}
-            for idx_pair in pair_idx_combo:
-                pair = (rcts[idx_pair[0]], pdts[idx_pair[1]])
-                paired_role = paired_smi_to_role[pair]
-                lhs_roles[idx_pair[0]] = paired_role[0]
-                rhs_roles[idx_pair[1]] = paired_role[1]
+    for _role in _roles:
+        role = [None for _ in range(tot)]
+        for smi, single_role in zip(unpaired_roles.keys(), _role):
+            for idx in smi2idx[smi]:
+                role[idx] = single_role
+        roles.append(role)
+    
+    # Add in all paired role assigment combos
+    w_paired_overlaid = []
+    for role in roles:
+        new_role = [elt for elt in role]
+        for paired_role in unclashing_paired_roles:
+            for s, r in zip(*paired_role):
+                for idx in smi2idx[s]:
+                    new_role[idx] = r
+        w_paired_overlaid.append(new_role)
 
-            roles.append((";".join(lhs_roles.values()), ";".join(rhs_roles.values())))
+    roles.extend(w_paired_overlaid)
+
+    tmp = []
+    for role in roles:
+        lhs = ";".join(role[:len(rcts)])
+        rhs = ";".join(role[len(rcts):])
+        tmp.append((lhs, rhs))
+
+    roles = tmp
 
     return roles
 
@@ -158,7 +160,7 @@ def main(cfg: DictConfig):
     rule_2_role_templates = defaultdict(set)
     for _, row in tqdm(mapped_rxns.iterrows(), total=len(mapped_rxns)):
         roles = get_coreactant_roles(
-            reaction=row['am_smarts'],
+            reaction=row['smarts'],
             unpaired_smi_to_role=unpaired_smi_to_role,
             paired_smi_to_role=paired_smi_to_role,    
         )
