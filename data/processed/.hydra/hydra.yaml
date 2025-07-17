@@ -2,14 +2,15 @@ hydra:
   run:
     dir: ${filepaths.processed_data}
   sweep:
-    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
-    subdir: ${hydra.job.num}
+    dir: ${filepaths.processed_data}
+    subdir: .
   launcher:
     _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params: null
+    params:
+      mapped_rxns_fn: mapped_known_reactions_x_rc_plus_0_rules.parquet
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -111,14 +112,15 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task: []
+    task:
+    - mapped_rxns_fn=mapped_known_reactions_x_mechinformed_rules.parquet
   job:
-    name: write_mechinformed_rules
+    name: add_coreactant_roles
     chdir: true
-    override_dirname: ''
+    override_dirname: mapped_rxns_fn=mapped_known_reactions_x_mechinformed_rules.parquet
     id: ???
     num: ???
-    config_name: write_mechinformed_rules
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
@@ -129,7 +131,7 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr
+    cwd: /home/stef/cgr/scripts
     config_sources:
     - path: hydra.conf
       schema: pkg

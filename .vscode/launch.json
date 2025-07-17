@@ -24,7 +24,7 @@
             "console": "integratedTerminal",
             "args": "${command:pickArgs}",
             "cwd": "${fileDirname}",
-            "justMyCode": false,
+            "justMyCode": true,
             "env": {
                 "HYDRA_FULL_ERROR": "1",
             },

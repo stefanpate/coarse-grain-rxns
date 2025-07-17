@@ -1,20 +1,20 @@
 class	smiles	name
-ACETYL-COA	C	acetyl-CoA
-CO	C	
-CO2	O	CO2
-CO3	O	hydrogencarbonate
-CoA	C	CoA
-H+	[	
-H2O2	O	H2O2
-HBr	B	
-HCN	C	hydrogen cyanide
-HCl	C	
+ACETYL-COA	CC(=O)SCCNC(=O)CCNC(=O)C(O)C(C)(C)COP(=O)(O)OP(=O)(O)OCC1OC(n2cnc3c(N)ncnc32)C(O)C1OP(=O)(O)O	acetyl-CoA
+CO	C#[O+]	
+CO2	O=C=O	CO2
+CO3	O=C(O)O	hydrogencarbonate
+CoA	CC(C)(COP(=O)(O)OP(=O)(O)OCC1OC(n2cnc3c(N)ncnc32)C(O)C1OP(=O)(O)O)C(O)C(=O)NCCC(=O)NCCS	CoA
+H+	[H+]	
+H2O2	OO	H2O2
+HBr	Br	
+HCN	C#N	hydrogen cyanide
+HCl	Cl	
 HF	F	
 HI	I	
 NH3	N	NH4(+)
-O2	O	O2
-PPI	O	diphosphate
-Pi	O	phosphate
-SULFATE	O	sulfate
-SULFITE	O	sulfite
+O2	O=O	O2
+PPI	O=P(O)(O)OP(=O)(O)O	diphosphate
+Pi	O=P(O)(O)O	phosphate
+SULFATE	O=S(=O)(O)O	sulfate
+SULFITE	O=S(O)O	sulfite
 WATER	O	H2O
