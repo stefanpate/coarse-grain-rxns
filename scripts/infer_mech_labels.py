@@ -56,7 +56,7 @@ def main(cfg: DictConfig):
 
     # Predict
     log.info("Predicting")
-    trainer = L.Trainer(max_epochs=cfg.training.max_epochs, logger=None, accelerator="auto", devices=1)
+    trainer = L.Trainer(logger=None, accelerator="auto", devices=1)
     probas = trainer.predict(model=model, dataloaders=dataloader)
 
     # Format preds

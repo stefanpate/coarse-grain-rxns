@@ -7,9 +7,11 @@ from typing import Iterable
 import lightning
 import torch.nn.functional as F
 import torcheval.metrics.functional as MF
+from torch.utils.data import DataLoader
 import numpy as np
 from itertools import accumulate
 from rdkit import Chem
+from sklearn.base import BaseEstimator, ClassifierMixin
 
 '''
 Model components
@@ -140,6 +142,70 @@ class GNN(lightning.LightningModule):
         self.log("test_precision", prec, prog_bar=True, batch_size=len(bmg))
         self.log("test_auroc", auroc, prog_bar=True, batch_size=len(bmg))
         self.log("test_auprc", auprc, prog_bar=True, batch_size=len(bmg))
+
+class SklearnGNN(ClassifierMixin, BaseEstimator):
+    '''
+    Sklearn estimator wrapper for GNN. Currently limited to 
+    predict_proba method and instantiation from an existing (trained)
+    model. For purposes of model calibration only.
+    '''
+    def __init__(
+            self,
+            model: GNN | None = None,
+            message_passing: MessagePassing | None = None,
+            predictor: nn.Module | None = None,
+            trainer: lightning.Trainer | None = None
+        ):
+        self.model = model
+        self.trainer = trainer
+        self.message_passing = message_passing
+        self.predictor = predictor
+        self.classes_ = np.array([0, 1]) # For sklearn compatibility
+    
+    def predict_proba(self, X: list) -> np.ndarray:
+        '''
+        Args
+        ----
+        X: list[tuple[ReactionDatapoint, int]]
+            X contains tuples of (ReactionDatapoint, reaction datapoint index). Each reaction datapoint
+            is repeated for each atom in the reaction. This is a workaround to match dimensions with the y
+            input for fit(). y has to be of shape (n_samples,) and without composed "multi-target" labels.
+
+        Returns
+        -------
+        np.ndarray of shape (n_samples, 2)
+            Probability of each class for each sample
+        '''
+        if self.model is None:
+            raise ValueError("Model not trained yet")
+        
+        # De duplicate reaction datapoints
+        X, X_idx = zip(*X)
+        first_instances = [X_idx.index(i) for i in range(min(X_idx), max(X_idx) + 1)]
+        X = [(X[i], None) for i in first_instances]
+
+        # Predict
+        dataloader = DataLoader(X, batch_size=256, shuffle=False, collate_fn=collate_batch)
+        p1 = self.trainer.predict(model=self.model, dataloaders=dataloader)
+        p1 = np.vstack([batch.cpu().numpy() for batch in p1])
+        probas = np.hstack([1 - p1, p1]) # Convert to 2-class probabilities
+
+        return probas
+    
+    def fit(self, X, y=None):
+        '''
+        For sklearn compatibility
+        '''
+        return self
+    
+    def predict(self, X):
+        '''
+        For sklearn compatibility
+        '''
+        return self
+    
+    def __sklearn_is_fitted__(self):
+        return self.model is not None
 
 '''
 Auxiliary
