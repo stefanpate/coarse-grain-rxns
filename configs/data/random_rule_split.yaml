@@ -1,14 +1,16 @@
+split_seed: 1234
+
 outer_splitter: 
   _target_: sklearn.model_selection.GroupKFold
   n_splits: 5
   shuffle: True
-  random_state: 1234
+  random_state: ${..split_seed}
 
 inner_splitter:
   _target_: sklearn.model_selection.GroupKFold
   n_splits: 3
   shuffle: True
-  random_state: 1234
+  random_state: ${..split_seed}
 
 outer_split_idx: 0
 split_strategy: random_rule_split
