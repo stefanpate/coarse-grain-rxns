@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/938369612730365141/79db1a29ba11418190b3260b33c66ab8/artifacts
+end_time: 1753047956525
+entry_point_name: ''
+experiment_id: '938369612730365141'
+lifecycle_stage: active
+run_id: 79db1a29ba11418190b3260b33c66ab8
+run_name: intrigued-calf-992
+run_uuid: 79db1a29ba11418190b3260b33c66ab8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753047683998
+status: 3
+tags: []
+user_id: stef

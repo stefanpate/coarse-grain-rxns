@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/938369612730365141/7fe57f38ea2a4039a9eafe10be8f3b02/artifacts
+end_time: 1753047642677
+entry_point_name: ''
+experiment_id: '938369612730365141'
+lifecycle_stage: active
+run_id: 7fe57f38ea2a4039a9eafe10be8f3b02
+run_name: unruly-midge-556
+run_uuid: 7fe57f38ea2a4039a9eafe10be8f3b02
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753047403359
+status: 3
+tags: []
+user_id: stef

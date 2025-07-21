@@ -67,7 +67,7 @@ def main(cfg: DictConfig):
     log.info("Loading & preparing data")
     df = pd.read_parquet(
         Path(cfg.mechinformed_mapped_rxns)
-    )[:1000] # TODO: remove limit
+    )
 
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)

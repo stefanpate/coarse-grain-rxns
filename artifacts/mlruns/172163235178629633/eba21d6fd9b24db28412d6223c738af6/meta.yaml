@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/172163235178629633/eba21d6fd9b24db28412d6223c738af6/artifacts
+end_time: 1753102772892
+entry_point_name: ''
+experiment_id: '172163235178629633'
+lifecycle_stage: active
+run_id: eba21d6fd9b24db28412d6223c738af6
+run_name: gifted-quail-420
+run_uuid: eba21d6fd9b24db28412d6223c738af6
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753102437504
+status: 3
+tags: []
+user_id: stef

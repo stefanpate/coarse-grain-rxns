@@ -1,21 +1,22 @@
 data:
-  inner_splitter: sklearn.model_selection.GroupKFold
+  inner_splitter: true
   outer_split_idx: 0
-  outer_splitter: 1234
+  outer_splitter: sklearn.model_selection.GroupKFold
+  split_seed: 1234
   split_strategy: random_rule_split
 model:
   featurizer_mode: PROD_DIFF
-  mp_d_h: 211
+  mp_d_h: 250
   mp_depth: 4
   pred_head_d_hs:
-  - 181
-  - 103
+  - 120
+  - 120
   pred_head_name: ffn
 training:
-  batch_size: 102
-  final_lr: 0.001
+  batch_size: 100
+  final_lr: 0.0001
   init_lr: 0.0001
-  max_epochs: 7
-  max_lr: 0.0001
-  pw_scl: 0.12624714905305276
+  max_epochs: 10
+  max_lr: 0.001
+  pw_scl: 1.0
   warmup_epochs: 2

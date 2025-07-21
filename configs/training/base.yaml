@@ -2,6 +2,6 @@ warmup_epochs: 2
 init_lr: 1e-4
 max_lr: 1e-3
 final_lr: 1e-4
-max_epochs: 40
-batch_size: 64
+max_epochs: 10
+batch_size: 100
 pw_scl: 1.0
