@@ -28,7 +28,7 @@ def main(cfg: DictConfig):
     # Load data
     log.info("Loading & preparing data")
     df = pd.read_parquet(
-        Path(cfg.filepaths.raw_data) / "mapped_sprhea_240310_v3_mapped_no_subunits_x_mechinformed_rules.parquet"
+        Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
 
     # Prep data
