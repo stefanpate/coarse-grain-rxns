@@ -4,7 +4,7 @@ defaults:
   - data: random_rule_split
   - model: ffn_pred_base
   - override hydra/job_logging: custom
-  # - override hydra/launcher: quest_cpu
+  - override hydra/launcher: quest_cpu
   - _self_
 
 # These determine the hpo result to use
@@ -13,7 +13,6 @@ study_version: 0
 objective: val_f1
 study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
 
-mechinformed_mapped_rxns: ${filepaths.raw_data}/mapped_known_reactions_x_mechinformed_rules.parquet
 do_calibrate: False
 calibration_fraction: 0.15
 experiment_name: "outer_splits" # Determines location of output - model, preds, artifacts
