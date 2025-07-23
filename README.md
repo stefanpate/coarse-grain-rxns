@@ -38,6 +38,12 @@ python scripts/write_rcr_rules.py -m R=1,2,3
 python scripts/write_mechinformed_rules.py
 ```
 
+### Training a model on mechinformed templates
+
+### Writing mechinferred rules based on model of mechinformed templates
+
+
+
 ### Overlaying coreactant roles on rule set (Optional)
 
 This is done so that rules can be used in biosynthesis software, [Pickaxe](https://github.com/tyo-nu/MINE-Database/tree/master), which assumes a default set of available coreactants in a biological context, e.g., NADH/NAD+, ATP, Pi.

@@ -23,7 +23,7 @@ def main(cfg: DictConfig):
 
     # Load predicted mech probas
     preds = []
-    for fn in (Path(cfg.filepaths.processed_data) / cfg.mech_probas_dir).glob("*.parquet"):
+    for fn in (Path(cfg.mech_probas_dir)).glob("*.parquet"):
         log.info(f"Loading: {fn}")
         preds.append(pd.read_parquet(fn))
 
@@ -52,7 +52,7 @@ def main(cfg: DictConfig):
             templates[template] = row["rule_id"]
 
         df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-        df.to_csv(f"mechinferred_dt_{int(dt * 100)}_rules.csv", sep=',', index=False)
+        df.to_csv(f"mechinferred_dt_{int(dt * 100):02d}_rules.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
