@@ -1,7 +1,11 @@
 defaults:
   - submitit_slurm
 
+<<<<<<< HEAD
 timeout_min: 120
+=======
+timeout_min: 36030
+>>>>>>> 091d4a8d1ff1aa65772993f7a66a5a4ba2fa3338
 account: b1039
 partition: b1039
 mem_gb: 24
