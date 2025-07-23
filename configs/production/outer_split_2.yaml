@@ -1,23 +1,23 @@
 data:
-  inner_splitter: true
+  inner_splitter: 3
   outer_split_idx: 2
-  outer_splitter: true
+  outer_splitter: sklearn.model_selection.GroupKFold
+  split_seed: 1234
   split_strategy: random_rule_split
 model:
-  ckpt: 935416590272618137/256e5a514ff647f29c39350d34fad7b8/artifacts/epoch=7-step=648/epoch=7-step=648.ckpt
+  ckpt: 336355965838399694/c5a85072b84243d4a9886885006952ae/artifacts/epoch=5-step=714/epoch=5-step=714.ckpt
   featurizer_mode: PROD_DIFF
-  mp_d_h: 200
+  mp_d_h: 235
   mp_depth: 4
   pred_head_d_hs:
-  - 130
-  - 196
-  - 104
+  - 187
+  - 155
   pred_head_name: ffn
 training:
-  batch_size: 101
+  batch_size: 102
   final_lr: 0.001
   init_lr: 0.0001
-  max_epochs: 8
+  max_epochs: 6
   max_lr: 0.0001
-  pw_scl: 0.1564945312174881
+  pw_scl: 0.13062327097080317
   warmup_epochs: 2

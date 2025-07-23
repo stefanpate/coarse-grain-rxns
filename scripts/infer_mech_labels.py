@@ -25,7 +25,7 @@ def main(cfg: DictConfig):
     # Load data
     log.info("Loading & preparing data")
     df = pd.read_parquet(
-        Path(cfg.filepaths.mechinformed_mapped_rxns)
+        Path(cfg.filepaths.rc_plus_0_mapped_rxns)
     )
 
     # Prep data

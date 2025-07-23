@@ -40,16 +40,35 @@ python scripts/write_mechinformed_rules.py
 
 ### Training a model on mechinformed templates
 
-Once you have selected hyperparameters and saved the appropriate configuraitons to configs/full, you can train a production model(s)
+(Optional) you may run hyperparameter optimization using Optuna. Specify parameter ranges, objective functions and so on in the associated config file hpo.yaml.
+
+```
+python scripts/hpo.py
+```
+
+Once you have selected hyperparameters and saved the appropriate configuraitons to configs/full, you can train a production model(s). You can either set hyperparameters in the config file templates under subdirectory full or use the notebook mech_classification_performance.ipynb to generate these config files from Optuna HPO studies.
 
 ```
 python scripts/train_production.py
 ```
 
+With that production model, predict labels for atom-mapped reactions. To run the inference script, make sure you have the proper config files in the production subdirectory, including model checkpoints.
+
+```
+python scripts/infer_mech_labels.py -m
+```
+
+The scores output by the production model for atom-mapped reactions can be used to write mechinferred rules.
+
 ### Writing mechinferred rules based on model of mechinformed templates
 
+The inference script stores scores (probas) for atom-mapped reactions. These reactions are sourced from [Rhea](https://www.rhea-db.org/) and stored in the schemas specified [here](https://github.com/stefanpate/enz-rxn-data). Atom-mappings are obtained by application of minimal (reaction center only) rules using functions from [this library](https://github.com/stefanpate/ergochemics). 
 
+Using these scores, you can generate SMARTS-encoded reactions rules which can be applied using cheminformatics libraries such as RDkit. You can tune the permisiveness of these rules by varying the decision threshold for inclusion of an atom in a rule template. A default set of decision thresholds for the included production model are specified in the config file write_mechinferred_rules.yaml.
 
+```
+python scripts/write_mechinferred_rules.py
+```
 
 ### Overlaying coreactant roles on rule set (Optional)
 
