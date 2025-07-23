@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/702626496961076205/5535137cd7fc46c490d2688ae3af479e/artifacts
+end_time: 1753281580552
+entry_point_name: ''
+experiment_id: '702626496961076205'
+lifecycle_stage: active
+run_id: 5535137cd7fc46c490d2688ae3af479e
+run_name: nosy-moth-711
+run_uuid: 5535137cd7fc46c490d2688ae3af479e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753281303567
+status: 3
+tags: []
+user_id: spn1560

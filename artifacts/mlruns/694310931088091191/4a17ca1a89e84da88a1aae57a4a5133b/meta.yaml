@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/694310931088091191/4a17ca1a89e84da88a1aae57a4a5133b/artifacts
+end_time: 1753288474330
+entry_point_name: ''
+experiment_id: '694310931088091191'
+lifecycle_stage: active
+run_id: 4a17ca1a89e84da88a1aae57a4a5133b
+run_name: nosy-tern-800
+run_uuid: 4a17ca1a89e84da88a1aae57a4a5133b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

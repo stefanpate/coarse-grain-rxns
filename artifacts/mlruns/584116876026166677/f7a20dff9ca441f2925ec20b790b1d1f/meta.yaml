@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/584116876026166677/f7a20dff9ca441f2925ec20b790b1d1f/artifacts
+end_time: 1753288438803
+entry_point_name: ''
+experiment_id: '584116876026166677'
+lifecycle_stage: active
+run_id: f7a20dff9ca441f2925ec20b790b1d1f
+run_name: rare-fish-903
+run_uuid: f7a20dff9ca441f2925ec20b790b1d1f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

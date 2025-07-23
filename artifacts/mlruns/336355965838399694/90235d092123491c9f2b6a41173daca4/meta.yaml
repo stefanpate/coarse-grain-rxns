@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/336355965838399694/90235d092123491c9f2b6a41173daca4/artifacts
+end_time: 1753292873493
+entry_point_name: ''
+experiment_id: '336355965838399694'
+lifecycle_stage: active
+run_id: 90235d092123491c9f2b6a41173daca4
+run_name: thoughtful-owl-609
+run_uuid: 90235d092123491c9f2b6a41173daca4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753292514274
+status: 3
+tags: []
+user_id: spn1560

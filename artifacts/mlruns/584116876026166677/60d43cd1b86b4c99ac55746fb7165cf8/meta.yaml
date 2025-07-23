@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/584116876026166677/60d43cd1b86b4c99ac55746fb7165cf8/artifacts
+end_time: 1753288461494
+entry_point_name: ''
+experiment_id: '584116876026166677'
+lifecycle_stage: active
+run_id: 60d43cd1b86b4c99ac55746fb7165cf8
+run_name: silent-bee-433
+run_uuid: 60d43cd1b86b4c99ac55746fb7165cf8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/694310931088091191/374e376039494ad38ebc8c501537cf6c/artifacts
+end_time: 1753288454738
+entry_point_name: ''
+experiment_id: '694310931088091191'
+lifecycle_stage: active
+run_id: 374e376039494ad38ebc8c501537cf6c
+run_name: colorful-flea-381
+run_uuid: 374e376039494ad38ebc8c501537cf6c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

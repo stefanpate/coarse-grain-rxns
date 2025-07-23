@@ -8,9 +8,9 @@ defaults:
   - _self_
 
 # These determine the hpo result to use
-use_study: False # Do use hpo result
+use_study: True # Do use hpo result
 study_version: 0
-objective: val_f1
+objective: val_auprc
 study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
 
 do_calibrate: False

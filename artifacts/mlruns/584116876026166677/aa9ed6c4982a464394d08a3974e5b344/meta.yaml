@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/584116876026166677/aa9ed6c4982a464394d08a3974e5b344/artifacts
+end_time: 1753288458199
+entry_point_name: ''
+experiment_id: '584116876026166677'
+lifecycle_stage: active
+run_id: aa9ed6c4982a464394d08a3974e5b344
+run_name: unruly-bear-241
+run_uuid: aa9ed6c4982a464394d08a3974e5b344
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/336355965838399694/c5a85072b84243d4a9886885006952ae/artifacts
+end_time: 1753292844577
+entry_point_name: ''
+experiment_id: '336355965838399694'
+lifecycle_stage: active
+run_id: c5a85072b84243d4a9886885006952ae
+run_name: adaptable-ray-950
+run_uuid: c5a85072b84243d4a9886885006952ae
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753292514274
+status: 3
+tags: []
+user_id: spn1560

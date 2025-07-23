@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/702626496961076205/940a251b5772471e98b59756b08177ad/artifacts
+end_time: 1753281617585
+entry_point_name: ''
+experiment_id: '702626496961076205'
+lifecycle_stage: active
+run_id: 940a251b5772471e98b59756b08177ad
+run_name: dapper-sloth-100
+run_uuid: 940a251b5772471e98b59756b08177ad
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753281303567
+status: 3
+tags: []
+user_id: spn1560

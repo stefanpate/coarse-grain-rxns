@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/694310931088091191/04e1f5edae654e0e935525ad6377db13/artifacts
+end_time: 1753288456385
+entry_point_name: ''
+experiment_id: '694310931088091191'
+lifecycle_stage: active
+run_id: 04e1f5edae654e0e935525ad6377db13
+run_name: casual-bird-306
+run_uuid: 04e1f5edae654e0e935525ad6377db13
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

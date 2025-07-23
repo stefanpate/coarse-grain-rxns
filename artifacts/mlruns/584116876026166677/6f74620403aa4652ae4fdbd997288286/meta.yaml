@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/584116876026166677/6f74620403aa4652ae4fdbd997288286/artifacts
+end_time: 1753288443437
+entry_point_name: ''
+experiment_id: '584116876026166677'
+lifecycle_stage: active
+run_id: 6f74620403aa4652ae4fdbd997288286
+run_name: unique-calf-757
+run_uuid: 6f74620403aa4652ae4fdbd997288286
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196772
+status: 3
+tags: []
+user_id: spn1560

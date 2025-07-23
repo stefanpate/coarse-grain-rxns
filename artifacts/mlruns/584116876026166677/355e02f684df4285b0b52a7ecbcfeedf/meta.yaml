@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/584116876026166677/355e02f684df4285b0b52a7ecbcfeedf/artifacts
+end_time: 1753288470163
+entry_point_name: ''
+experiment_id: '584116876026166677'
+lifecycle_stage: active
+run_id: 355e02f684df4285b0b52a7ecbcfeedf
+run_name: puzzled-seal-843
+run_uuid: 355e02f684df4285b0b52a7ecbcfeedf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753288196774
+status: 3
+tags: []
+user_id: spn1560

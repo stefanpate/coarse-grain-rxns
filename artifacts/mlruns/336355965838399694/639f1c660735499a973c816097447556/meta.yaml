@@ -1,0 +1,15 @@
+artifact_uri: file:///home/spn1560/coarse-grain-rxns/artifacts/mlruns/336355965838399694/639f1c660735499a973c816097447556/artifacts
+end_time: 1753292882521
+entry_point_name: ''
+experiment_id: '336355965838399694'
+lifecycle_stage: active
+run_id: 639f1c660735499a973c816097447556
+run_name: nosy-donkey-544
+run_uuid: 639f1c660735499a973c816097447556
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1753292514274
+status: 3
+tags: []
+user_id: spn1560
