@@ -40,7 +40,14 @@ python scripts/write_mechinformed_rules.py
 
 ### Training a model on mechinformed templates
 
+Once you have selected hyperparameters and saved the appropriate configuraitons to configs/full, you can train a production model(s)
+
+```
+python scripts/train_production.py
+```
+
 ### Writing mechinferred rules based on model of mechinformed templates
+
 
 
 

@@ -12,4 +12,12 @@ filepaths:
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
   figures: ${.artifacts}/figures
-mapped_rxns_fn: mapped_known_reactions_x_mechinformed_rules.parquet
+  mechinformed_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_mechinformed_rules.parquet
+min_mapped: mapped_known_reactions_x_rc_plus_0_rules.parquet
+mech_probas_dir: ${filepaths.processed_data}/mech_probas
+decision_thresholds:
+- 0.9100252985954285
+- 0.13334070146083832
+- 0.046352483332157135
+- 0.021847588941454887
+- 0.011600149795413017
