@@ -1350,7 +1350,7 @@ wheels = [
 [[package]]
 name = "minedatabase"
 version = "0.1.0"
-source = { git = "https://github.com/stefanpate/pickaxe.git?branch=py_upgrade#c8530c5dfa52142de579be0d94350cb3a1d96072" }
+source = { git = "https://github.com/stefanpate/pickaxe.git?branch=py_upgrade#1dbe1cddfe000731fad4174fcecd88a391dbc60a" }
 dependencies = [
     { name = "lxml" },
     { name = "pandas" },

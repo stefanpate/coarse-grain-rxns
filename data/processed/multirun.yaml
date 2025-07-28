@@ -9,7 +9,8 @@ hydra:
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params: null
+    params:
+      mapped_rxns_fn: mapped_known_reactions_x_rc_plus_1_rules.parquet,mapped_known_reactions_x_rc_plus_2_rules.parquet,mapped_known_reactions_x_rc_plus_3_rules.parquet,mapped_known_reactions_x_rc_plus_4_rules.parquet,mapped_known_reactions_x_mechinferred_dt_01_rules.parquet,mapped_known_reactions_x_mechinferred_dt_02_rules.parquet,mapped_known_reactions_x_mechinferred_dt_04_rules.parquet,mapped_known_reactions_x_mechinferred_dt_13_rules.parquet,mapped_known_reactions_x_mechinferred_dt_91_rules.parquet
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -111,15 +112,14 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=MULTIRUN
-    task:
-    - R=1,2,3,4
+    task: []
   job:
-    name: write_rcr_rules
+    name: add_coreactant_roles
     chdir: true
-    override_dirname: R=1,2,3,4
+    override_dirname: ''
     id: ???
     num: ???
-    config_name: write_rcr_rules
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
@@ -168,5 +168,6 @@ filepaths:
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
   figures: ${.artifacts}/figures
-src_file: mapped_known_reactions_x_rc_plus_0_rules.parquet
-R: 1
+  mechinformed_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_mechinformed_rules.parquet
+  rc_plus_0_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_rc_plus_0_rules.parquet
+mapped_rxns_fn: mapped_known_reactions_x_rc_plus_0_rules.parquet
