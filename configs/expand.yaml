@@ -4,7 +4,7 @@ defaults:
   - override hydra/launcher: quest_cpu
   - _self_
 
-starters: ccm_aa
+starters: 250728_benchmark_starters.csv
 generations: 2
 rules: ???
 coreactants: metacyc_coreactants
