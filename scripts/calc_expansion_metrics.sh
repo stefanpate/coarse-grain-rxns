@@ -4,7 +4,7 @@
 #SBATCH -N 1
 #SBATCH -n 13
 #SBATCH --mem=100GB
-#SBATCH -t 6:00:00
+#SBATCH -t 8:00:00
 #SBATCH --job-name="calc_exp_metrics"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A

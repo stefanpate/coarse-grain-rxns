@@ -213,8 +213,13 @@ def main(cfg: DictConfig):
         df = pd.DataFrame(data=res, columns=columns)
         df["expansion"] = exp
         dfes.append(df)
-
+    
     full_df = pd.concat(dfes)
+
+    if Path(f"{cfg.expansion_name}_reaction_metrics.parquet").exists():
+        existing_df = pd.read_parquet(f"{cfg.expansion_name}_reaction_metrics.parquet")
+        full_df = pd.concat([existing_df, full_df], ignore_index=True).drop_duplicates().reset_index()
+
     full_df.to_parquet(f"{cfg.expansion_name}_reaction_metrics.parquet")
 
 if __name__ == "__main__":
