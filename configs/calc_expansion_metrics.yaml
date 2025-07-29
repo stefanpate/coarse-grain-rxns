@@ -29,7 +29,7 @@ expansion_fns:
   - 2_steps_250728_benchmark_starters_rules_rc_plus_3_rules_w_coreactants_aplusb_True.pk
   - 2_steps_250728_benchmark_starters_rules_rc_plus_4_rules_w_coreactants_aplusb_True.pk
 
-expansion_fns:
+mapped_rxns_fns:
   - mapped_known_reactions_x_mechinformed_rules.parquet
   - mapped_known_reactions_x_mechinferred_dt_01_rules.parquet 
   - mapped_known_reactions_x_mechinferred_dt_02_rules.parquet

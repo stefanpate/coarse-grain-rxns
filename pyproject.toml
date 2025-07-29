@@ -13,6 +13,7 @@ dependencies = [
     "ipykernel>=6.29.5",
     "ipywidgets>=8.1.5",
     "matplotlib>=3.10.1",
+    "matplotlib-venn>=1.1.2",
     "minedatabase",
     "mlflow>=2.22.0",
     "nbformat>=5.10.4",
