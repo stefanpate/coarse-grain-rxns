@@ -8,7 +8,7 @@
 #SBATCH --job-name="expand"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
-#SBATCH --array=0-11
+#SBATCH --array=0-10
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=stefan.pate@northwestern.edu

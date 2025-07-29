@@ -5,32 +5,7 @@ hydra:
     dir: ${filepaths.interim_data}
     subdir: .
   launcher:
-    submitit_folder: ${hydra.sweep.dir}/.submitit/%j
-    timeout_min: 360
-    cpus_per_task: 50
-    gpus_per_node: null
-    tasks_per_node: 1
-    mem_gb: 0
-    nodes: 1
-    name: ${hydra.job.name}
-    stderr_to_stdout: false
-    _target_: hydra_plugins.hydra_submitit_launcher.submitit_launcher.SlurmLauncher
-    partition: b1039
-    qos: null
-    comment: null
-    constraint: null
-    exclude: null
-    gres: null
-    cpus_per_gpu: null
-    gpus_per_task: null
-    mem_per_gpu: null
-    mem_per_cpu: null
-    account: b1039
-    signal_delay_s: 120
-    max_num_timeout: 0
-    additional_parameters: {}
-    array_parallelism: 256
-    setup: null
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
@@ -139,11 +114,11 @@ hydra:
     - hydra.mode=RUN
     task:
     - processes=50
-    - rules=rc_plus_3_rules_w_coreactants
+    - rules=rc_plus_0_rules_w_coreactants
   job:
     name: expand
     chdir: true
-    override_dirname: processes=50,rules=rc_plus_3_rules_w_coreactants
+    override_dirname: processes=50,rules=rc_plus_0_rules_w_coreactants
     id: ???
     num: ???
     config_name: expand
@@ -157,7 +132,7 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /gpfs/home/spn1560/coarse-grain-rxns/scripts
+    cwd: /gpfs/home/spn1560/coarse-grain-rxns
     config_sources:
     - path: hydra.conf
       schema: pkg
@@ -178,8 +153,6 @@ hydra:
       hydra/hydra_help: default
       hydra/help: default
       hydra/sweeper: basic
-      hydra/launcher: quest_cpu
+      hydra/launcher: basic
       hydra/output: default
   verbose: false
-false
-se: false

@@ -1,10 +1,10 @@
 defaults:
   - filepaths: filepaths
   - override hydra/job_logging: custom
-  - override hydra/launcher: quest_cpu
+  # - override hydra/launcher: quest_cpu
   - _self_
 
-starters: 250728_benchmark_starters.csv
+starters: 250728_benchmark_starters
 generations: 2
 rules: ???
 coreactants: metacyc_coreactants
