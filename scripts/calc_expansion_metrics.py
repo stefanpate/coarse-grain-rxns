@@ -163,7 +163,7 @@ def main(cfg: DictConfig):
     for exp in cfg.expansion_fns:
         pk = Pickaxe()
         pk.load_pickled_pickaxe(
-            Path(cfg.filepaths.interim_data) / exp
+            Path(cfg.filepaths.expansions) / exp
         )
         expansions.append(pk)
 
