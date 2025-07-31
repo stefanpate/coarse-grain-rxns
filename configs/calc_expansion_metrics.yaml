@@ -43,9 +43,9 @@ mapped_rxns_fns:
 
 hydra:
   run:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.expansions}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.expansions}
     subdir: .
