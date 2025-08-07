@@ -136,13 +136,14 @@ def rxn_proc_initializer(cfg: DictConfig, _starters: dict[str, str]):
     mapped_rxns = pd.read_parquet(
         Path(cfg.filepaths.raw_data) / cfg.mapped_rxns
     )
-    mapped_rxns["reaction_center"] = mapped_rxns["am_smarts"].apply(get_lhs_block_rc)
 
+    print("Instantiating fingerprinter and dxgb model")
     dxgb = instantiate(cfg.dxgb)
     mfper = instantiate(cfg.mfper)
     _fingerprint = partial(mfper.fingerprint, rc_dist_ub=cfg.rc_dist_ub)
 
-    # Calculate morgan fps for all mapped reactions
+    print("Calculating reaction centers and morgan fps for all mapped reactions")
+    mapped_rxns["reaction_center"] = mapped_rxns["am_smarts"].apply(get_lhs_block_rc)
     mapped_rxns["mol"] = mapped_rxns["smarts"].apply(lambda x : Chem.MolFromSmiles(x.split('>>')[0]))
     mapped_rxns["mfp"] = mapped_rxns.apply(lambda x : _fingerprint(x.mol, x.reaction_center), axis=1)
 
@@ -181,19 +182,14 @@ def main(cfg: DictConfig):
     # df.to_parquet(f"{cfg.expansion}_compound_metrics.parquet")
 
     # Process reactions
-    # with ProcessPoolExecutor(max_workers=cfg.processes, initializer=rxn_proc_initializer, initargs=(cfg, _starters)) as executor:
-    #     results = list(
-    #         tqdm(
-    #             executor.map(process_reaction, expansion.reactions.values(), chunksize=100),
-    #             total=len(expansion.reactions),
-    #             desc="Procesing reactions"
-    #         )
-    #     )
-    # TODO: remove, debugging only
-    results = []
-    rxn_proc_initializer(cfg, _starters)
-    for v in expansion.reactions.values():
-        results.append(process_reaction(v))
+    with ProcessPoolExecutor(max_workers=cfg.processes, initializer=rxn_proc_initializer, initargs=(cfg, _starters)) as executor:
+        results = list(
+            tqdm(
+                executor.map(process_reaction, expansion.reactions.values(), chunksize=100),
+                total=len(expansion.reactions),
+                desc="Procesing reactions"
+            )
+        )
 
     # Save reaction metrics
     print("Saving reaction metrics")
