@@ -13,11 +13,11 @@ a_plus_b: True
 
 hydra:
   run:
-    dir: ${filepaths.interim_data}
+    dir: ${filepaths.expansions}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.interim_data}
+    dir: ${filepaths.expansions}
     subdir: .
   sweeper:
     params:

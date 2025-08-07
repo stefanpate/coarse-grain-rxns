@@ -1,9 +1,7 @@
 import hydra
 from hydra.utils import instantiate
 from omegaconf import DictConfig
-from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
-from tqdm import tqdm
 import pandas as pd
 from minedatabase.pickaxe import Pickaxe
 from ergochemics.mapping import get_reaction_center
@@ -12,10 +10,12 @@ import numpy as np
 from functools import partial
 from rdkit import Chem
 import logging
+from tqdm import tqdm
+from concurrent.futures import ProcessPoolExecutor
 
 def process_compounds(pk: Pickaxe) -> list[list[int, int, str, str]]:
     data = []
-    for v in pk.compounds.values():
+    for v in tqdm(pk.compounds.values(), desc="Processing compounds", total=len(pk.compounds)):
         
         # Only the "universal" / default currency coreactants have id start with "X"
         # Can use this to filter them out when looking at compound stats
@@ -70,83 +70,81 @@ def is_valid_rxn(rxn: dict, starters: dict[str, str]):
 
     return in_linked and out_linked
 
-def process_reactions(pk: Pickaxe, mapped_rxn: pd.DataFrame) -> float:
-    # Collect starters
-    starters = {}
-    for v in pk.compounds.values():
-        if v["Type"].startswith("Start"):
-            starters[v['_id']] = v["ID"]
+def process_reaction(v: dict) -> list:
+    if not is_valid_rxn(rxn=v, starters=starters):
+        return []
 
-    # Calculate morgan fps for all mapped reactions
-    mapped_rxn["mol"] = mapped_rxn["smarts"].apply(lambda x : Chem.MolFromSmiles(x.split('>>')[0]))
-    mapped_rxn["mfp"] = mapped_rxn.apply(lambda x : _fingerprint(x.mol, x.reaction_center), axis=1)
+    # Important to use am smarts for mol and fp creation since this is where you
+    # get the correct reaction center from and am_smarts and Operator_aligned_smarts
+    # are not guaranteed to be the same out of Pickaxe
+    query_smarts = v["Operator_aligned_smarts"]
+    query_am_smarts = v["am_rxn"]
+    query_lhs_mol = Chem.MolFromSmiles(query_am_smarts.split('>>')[0])
 
-    data = []
-    for v in pk.reactions.values():
-        if not is_valid_rxn(rxn=v, starters=starters):
-            continue
+    if query_lhs_mol is None:
+        # TODO: figure out logging with multiprocessing
+        # log.warning(f"Invalid query LHS molecule for reaction {v['_id']}: {query_am_smarts}")
+        return []
 
-        # Important to use am smarts for mol and fp creation since this is where you
-        # get the correct reaction center from and am_smarts and Operator_aligned_smarts
-        # are not guaranteed to be the same out of Pickaxe
-        query_smarts = v["Operator_aligned_smarts"]
-        query_am_smarts = v["am_rxn"]
-        query_lhs_mol = Chem.MolFromSmiles(query_am_smarts.split('>>')[0])
+    try:
+        query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
+    except Exception as e:
+        # TODO: figure out logging with multiprocessing
+        # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
+        return []
 
-        if query_lhs_mol is None:
-            # TODO: figure out logging with multiprocessing
-            # log.warning(f"Invalid query LHS molecule for reaction {v['_id']}: {query_am_smarts}")
-            continue
+    rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
+    analogues = mapped_rxns.loc[mapped_rxns.rule_id.isin(rules)]
 
-        try:
-            query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
-        except Exception as e:
-            # TODO: figure out logging with multiprocessing
-            # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
-            continue
+    if analogues.empty:
+        max_sim = 0.0
+        nearest_kr = ''
+        nearest_krid = ''
+    else:
+        mfps = np.vstack(analogues["mfp"])
+        query_mfp = _fingerprint(
+            mol=query_lhs_mol,
+            reaction_center=query_lhs_block_rc
+        ).reshape(-1, 1)
+        sims = np.matmul(mfps, query_mfp) / (np.linalg.norm(mfps, axis=1).reshape(-1, 1) * np.linalg.norm(query_mfp))
+        sims = sims.reshape(-1,)
+        max_sim = float(np.max(sims))
+        max_idx = int(np.argmax(sims))
+        nearest_kr = analogues.iloc[max_idx].smarts
+        nearest_krid = analogues.iloc[max_idx].rxn_id
 
-        rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
-        analogues = mapped_rxn.loc[mapped_rxn.rule_id.isin(rules)]
+    is_feasible = dxgb.predict_label(query_smarts)
 
-        if analogues.empty:
-            max_sim = 0.0
-            nearest_kr = ''
-            nearest_krid = ''
-        else:
-            mfps = np.vstack(analogues["mfp"])
-            query_mfp = _fingerprint(
-                mol=query_lhs_mol,
-                reaction_center=query_lhs_block_rc
-            ).reshape(-1, 1)
-            sims = np.matmul(mfps, query_mfp) / (np.linalg.norm(mfps, axis=1).reshape(-1, 1) * np.linalg.norm(query_mfp))
-            sims = sims.reshape(-1,)
-            max_sim = float(np.max(sims))
-            max_idx = int(np.argmax(sims))
-            nearest_kr = analogues.iloc[max_idx].smarts
-            nearest_krid = analogues.iloc[max_idx].rxn_id
+    return [
+        v['_id'],
+        query_smarts,
+        query_am_smarts,
+        is_feasible,
+        max_sim,
+        nearest_kr,
+        nearest_krid,
+        list(v['Operators'])
+    ]
 
-        is_feasible = dxgb.predict_label(query_smarts)
+def rxn_proc_initializer(cfg: DictConfig, _starters: dict[str, str]):
+    print("Initializing reaction processing")
+    global dxgb, mfper, _fingerprint, mapped_rxns, starters
 
-        data.append(
-            [
-                v['_id'],
-                query_smarts,
-                query_am_smarts,
-                is_feasible,
-                max_sim,
-                nearest_kr,
-                nearest_krid,
-                list(v['Operators'])
-            ]
-        )
+    starters = _starters
 
-    return data
+    print("Loading mapped rxns ", Path(cfg.filepaths.raw_data) / cfg.mapped_rxns)
+    mapped_rxns = pd.read_parquet(
+        Path(cfg.filepaths.raw_data) / cfg.mapped_rxns
+    )
+    mapped_rxns["reaction_center"] = mapped_rxns["am_smarts"].apply(get_lhs_block_rc)
 
-def dxgb_initializer(cfg: DictConfig):
-    global dxgb, mfper, _fingerprint
     dxgb = instantiate(cfg.dxgb)
     mfper = instantiate(cfg.mfper)
     _fingerprint = partial(mfper.fingerprint, rc_dist_ub=cfg.rc_dist_ub)
+
+    # Calculate morgan fps for all mapped reactions
+    mapped_rxns["mol"] = mapped_rxns["smarts"].apply(lambda x : Chem.MolFromSmiles(x.split('>>')[0]))
+    mapped_rxns["mfp"] = mapped_rxns.apply(lambda x : _fingerprint(x.mol, x.reaction_center), axis=1)
 
 def get_lhs_block_rc(am_smarts: str) -> list[int]:
     rc = get_reaction_center(am_smarts)
@@ -159,68 +157,50 @@ log = logging.getLogger(__name__)
 @hydra.main(version_base=None, config_path="../configs", config_name="calc_expansion_metrics")
 def main(cfg: DictConfig):
 
-    expansions = []
-    for exp in cfg.expansion_fns:
-        pk = Pickaxe()
-        pk.load_pickled_pickaxe(
-            Path(cfg.filepaths.expansions) / exp
-        )
-        expansions.append(pk)
+    print("Loading expansion ", Path(cfg.filepaths.expansions) / cfg.expansion)
+    expansion = Pickaxe()
+    expansion.load_pickled_pickaxe(
+        Path(cfg.filepaths.expansions) / cfg.expansion
+    )
 
-    mapped_rxns = []
-    for fn in cfg.mapped_rxns_fns:
-        df = pd.read_parquet(
-            Path(cfg.filepaths.raw_data) / fn
-        )
-        df["reaction_center"] = df["am_smarts"].apply(get_lhs_block_rc)
-        mapped_rxns.append(df)
+    # Collect starters
+    _starters = {}
+    for v in expansion.compounds.values():
+        if v["Type"].startswith("Start"):
+            _starters[v['_id']] = v["ID"]
 
-    # Process compounds
-    with ProcessPoolExecutor(max_workers=len(expansions)) as executor:
-        results = list(
-            tqdm(
-                executor.map(process_compounds, expansions, chunksize=1),
-                total=len(expansions),
-                desc="Procesing compounds"
-            )
-        )
+    # TODO: uncomment
+    # # Process compounds
+    # proc_cpds = process_compounds(expansion)
     
-    # Save compound metrics
-    columns = ["smiles", "fan_out", "gen", "id"] 
-    dfes = []
-    for exp, res in zip(cfg.expansion_fns, results):
-        df = pd.DataFrame(data=res, columns=columns)
-        df["expansion"] = exp
-        dfes.append(df)
-
-    full_df = pd.concat(dfes)
-    full_df.to_parquet(f"{cfg.expansion_name}_compound_metrics.parquet")
+    # # Save compound metrics
+    # print("Saving compound metrics")
+    # columns = ["smiles", "fan_out", "gen", "id"] 
+    # df = pd.DataFrame(data=proc_cpds, columns=columns)
+    # df["expansion"] = cfg.expansion
+    # df.to_parquet(f"{cfg.expansion}_compound_metrics.parquet")
 
     # Process reactions
-    with ProcessPoolExecutor(max_workers=len(expansions), initializer=dxgb_initializer, initargs=(cfg,)) as executor:
-        results = list(
-            tqdm(
-                executor.map(process_reactions, expansions, mapped_rxns, chunksize=1),
-                total=len(expansions),
-                desc="Procesing reactions"
-            )
-        )
+    # with ProcessPoolExecutor(max_workers=cfg.processes, initializer=rxn_proc_initializer, initargs=(cfg, _starters)) as executor:
+    #     results = list(
+    #         tqdm(
+    #             executor.map(process_reaction, expansion.reactions.values(), chunksize=100),
+    #             total=len(expansion.reactions),
+    #             desc="Procesing reactions"
+    #         )
+    #     )
+    # TODO: remove, debugging only
+    results = []
+    rxn_proc_initializer(cfg, _starters)
+    for v in expansion.reactions.values():
+        results.append(process_reaction(v))
 
     # Save reaction metrics
+    print("Saving reaction metrics")
     columns = ["id", "smarts", "am_smarts", "dxgb_label", "max_rxn_sim", "nearest_analogue", "nearest_analogue_id", "rules"] 
-    dfes = []
-    for exp, res in zip(cfg.expansion_fns, results):
-        df = pd.DataFrame(data=res, columns=columns)
-        df["expansion"] = exp
-        dfes.append(df)
-    
-    full_df = pd.concat(dfes)
-
-    if Path(f"{cfg.expansion_name}_reaction_metrics.parquet").exists():
-        existing_df = pd.read_parquet(f"{cfg.expansion_name}_reaction_metrics.parquet")
-        full_df = pd.concat([existing_df, full_df], ignore_index=True).drop_duplicates().reset_index()
-
-    full_df.to_parquet(f"{cfg.expansion_name}_reaction_metrics.parquet")
+    df = pd.DataFrame(data=[elt for elt in results if len(elt) != 0], columns=columns)
+    df["expansion"] = cfg.expansion
+    df.to_parquet(f"TEST_{cfg.expansion}_reaction_metrics.parquet")
 
 if __name__ == "__main__":
     main()

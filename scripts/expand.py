@@ -26,7 +26,7 @@ def main(cfg: DictConfig):
 
     # Save results
     pk.pickle_pickaxe(
-        Path(cfg.filepaths.interim_data) / f"{cfg.generations}_steps_{cfg.starters}_rules_{cfg.rules}_aplusb_{cfg.a_plus_b}.pk"
+        Path(f"{cfg.generations}_steps_{cfg.starters}_rules_{cfg.rules}_aplusb_{cfg.a_plus_b}.pk")
     )
 
 if __name__ == '__main__':
