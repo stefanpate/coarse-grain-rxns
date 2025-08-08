@@ -1,3 +1,18 @@
+# Manual / large files
+configs/filepaths/
+artifacts/250227_skeleton_proposal.txt
+scripts/nohup*
+**/hpo_conf
+**/train_conf
+**/pred_conf
+*.pk
+**/.submitit
+**/.hydra
+logs/
+data/processed/*reaction_metrics.parquet
+.vscode/
+**calibrated_model.pkl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -169,16 +184,3 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-configs/filepaths/
-artifacts/250227_skeleton_proposal.txt
-scripts/nohup*
-**/hpo_conf
-**/train_conf
-**/pred_conf
-*.pk
-**/.submitit
-**/.hydra
-logs/
-data/processed/2_steps_250728_benchmark_starters_aplusb_True_reaction_metrics.parquet
-.vscode/
-**calibrated_model.pkl
