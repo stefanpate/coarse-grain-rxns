@@ -9,7 +9,8 @@ hydra:
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params: null
+    params:
+      mapped_rxns_fn: mapped_known_reactions_x_rc_plus_1_rules.parquet,mapped_known_reactions_x_rc_plus_2_rules.parquet,mapped_known_reactions_x_rc_plus_3_rules.parquet,mapped_known_reactions_x_rc_plus_4_rules.parquet,mapped_known_reactions_x_mechinferred_dt_01_rules.parquet,mapped_known_reactions_x_mechinferred_dt_02_rules.parquet,mapped_known_reactions_x_mechinferred_dt_04_rules.parquet,mapped_known_reactions_x_mechinferred_dt_13_rules.parquet,mapped_known_reactions_x_mechinferred_dt_91_rules.parquet
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -112,16 +113,14 @@ hydra:
     hydra:
     - hydra.mode=RUN
     task:
-    - mapped_rxns=mapped_known_reactions_x_rc_plus_0_rules.parquet
-    - expansion=batch_19_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk
-    - processes=50
+    - mapped_rxns_fn=mapped_known_reactions_x_imt_rules.parquet
   job:
-    name: calc_expansion_metrics
+    name: add_coreactant_roles
     chdir: true
-    override_dirname: expansion=batch_19_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk,mapped_rxns=mapped_known_reactions_x_rc_plus_0_rules.parquet,processes=50
+    override_dirname: mapped_rxns_fn=mapped_known_reactions_x_imt_rules.parquet
     id: ???
     num: ???
-    config_name: calc_expansion_metrics
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
@@ -132,18 +131,18 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /gpfs/home/spn1560/coarse-grain-rxns
+    cwd: /home/stef/cgr/scripts
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /gpfs/home/spn1560/coarse-grain-rxns/configs
+    - path: /home/stef/cgr/configs
       schema: file
       provider: main
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /home/spn1560/coarse-grain-rxns/data/processed
+    output_dir: /home/stef/cgr/data/processed
     choices:
       filepaths: filepaths
       hydra/env: default

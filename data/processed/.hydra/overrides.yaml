@@ -1,3 +1,1 @@
-- mapped_rxns=mapped_known_reactions_x_rc_plus_0_rules.parquet
-- expansion=batch_19_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk
-- processes=50
+- mapped_rxns_fn=mapped_known_reactions_x_imt_rules.parquet
