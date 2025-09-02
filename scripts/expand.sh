@@ -16,13 +16,14 @@
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/expand.py
 rules_sweep=(
+    "imt_rules_w_coreactants"
     # "mechinformed_rules_w_coreactants"
     # "mechinferred_dt_01_rules_w_coreactants" 
     # "mechinferred_dt_02_rules_w_coreactants"
     # "mechinferred_dt_04_rules_w_coreactants"
     # "mechinferred_dt_13_rules_w_coreactants"
     # "mechinferred_dt_91_rules_w_coreactants"
-    "rc_plus_0_rules_w_coreactants" 
+    # "rc_plus_0_rules_w_coreactants" 
     # "rc_plus_1_rules_w_coreactants"
     # "rc_plus_2_rules_w_coreactants"
     # "rc_plus_3_rules_w_coreactants"

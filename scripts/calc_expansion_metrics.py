@@ -196,7 +196,7 @@ def main(cfg: DictConfig):
     columns = ["id", "smarts", "am_smarts", "dxgb_label", "max_rxn_sim", "nearest_analogue", "nearest_analogue_id", "rules"] 
     df = pd.DataFrame(data=[elt for elt in results if len(elt) != 0], columns=columns)
     df["expansion"] = cfg.expansion
-    df.to_parquet(f"TEST_{cfg.expansion}_reaction_metrics.parquet")
+    df.to_parquet(f"{cfg.expansion}_reaction_metrics.parquet")
 
 if __name__ == "__main__":
     main()
