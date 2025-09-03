@@ -170,16 +170,15 @@ def main(cfg: DictConfig):
         if v["Type"].startswith("Start"):
             _starters[v['_id']] = v["ID"]
 
-    # TODO: uncomment
-    # # Process compounds
-    # proc_cpds = process_compounds(expansion)
+    # Process compounds
+    proc_cpds = process_compounds(expansion)
     
-    # # Save compound metrics
-    # print("Saving compound metrics")
-    # columns = ["smiles", "fan_out", "gen", "id"] 
-    # df = pd.DataFrame(data=proc_cpds, columns=columns)
-    # df["expansion"] = cfg.expansion
-    # df.to_parquet(f"{cfg.expansion}_compound_metrics.parquet")
+    # Save compound metrics
+    print("Saving compound metrics")
+    columns = ["smiles", "fan_out", "gen", "id"] 
+    df = pd.DataFrame(data=proc_cpds, columns=columns)
+    df["expansion"] = cfg.expansion
+    df.to_parquet(f"{cfg.expansion}_compound_metrics.parquet")
 
     # Process reactions
     with ProcessPoolExecutor(max_workers=cfg.processes, initializer=rxn_proc_initializer, initargs=(cfg, _starters)) as executor:
