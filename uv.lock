@@ -584,7 +584,7 @@ wheels = [
 [[package]]
 name = "ergochemics"
 version = "0.1.0"
-source = { git = "https://github.com/stefanpate/ergochemics.git#019a36252e53bd742f71705739d452e7919bdb53" }
+source = { git = "https://github.com/stefanpate/ergochemics.git#b22ee0267227b0c167145ef76fe2444ad57f2b7e" }
 dependencies = [
     { name = "pandas" },
     { name = "pydantic" },

@@ -12,6 +12,7 @@ Requires-Dist: hydra-submitit-launcher>=1.2.0
 Requires-Dist: ipykernel>=6.29.5
 Requires-Dist: ipywidgets>=8.1.5
 Requires-Dist: matplotlib>=3.10.1
+Requires-Dist: matplotlib-venn>=1.1.2
 Requires-Dist: minedatabase
 Requires-Dist: mlflow>=2.22.0
 Requires-Dist: nbformat>=5.10.4
