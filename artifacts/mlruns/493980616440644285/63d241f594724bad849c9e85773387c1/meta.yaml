@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/493980616440644285/63d241f594724bad849c9e85773387c1/artifacts
+end_time: 1762206203659
+entry_point_name: ''
+experiment_id: '493980616440644285'
+lifecycle_stage: active
+run_id: 63d241f594724bad849c9e85773387c1
+run_name: chill-ox-17
+run_uuid: 63d241f594724bad849c9e85773387c1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762205906323
+status: 3
+tags: []
+user_id: stef

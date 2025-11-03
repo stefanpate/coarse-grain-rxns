@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/493980616440644285/c2cf795ea355435a8ea5398e5abcb3c0/artifacts
+end_time: 1762205297318
+entry_point_name: ''
+experiment_id: '493980616440644285'
+lifecycle_stage: active
+run_id: c2cf795ea355435a8ea5398e5abcb3c0
+run_name: magnificent-bird-482
+run_uuid: c2cf795ea355435a8ea5398e5abcb3c0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762205063584
+status: 3
+tags: []
+user_id: stef

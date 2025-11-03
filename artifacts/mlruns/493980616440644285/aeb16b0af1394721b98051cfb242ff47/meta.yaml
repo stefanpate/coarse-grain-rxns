@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/493980616440644285/aeb16b0af1394721b98051cfb242ff47/artifacts
+end_time: 1762206499119
+entry_point_name: ''
+experiment_id: '493980616440644285'
+lifecycle_stage: active
+run_id: aeb16b0af1394721b98051cfb242ff47
+run_name: delicate-wolf-509
+run_uuid: aeb16b0af1394721b98051cfb242ff47
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762206263155
+status: 3
+tags: []
+user_id: stef

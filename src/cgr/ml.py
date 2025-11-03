@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 import numpy as np
 from itertools import accumulate
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from sklearn.base import BaseEstimator, ClassifierMixin
 
 '''
@@ -292,6 +293,34 @@ def bin_label_to_sep_aidx(bin_label: np.ndarray, am_smarts: str) -> tuple[tuple[
         rhs_aidxs[rhs_midx].append(int(rhs_aidx))
 
     return tuple(tuple(elt) for elt in lhs_aidxs), tuple(tuple(elt) for elt in rhs_aidxs)
+
+def scrub_anonymous_template_atoms(template_aidxs: tuple[tuple[tuple[int]]], rule: str) -> tuple[tuple[tuple[int]]]:
+    '''
+    Removes atom indices from template aidxs that correspond to anonymous atoms in the rule SMARTS. 
+    This is necessary for doing the mechinvolved classification task. Anonymous atoms are used in reaction rules
+    to connect atoms that are involved in the mechanism.
+
+    Args
+    ----
+    template_aidxs: tuple[tuple[tuple[int]]]
+        The template atom indices as nested tuples. Outermost tuple corresponds to reactant/product sides,
+        middle tuple corresponds to molecules on that side, innermost tuple corresponds to atom indices in that molecule.
+    rule: str
+        The reaction rule SMARTS.
+    '''
+    op = AllChem.ReactionFromSmarts(rule)
+    rule_mols = [op.GetReactants(), op.GetProducts()]
+    scrubbed_aidxs = []
+    for rule_side, template_side in zip(rule_mols, template_aidxs):
+        scrubbed_side = []
+        for template_mol_aidxs, op_mol in zip(template_side, rule_side):
+            scrubbed_mol_aidxs = []
+            for template_aidx, atom in zip(template_mol_aidxs, op_mol.GetAtoms()):
+                if atom.GetSymbol() != '*':
+                    scrubbed_mol_aidxs.append(template_aidx)
+            scrubbed_side.append(tuple(scrubbed_mol_aidxs))
+        scrubbed_aidxs.append(tuple(scrubbed_side))
+    return tuple(scrubbed_aidxs)
 
 def calc_bce_pos_weight(y: list[np.ndarray], pw_scl: float) -> float:
     '''

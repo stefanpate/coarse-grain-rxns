@@ -22,6 +22,7 @@ from cgr.ml import (
     LinearPredictor,
     collate_batch,
     sep_aidx_to_bin_label,
+    scrub_anonymous_template_atoms,
     calc_bce_pos_weight,
     SklearnGNN
 )
@@ -72,7 +73,7 @@ def main(cfg: DictConfig):
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
-    df['template_aidxs']
+    df['template_aidxs'] = df.apply(lambda x: scrub_anonymous_template_atoms(x.template_aidxs, x.rule), axis=1) # Scrub anonymous atoms from aidxs
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.template_aidxs), axis=1) # Convert aidxs to binary labels for block mol
     ys = [elt[0] for elt in df["binary_label"]]
     groups = df["rule_id"].tolist() if cfg.data.split_strategy != "random_split" else None

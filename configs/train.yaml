@@ -4,7 +4,7 @@ defaults:
   - data: random_rule_split
   - model: ffn_pred_base
   - override hydra/job_logging: custom
-  - override hydra/launcher: quest_cpu
+  # - override hydra/launcher: quest_cpu
   - _self_
 
 # These determine the hpo result to use
@@ -15,7 +15,7 @@ study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}
 
 do_calibrate: False
 calibration_fraction: 0.15
-experiment_name: "outer_splits_v2" # Determines location of output - model, preds, artifacts
+experiment_name: "outer_splits_v3" # Determines location of output - model, preds, artifacts
 
 hydra:
   run:
