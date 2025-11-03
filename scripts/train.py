@@ -72,6 +72,7 @@ def main(cfg: DictConfig):
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
+    df['template_aidxs']
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.template_aidxs), axis=1) # Convert aidxs to binary labels for block mol
     ys = [elt[0] for elt in df["binary_label"]]
     groups = df["rule_id"].tolist() if cfg.data.split_strategy != "random_split" else None
@@ -156,11 +157,10 @@ def main(cfg: DictConfig):
         df_rxn_ids = []
         for i in range(len(test_y)):
             df_rxn_ids.extend([test_rxn_ids[i]] * test_y[i].shape[0])
-        df_rxn_ids = np.array(df_rxn_ids, dtype=np.int32).reshape(-1, 1)
 
         pred_df = pd.DataFrame(
             data={
-                "rxn_id": df_rxn_ids.flatten(),
+                "rxn_id": df_rxn_ids,
                 "aidx": aidxs.flatten(),
                 "y": y.flatten(),
                 "y_pred": y_pred.flatten()

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/396146117139577672/0043e0f87a3a472bbfcad10e1296fa9e/artifacts
+end_time: 1761940732139
+entry_point_name: ''
+experiment_id: '396146117139577672'
+lifecycle_stage: active
+run_id: 0043e0f87a3a472bbfcad10e1296fa9e
+run_name: bald-boar-103
+run_uuid: 0043e0f87a3a472bbfcad10e1296fa9e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1761940463377
+status: 3
+tags: []
+user_id: stef

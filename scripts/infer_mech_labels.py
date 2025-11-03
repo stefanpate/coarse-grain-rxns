@@ -66,13 +66,11 @@ def main(cfg: DictConfig):
     for i in range(len(y)):
         df_rxn_ids.extend([rxn_ids[i]] * y[i].shape[0])
     df_rxn_ids = np.array(df_rxn_ids, dtype=np.int32).reshape(-1, 1)
-    y = np.vstack(y)
 
     pred_df = pd.DataFrame(
         data={
             "rxn_id": df_rxn_ids.flatten(),
             "aidx": aidxs.flatten(),
-            "y": y.flatten(),
             "probas": probas.flatten()
         }
     )

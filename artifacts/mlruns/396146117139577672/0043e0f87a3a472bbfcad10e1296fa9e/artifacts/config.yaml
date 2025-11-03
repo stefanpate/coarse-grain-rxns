@@ -1,0 +1,55 @@
+filepaths:
+  root: /home/stef/cgr
+  projects: /home/stef/quest_data/cgr
+  data: ${.root}/data
+  artifacts: ${.root}/artifacts
+  configs: ${.root}/configs
+  raw_data: ${.data}/raw
+  processed_data: ${.data}/processed
+  interim_data: ${.data}/interim
+  mlruns: ${.artifacts}/mlruns
+  hpo_studies: ${.artifacts}/hpo_studies
+  coreactants: ${.artifacts}/coreactants
+  starters: ${.artifacts}/starters
+  rules: ${.artifacts}/rules
+  figures: ${.artifacts}/figures
+  mechinformed_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_mechinformed_rules.parquet
+  rc_plus_0_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_rc_plus_0_rules.parquet
+  expansions: ${.projects}/expansions
+training:
+  warmup_epochs: 2
+  init_lr: 0.0001
+  max_lr: 0.001
+  final_lr: 0.0001
+  max_epochs: 10
+  batch_size: 100
+  pw_scl: 1.0
+data:
+  split_seed: 1234
+  outer_splitter:
+    _target_: sklearn.model_selection.GroupKFold
+    n_splits: 5
+    shuffle: true
+    random_state: ${..split_seed}
+  inner_splitter:
+    _target_: sklearn.model_selection.GroupKFold
+    n_splits: 3
+    shuffle: true
+    random_state: ${..split_seed}
+  outer_split_idx: 2
+  split_strategy: random_rule_split
+model:
+  mp_d_h: 250
+  mp_depth: 4
+  pred_head_name: ffn
+  pred_head_d_hs:
+  - 120
+  - 120
+  featurizer_mode: PROD_DIFF
+use_study: true
+study_version: 0
+objective: val_auprc
+study_name: outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}
+do_calibrate: false
+calibration_fraction: 0.15
+experiment_name: outer_splits_v2
