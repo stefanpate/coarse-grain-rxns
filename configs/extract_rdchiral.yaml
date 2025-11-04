@@ -1,0 +1,9 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+hydra:
+  run:
+    dir: ${filepaths.processed_data}
+  job:
+    chdir: True
