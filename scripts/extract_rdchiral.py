@@ -105,7 +105,7 @@ def main(cfg: DictConfig):
     ]
     template_df = pd.DataFrame(template_data)
     template_df.to_csv(
-        "rchiral_rules.csv",
+        "rdchiral_rules.csv",
         index=False
     )
 
