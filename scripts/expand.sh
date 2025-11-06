@@ -16,7 +16,8 @@
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/expand.py
 rules_sweep=(
-    "imt_rules_w_coreactants"
+    "rdchiral_rules_w_coreactants"
+    # "imt_rules_w_coreactants"
     # "mechinformed_rules_w_coreactants"
     # "mechinferred_dt_01_rules_w_coreactants" 
     # "mechinferred_dt_02_rules_w_coreactants"
