@@ -17,7 +17,8 @@
 script=/home/spn1560/coarse-grain-rxns/scripts/calc_expansion_metrics.py
 processes=50 # Make sure this matches -n above
 exp_sweep=(
-    "2_steps_250728_benchmark_starters_rules_imt_rules_w_coreactants_aplusb_True.pk"
+    mapped_known_reactions_x_rdchiral_rules.parquet
+    # "2_steps_250728_benchmark_starters_rules_imt_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_mechinformed_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_01_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_02_rules_w_coreactants_aplusb_True.pk"
@@ -51,7 +52,8 @@ exp_sweep=(
 )
 
 mappings_sweep=(
-    "mapped_known_reactions_x_imt_rules.parquet"
+    mapped_known_reactions_x_rdchiral_rules.parquet
+    # "mapped_known_reactions_x_imt_rules.parquet"
     # "mapped_known_reactions_x_mechinformed_rules.parquet"
     # "mapped_known_reactions_x_mechinferred_dt_01_rules.parquet" 
     # "mapped_known_reactions_x_mechinferred_dt_02_rules.parquet"
