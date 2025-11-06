@@ -65,7 +65,7 @@ def main(cfg: DictConfig):
     df_rxn_ids = []
     for i in range(len(y)):
         df_rxn_ids.extend([rxn_ids[i]] * y[i].shape[0])
-    df_rxn_ids = np.array(df_rxn_ids, dtype=np.int32).reshape(-1, 1)
+    df_rxn_ids = np.array(df_rxn_ids).reshape(-1, 1)
 
     pred_df = pd.DataFrame(
         data={

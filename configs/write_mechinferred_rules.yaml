@@ -4,7 +4,7 @@ defaults:
 
 min_mapped: mapped_known_reactions_x_rc_plus_0_rules.parquet
 mech_probas_dir: ${filepaths.processed_data}/mech_probas
-decision_thresholds: [0.9100252985954285, 0.13334070146083832, 0.046352483332157135, 0.021847588941454887, 0.011600149795413017]
+decision_thresholds: [0.9562190771102905, 0.05624692514538765, 0.01461805310100317, 0.0060590095818042755, 0.0028916343580931425]
 
 hydra:
   run:

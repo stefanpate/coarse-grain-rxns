@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/823268239766567171/361eea2700cb429a9a4a2dc6f192d098/artifacts
+end_time: 1762461485462
+entry_point_name: ''
+experiment_id: '823268239766567171'
+lifecycle_stage: active
+run_id: 361eea2700cb429a9a4a2dc6f192d098
+run_name: awesome-squirrel-756
+run_uuid: 361eea2700cb429a9a4a2dc6f192d098
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762461219072
+status: 3
+tags: []
+user_id: stef

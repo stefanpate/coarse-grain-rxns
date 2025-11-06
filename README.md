@@ -52,13 +52,13 @@ Once you have selected hyperparameters and saved the appropriate configuraitons 
 python scripts/train_production.py
 ```
 
-With that production model, predict labels for atom-mapped reactions. To run the inference script, make sure you have the proper config files in the production subdirectory, including model checkpoints.
+With that production model, predict labels for atom-mapped reactions. To run the inference script, make sure you have the proper config files in the `configs/full` subdirectory, including model checkpoints.
 
 ```
 python scripts/infer_mech_labels.py -m
 ```
 
-The scores output by the production model for atom-mapped reactions can be used to write mechinferred rules.
+The scores output by the production model for atom-mapped reactions can be used to write mechinferred rules. Make sure you have the proper config files in the `configs/production` subdirectory, including model checkpoints.
 
 ### Writing mechinferred rules based on model of mechinformed templates
 

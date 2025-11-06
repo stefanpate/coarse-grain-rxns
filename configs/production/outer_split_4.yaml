@@ -1,11 +1,11 @@
 data:
   inner_splitter: 3
   outer_split_idx: 4
-  outer_splitter: sklearn.model_selection.GroupKFold
+  outer_splitter: 1234
   split_seed: 1234
   split_strategy: random_rule_split
 model:
-  ckpt: 336355965838399694/3dcde9af821446f8b8f6df9ccfb985f3/artifacts/epoch=4-step=540/epoch=4-step=540.ckpt
+  ckpt: 823268239766567171/361eea2700cb429a9a4a2dc6f192d098/artifacts/epoch=4-step=540/epoch=4-step=540.ckpt
   featurizer_mode: PROD_DIFF
   mp_d_h: 293
   mp_depth: 4

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/823268239766567171/e3618eb8f8ed47e09d893c622d872b2d/artifacts
+end_time: 1762460799407
+entry_point_name: ''
+experiment_id: '823268239766567171'
+lifecycle_stage: active
+run_id: e3618eb8f8ed47e09d893c622d872b2d
+run_name: polite-fly-459
+run_uuid: e3618eb8f8ed47e09d893c622d872b2d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762460540868
+status: 3
+tags: []
+user_id: stef

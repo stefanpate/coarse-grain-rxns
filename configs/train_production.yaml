@@ -2,7 +2,7 @@ defaults:
   - filepaths: filepaths
   - full: outer_split_0
   - override hydra/job_logging: custom
-  - override hydra/launcher: quest_cpu
+  # - override hydra/launcher: quest_cpu
   - _self_
 
 training: ${full.training}

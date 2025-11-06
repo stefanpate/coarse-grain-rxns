@@ -18,7 +18,7 @@ def main(cfg: DictConfig):
         Path(cfg.filepaths.raw_data) / cfg.min_mapped
     )
 
-    min_mapped["rxn_id"] = min_mapped["rxn_id"].astype(int)
+    min_mapped["rxn_id"] = min_mapped["rxn_id"]
     min_mapped["template_aidxs"] = min_mapped["template_aidxs"].apply(rc_to_nest)
 
     # Load predicted mech probas
@@ -36,12 +36,13 @@ def main(cfg: DictConfig):
     for dt in cfg.decision_thresholds:
         log.info(f"Decision threshold: {dt}")
         templates = {}
-        pred_df["y_pred"] = (pred_df["probas"] > dt).astype(int)
+        pred_df['y_pred'] = (pred_df['probas'] > dt).astype(int)
+        majority_vote = pred_df.groupby(['rxn_id', 'aidx'])['y_pred'].agg(lambda x: x.mode()[0]).reset_index()
         for _, row in min_mapped.iterrows():
             rc = row['template_aidxs']
             am_smarts = row['am_smarts']
             rxn_id = row['rxn_id']
-            y_pred = pred_df.loc[pred_df["rxn_id"] == rxn_id, "y_pred"].to_numpy()
+            y_pred = majority_vote.loc[majority_vote["rxn_id"] == rxn_id].sort_values(by='aidx', ascending=True)['y_pred'].to_numpy()
             atoms_to_include, _ = bin_label_to_sep_aidx(bin_label=y_pred, am_smarts=am_smarts)
             try:
                 template = extract_reaction_template(rxn=am_smarts, atoms_to_include=atoms_to_include, reaction_center=rc[0])
@@ -52,7 +53,7 @@ def main(cfg: DictConfig):
             templates[template] = row["rule_id"]
 
         df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-        df.to_csv(f"mechinferred_dt_{int(dt * 100):02d}_rules.csv", sep=',', index=False)
+        df.to_csv(f"mechinferred_dt_{int(dt * 100):03d}_rules.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
