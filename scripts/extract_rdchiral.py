@@ -48,18 +48,49 @@ def main(cfg: DictConfig):
 
     # Load data
     log.info("Loading & preparing data")
+    min_mapped = pd.read_parquet(
+        Path(cfg.filepaths.raw_data) / cfg.filepaths.rc_plus_0_mapped_rxns
+    )
     df = pd.read_parquet(
         Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
 
     # Prep data
+    min_mapped["template_aidxs"] = min_mapped["template_aidxs"].apply(rc_to_nest)
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     df['template_aidxs'] = df.apply(lambda x: scrub_anonymous_template_atoms(x.template_aidxs, x.rule), axis=1) # Scrub anonymous atoms from aidxs
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.template_aidxs)[0], axis=1) # Convert aidxs to binary labels for LHS block mol
 
-    pred_data = []
     rdchiral_templates = defaultdict(list)
-    for _, row in tqdm(df.iterrows(), total=len(df), desc="Extracting rdchiral templates and preds"):
+    for _, row in tqdm(min_mapped.iterrows(), total=len(min_mapped), desc="Extracting rdchiral templates for min mapped reactions"):
+        am_smarts = row['am_smarts']
+        lhs, rhs = am_smarts.split('>>')
+        rxn = {'_id': row['rxn_id'], 'reactants': lhs, 'products': rhs}
+        res = extract_from_reaction(rxn)
+        try:
+            rdchiral_template = ">>".join(res['reaction_smarts'].split('>>')[::-1]) # rdchiral returns in retro direction
+        except BaseException as e:
+            log.warning(f"rdchiral extraction failed for rxn_id {row['rxn_id']} with error: {e}")
+            continue
+        
+        rdchiral_templates[rdchiral_template].append(row['rxn_id'])
+
+    template_data = [
+        {
+            'id': i,
+            'smarts': tpl,
+            'krids': rdchiral_templates[tpl]
+        }
+        for i, tpl in enumerate(rdchiral_templates.keys())
+    ]
+    template_df = pd.DataFrame(template_data)
+    template_df.to_csv(
+        "rdchiral_rules.csv",
+        index=False
+    )
+
+    pred_data = []
+    for _, row in tqdm(df.iterrows(), total=len(df), desc="Getting rdchiral preds on mechinformeed mapped reactions"):
         am_smarts = row['am_smarts']
         lhs, rhs = am_smarts.split('>>')
         rxn = {'_id': row['rxn_id'], 'reactants': lhs, 'products': rhs}
@@ -87,25 +118,9 @@ def main(cfg: DictConfig):
                 }
             )
 
-        rdchiral_templates[rdchiral_template].append(row['rxn_id'])
-
     pred_df = pd.DataFrame(pred_data)
     pred_df.to_parquet(
         "rdchiral_predictions.parquet",
-        index=False
-    )
-
-    template_data = [
-        {
-            'id': i,
-            'smarts': tpl,
-            'krids': rdchiral_templates[tpl]
-        }
-        for i, tpl in enumerate(rdchiral_templates.keys())
-    ]
-    template_df = pd.DataFrame(template_data)
-    template_df.to_csv(
-        "rdchiral_rules.csv",
         index=False
     )
 
