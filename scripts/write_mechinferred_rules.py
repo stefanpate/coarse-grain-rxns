@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
 import logging
+from tqdm import tqdm
 
 log = logging.getLogger(__name__)
 
@@ -36,13 +37,12 @@ def main(cfg: DictConfig):
     for dt in cfg.decision_thresholds:
         log.info(f"Decision threshold: {dt}")
         templates = {}
-        pred_df['y_pred'] = (pred_df['probas'] > dt).astype(int)
-        majority_vote = pred_df.groupby(['rxn_id', 'aidx'])['y_pred'].agg(lambda x: x.mode()[0]).reset_index()
-        for _, row in min_mapped.iterrows():
+        pred_df["y_pred"] = (pred_df["probas"] > dt).astype(int)
+        for _, row in tqdm(min_mapped.iterrows(), total=min_mapped.shape[0], desc="Extracting templates"):
             rc = row['template_aidxs']
             am_smarts = row['am_smarts']
             rxn_id = row['rxn_id']
-            y_pred = majority_vote.loc[majority_vote["rxn_id"] == rxn_id].sort_values(by='aidx', ascending=True)['y_pred'].to_numpy()
+            y_pred = pred_df.loc[pred_df["rxn_id"] == rxn_id, "y_pred"].to_numpy()
             atoms_to_include, _ = bin_label_to_sep_aidx(bin_label=y_pred, am_smarts=am_smarts)
             try:
                 template = extract_reaction_template(rxn=am_smarts, atoms_to_include=atoms_to_include, reaction_center=rc[0])
