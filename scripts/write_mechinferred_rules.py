@@ -53,7 +53,7 @@ def main(cfg: DictConfig):
             templates[template] = row["rule_id"]
 
         df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-        df.to_csv(f"mechinferred_dt_{int(dt * 100):03d}_rules.csv", sep=',', index=False)
+        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
