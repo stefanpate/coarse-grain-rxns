@@ -104,20 +104,20 @@ hydra:
       - file
     disable_existing_loggers: false
   env: {}
-  mode: MULTIRUN
+  mode: RUN
   searchpath: []
   callbacks: {}
   output_subdir: .hydra
   overrides:
     hydra:
-    - hydra.mode=MULTIRUN
+    - hydra.mode=RUN
     task: []
   job:
     name: write_mechinferred_rules
     chdir: true
     override_dirname: ''
-    id: '0'
-    num: 0
+    id: ???
+    num: ???
     config_name: write_mechinferred_rules
     env_set: {}
     env_copy: []
@@ -129,18 +129,18 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr/scripts
+    cwd: /gpfs/home/spn1560/coarse-grain-rxns/scripts/slurm
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /home/stef/cgr/configs
+    - path: /gpfs/home/spn1560/coarse-grain-rxns/configs
       schema: file
       provider: main
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /home/stef/cgr/data/processed
+    output_dir: /home/spn1560/coarse-grain-rxns/data/processed
     choices:
       filepaths: filepaths
       hydra/env: default
