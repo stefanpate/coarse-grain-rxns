@@ -10,21 +10,21 @@
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
-#SBATCH --array=0
+#SBATCH --array=0-4
 #SBATCH --mail-user=stefan.pate@northwestern.edu
 
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/calc_expansion_metrics.py
 processes=50 # Make sure this matches -n above
 exp_sweep=(
-    mapped_known_reactions_x_rdchiral_rules.parquet
+    # mapped_known_reactions_x_rdchiral_rules.parquet
     # "2_steps_250728_benchmark_starters_rules_imt_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_mechinformed_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_01_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_02_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_04_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_13_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_mechinferred_dt_91_rules_w_coreactants_aplusb_True.pk"
+    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_002_rules_w_coreactants_aplusb_True.pk"
+    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_006_rules_w_coreactants_aplusb_True.pk"
+    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_014_rules_w_coreactants_aplusb_True.pk"
+    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_056_rules_w_coreactants_aplusb_True.pk"
+    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_956_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_rc_plus_1_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_rc_plus_2_rules_w_coreactants_aplusb_True.pk"
     # "2_steps_250728_benchmark_starters_rules_rc_plus_3_rules_w_coreactants_aplusb_True.pk"
@@ -52,14 +52,14 @@ exp_sweep=(
 )
 
 mappings_sweep=(
-    mapped_known_reactions_x_rdchiral_rules.parquet
+    # mapped_known_reactions_x_rdchiral_rules.parquet
     # "mapped_known_reactions_x_imt_rules.parquet"
     # "mapped_known_reactions_x_mechinformed_rules.parquet"
-    # "mapped_known_reactions_x_mechinferred_dt_01_rules.parquet" 
-    # "mapped_known_reactions_x_mechinferred_dt_02_rules.parquet"
-    # "mapped_known_reactions_x_mechinferred_dt_04_rules.parquet"
-    # "mapped_known_reactions_x_mechinferred_dt_13_rules.parquet"
-    # "mapped_known_reactions_x_mechinferred_dt_91_rules.parquet"
+    "mapped_known_reactions_x_mechinferred_dt_002_rules.parquet" 
+    "mapped_known_reactions_x_mechinferred_dt_006_rules.parquet"
+    "mapped_known_reactions_x_mechinferred_dt_014_rules.parquet"
+    "mapped_known_reactions_x_mechinferred_dt_056_rules.parquet"
+    "mapped_known_reactions_x_mechinferred_dt_956_rules.parquet"
     # "mapped_known_reactions_x_rc_plus_1_rules.parquet"
     # "mapped_known_reactions_x_rc_plus_2_rules.parquet"
     # "mapped_known_reactions_x_rc_plus_3_rules.parquet"
