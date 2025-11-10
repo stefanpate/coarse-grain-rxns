@@ -16,4 +16,4 @@ filepaths:
   configs: ${.root}/configs
   figures: ${.artifacts}/figures
   expansions: ${.projects}/expansions
-mapped_rxns_fn: mapped_known_reactions_x_mechinferred_dt_956_rules.parquet
+mapped_rxns_fn: mapped_known_reactions_x_mechinferred_dt_224_rules.parquet

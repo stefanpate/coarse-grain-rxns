@@ -8,7 +8,7 @@
 #SBATCH --job-name="expand"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
-#SBATCH --array=0-4
+#SBATCH --array=0-3
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=stefan.pate@northwestern.edu
@@ -19,11 +19,11 @@ rules_sweep=(
     # "rdchiral_rules_w_coreactants"
     # "imt_rules_w_coreactants"
     # "mechinformed_rules_w_coreactants"
-    "mechinferred_dt_002_rules_w_coreactants" 
-    "mechinferred_dt_006_rules_w_coreactants"
-    "mechinferred_dt_014_rules_w_coreactants"
-    "mechinferred_dt_056_rules_w_coreactants"
-    "mechinferred_dt_956_rules_w_coreactants"
+    "mechinferred_dt_019_rules_w_coreactants" 
+    "mechinferred_dt_039_rules_w_coreactants"
+    "mechinferred_dt_112_rules_w_coreactants"
+    "mechinferred_dt_224_rules_w_coreactants"
+    # "mechinferred_dt_956_rules_w_coreactants"
     # "rc_plus_0_rules_w_coreactants" 
     # "rc_plus_1_rules_w_coreactants"
     # "rc_plus_2_rules_w_coreactants"
