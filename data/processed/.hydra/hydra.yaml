@@ -9,7 +9,8 @@ hydra:
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params: null
+    params:
+      mapped_rxns_fn: mapped_known_reactions_x_mechinferred_dt_019_rules.parquet,mapped_known_reactions_x_mechinferred_dt_039_rules.parquet,mapped_known_reactions_x_mechinferred_dt_112_rules.parquet,mapped_known_reactions_x_mechinferred_dt_224_rules.parquet
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -104,21 +105,22 @@ hydra:
       - file
     disable_existing_loggers: false
   env: {}
-  mode: RUN
+  mode: MULTIRUN
   searchpath: []
   callbacks: {}
   output_subdir: .hydra
   overrides:
     hydra:
-    - hydra.mode=RUN
-    task: []
+    - hydra.mode=MULTIRUN
+    task:
+    - mapped_rxns_fn=mapped_known_reactions_x_mechinferred_dt_224_rules.parquet
   job:
-    name: write_mechinferred_rules
+    name: add_coreactant_roles
     chdir: true
-    override_dirname: ''
-    id: ???
-    num: ???
-    config_name: write_mechinferred_rules
+    override_dirname: mapped_rxns_fn=mapped_known_reactions_x_mechinferred_dt_224_rules.parquet
+    id: '3'
+    num: 3
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
