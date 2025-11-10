@@ -16,4 +16,16 @@ filepaths:
   configs: ${.root}/configs
   figures: ${.artifacts}/figures
   expansions: ${.projects}/expansions
-mapped_rxns_fn: mapped_known_reactions_x_mechinferred_dt_224_rules.parquet
+dxgb:
+  _target_: DORA_XGB.DORA_XGB.feasibility_classifier
+  cofactor_positioning: add_concat
+mfper:
+  _target_: ergochemics.similarity.MorganFingerprinter
+  radius: 3
+  length: 1024
+  mol_featurizer:
+    _target_: ergochemics.similarity.MolFeaturizer
+rc_dist_ub: 1
+expansion: 2_steps_250728_benchmark_starters_rules_mechinferred_dt_956_rules_w_coreactants_aplusb_True.pk
+mapped_rxns: mapped_known_reactions_x_mechinferred_dt_956_rules.parquet
+processes: 50
