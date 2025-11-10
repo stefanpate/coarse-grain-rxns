@@ -9,7 +9,8 @@ hydra:
   sweeper:
     _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
     max_batch_size: null
-    params: null
+    params:
+      mapped_rxns_fn: mapped_known_reactions_x_mechinferred_dt_002_rules.parquet,mapped_known_reactions_x_mechinferred_dt_006_rules.parquet,mapped_known_reactions_x_mechinferred_dt_014_rules.parquet,mapped_known_reactions_x_mechinferred_dt_056_rules.parquet,mapped_known_reactions_x_mechinferred_dt_956_rules.parquet
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -113,12 +114,12 @@ hydra:
     - hydra.mode=MULTIRUN
     task: []
   job:
-    name: write_mechinferred_rules
+    name: add_coreactant_roles
     chdir: true
     override_dirname: ''
     id: ???
     num: ???
-    config_name: write_mechinferred_rules
+    config_name: add_coreactant_roles
     env_set: {}
     env_copy: []
     config:
@@ -129,12 +130,12 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr/scripts
+    cwd: /gpfs/home/spn1560/coarse-grain-rxns/scripts
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /home/stef/cgr/configs
+    - path: /gpfs/home/spn1560/coarse-grain-rxns/configs
       schema: file
       provider: main
     - path: ''
@@ -154,11 +155,10 @@ hydra:
       hydra/output: default
   verbose: false
 filepaths:
-  root: /home/stef/cgr
-  projects: /home/stef/quest_data/cgr
+  root: /home/spn1560/coarse-grain-rxns
+  projects: /projects/b1039/spn1560/coarse-grain-rxns
   data: ${.root}/data
   artifacts: ${.root}/artifacts
-  configs: ${.root}/configs
   raw_data: ${.data}/raw
   processed_data: ${.data}/processed
   interim_data: ${.data}/interim
@@ -167,15 +167,9 @@ filepaths:
   coreactants: ${.artifacts}/coreactants
   starters: ${.artifacts}/starters
   rules: ${.artifacts}/rules
-  figures: ${.artifacts}/figures
   mechinformed_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_mechinformed_rules.parquet
   rc_plus_0_mapped_rxns: ${.raw_data}/mapped_known_reactions_x_rc_plus_0_rules.parquet
+  configs: ${.root}/configs
+  figures: ${.artifacts}/figures
   expansions: ${.projects}/expansions
-min_mapped: mapped_known_reactions_x_rc_plus_0_rules.parquet
-mech_probas_dir: ${filepaths.processed_data}/mech_probas
-decision_thresholds:
-- 0.9562190771102905
-- 0.05624692514538765
-- 0.01461805310100317
-- 0.0060590095818042755
-- 0.0028916343580931425
+mapped_rxns_fn: mapped_known_reactions_x_rc_plus_0_rules.parquet
