@@ -7,9 +7,9 @@
 width='267px' height='160px' viewBox='0 0 267 160'>
 <!-- END OF HEADER -->
 <rect style='opacity:1.0;fill:#FFFFFF;stroke:none' width='267.0' height='160.0' x='0.0' y='0.0'> </rect>
-<path class='bond-0 atom-0 atom-1' d='M 183.4,44.2 L 237.5,61.1 L 233.9,72.6 L 179.8,55.7 Z' style='fill:#BF99BF;fill-rule:evenodd;fill-opacity:1;stroke:#BF99BF;stroke-width:0.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;' />
-<ellipse cx='234.4' cy='71.0' rx='11.3' ry='11.7' class='atom-0'  style='fill:#BF99BF;fill-rule:evenodd;stroke:#BF99BF;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
-<ellipse cx='181.6' cy='49.9' rx='11.3' ry='11.3' class='atom-1'  style='fill:#BF99BF;fill-rule:evenodd;stroke:#BF99BF;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
+<path class='bond-0 atom-0 atom-1' d='M 183.4,44.2 L 237.5,61.1 L 233.9,72.6 L 179.8,55.7 Z' style='fill:#B7D1BA;fill-rule:evenodd;fill-opacity:1;stroke:#B7D1BA;stroke-width:0.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;' />
+<ellipse cx='234.4' cy='71.0' rx='11.3' ry='11.7' class='atom-0'  style='fill:#B7D1BA;fill-rule:evenodd;stroke:#B7D1BA;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
+<ellipse cx='181.6' cy='49.9' rx='11.3' ry='11.3' class='atom-1'  style='fill:#B7D1BA;fill-rule:evenodd;stroke:#B7D1BA;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
 <path class='bond-0 atom-0 atom-1' d='M 226.5,64.0 L 181.6,49.9' style='fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
 <path class='bond-0 atom-0 atom-1' d='M 223.9,72.1 L 183.8,59.5' style='fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
 <path class='bond-1 atom-1 atom-2' d='M 181.6,49.9 L 139.9,88.3' style='fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />

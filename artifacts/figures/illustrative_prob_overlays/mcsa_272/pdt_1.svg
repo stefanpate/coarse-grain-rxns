@@ -7,10 +7,10 @@
 width='262px' height='157px' viewBox='0 0 262 157'>
 <!-- END OF HEADER -->
 <rect style='opacity:1.0;fill:#FFFFFF;stroke:none' width='262.0' height='157.0' x='0.0' y='0.0'> </rect>
-<path class='bond-0 atom-0 atom-1' d='M 51.3,87.6 L 102.4,117.1 L 96.1,128.0 L 45.0,98.5 Z' style='fill:#BF99BF;fill-rule:evenodd;fill-opacity:1;stroke:#BF99BF;stroke-width:0.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;' />
-<ellipse cx='50.4' cy='89.3' rx='11.8' ry='12.1' class='atom-0'  style='fill:#BF99BF;fill-rule:evenodd;stroke:#BF99BF;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
-<ellipse cx='99.3' cy='122.5' rx='11.8' ry='11.8' class='atom-1'  style='fill:#BF99BF;fill-rule:evenodd;stroke:#BF99BF;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
-<ellipse cx='209.3' cy='122.7' rx='21.9' ry='12.1' class='atom-4'  style='fill:#BF99BF;fill-rule:evenodd;stroke:#BF99BF;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
+<path class='bond-0 atom-0 atom-1' d='M 51.3,87.6 L 102.4,117.1 L 96.1,128.0 L 45.0,98.5 Z' style='fill:#B7D1BA;fill-rule:evenodd;fill-opacity:1;stroke:#B7D1BA;stroke-width:0.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;' />
+<ellipse cx='50.4' cy='89.3' rx='11.8' ry='12.1' class='atom-0'  style='fill:#B7D1BA;fill-rule:evenodd;stroke:#B7D1BA;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
+<ellipse cx='99.3' cy='122.5' rx='11.8' ry='11.8' class='atom-1'  style='fill:#B7D1BA;fill-rule:evenodd;stroke:#B7D1BA;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
+<ellipse cx='209.3' cy='122.7' rx='21.9' ry='12.1' class='atom-4'  style='fill:#B7D1BA;fill-rule:evenodd;stroke:#B7D1BA;stroke-width:1.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
 <path class='bond-0 atom-0 atom-1' d='M 57.8,98.6 L 99.3,122.5' style='fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
 <path class='bond-0 atom-0 atom-1' d='M 62.2,90.9 L 99.3,112.3' style='fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />
 <path class='bond-1 atom-1 atom-2' d='M 99.3,122.5 L 150.4,93.0' style='fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1' />

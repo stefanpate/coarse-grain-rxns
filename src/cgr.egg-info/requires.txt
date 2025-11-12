@@ -19,6 +19,7 @@ plotly>=6.0.1
 polars>=1.31.0
 pyarrow>=19.0.1
 pydantic>=2.10.6
+rdchiral>=1.1.0
 rdkit>=2024.9.6
 scipy>=1.15.2
 torcheval>=0.0.7
