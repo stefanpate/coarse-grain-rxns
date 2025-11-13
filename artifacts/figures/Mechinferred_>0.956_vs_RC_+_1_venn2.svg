@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2025-11-10T17:55:52.156800</dc:date>
+    <dc:date>2025-11-13T16:27:41.654861</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -55,7 +55,7 @@ C 213.185706 303.012381 228.470862 303.329673 243.472669 301.039785
 C 258.474476 298.749898 272.968927 293.887024 286.316275 286.665798 
 C 299.663624 279.444571 311.664565 269.972821 321.78941 258.668604 
 C 331.914255 247.364387 340.011819 234.3965 345.724697 220.337309 
-" clip-path="url(#pa21312411e)" style="fill: #800080; opacity: 0.4; stroke: #800080; stroke-linejoin: miter"/>
+" clip-path="url(#p6e59356213)" style="fill: #800080; opacity: 0.4; stroke: #800080; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 345.724697 121.070032 
@@ -65,7 +65,7 @@ C 355.553507 216.284303 363.960393 209.401641 369.874028 200.566412
 C 375.787663 191.731182 378.945702 181.335338 378.945702 170.70367 
 C 378.945702 160.072003 375.787663 149.676159 369.874028 140.840929 
 C 363.960393 132.005699 355.553507 125.123037 345.724697 121.070032 
-" clip-path="url(#pa21312411e)" style="opacity: 0.4; stroke: #000000; stroke-linejoin: miter"/>
+" clip-path="url(#p6e59356213)" style="opacity: 0.4; stroke: #000000; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 345.724697 220.337309 
@@ -79,7 +79,7 @@ C 271.569863 179.525005 273.743982 188.211868 277.89925 195.993236
 C 282.054519 203.774604 288.064252 210.41324 295.395041 215.319916 
 C 302.725831 220.226592 311.154177 223.251714 319.932001 224.126781 
 C 328.709825 225.001847 337.569512 223.700179 345.724697 220.337309 
-" clip-path="url(#pa21312411e)" style="fill: #b25900; opacity: 0.4"/>
+" clip-path="url(#p6e59356213)" style="fill: #b25900; opacity: 0.4"/>
    </g>
    <g id="text_1">
     <!-- 233405 -->
@@ -662,7 +662,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pa21312411e">
+  <clipPath id="p6e59356213">
    <rect x="67.994393" y="15.12" width="334.689243" height="311.167341"/>
   </clipPath>
  </defs>
