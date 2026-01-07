@@ -1,5 +1,5 @@
 data:
-  inner_splitter: sklearn.model_selection.GroupKFold
+  inner_splitter: 1234
   outer_split_idx: 2
   outer_splitter: sklearn.model_selection.GroupKFold
   split_seed: 1234
