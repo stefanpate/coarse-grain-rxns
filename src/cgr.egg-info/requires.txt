@@ -21,6 +21,7 @@ pyarrow>=19.0.1
 pydantic>=2.10.6
 rdchiral>=1.1.0
 rdkit>=2024.9.6
+rxnmapper>=0.4.2
 scipy>=1.15.2
 torcheval>=0.0.7
 tqdm>=4.67.1

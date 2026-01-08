@@ -1,0 +1,11 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+test_cases: test_rdchiral_cases.json
+
+hydra:
+  run:
+    dir: ${filepaths.processed_data}
+  job:
+    chdir: True

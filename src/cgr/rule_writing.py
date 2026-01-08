@@ -4,7 +4,7 @@ import networkx as nx
 import re
 from copy import deepcopy
 
-def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]], reaction_center: Iterable[Iterable[int]]) -> str:
+def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]], reaction_center: Iterable[Iterable[int]], include_stereo: bool = False) -> str:
     '''
     Extracts a reaction template from a reaction string and a list of atoms to include.
     
@@ -57,13 +57,13 @@ def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]
             elt[2] = elt[2].union(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in connecting_amns]))
 
         # Construct lhs template
-        lsma = get_mol_template(lmol, l_incl_aidxs, l_connecting_aidxs)
+        lsma = get_mol_template(lmol, l_incl_aidxs, l_connecting_aidxs, include_stereo=include_stereo)
         ltemplate.append(lsma)
 
     # Construct rhs template
     rtemplate = []
     for rmol, r_incl_aidxs, r_connecting_aidxs in rhs:
-        rsma = get_mol_template(rmol, r_incl_aidxs, r_connecting_aidxs)
+        rsma = get_mol_template(rmol, r_incl_aidxs, r_connecting_aidxs, include_stereo=include_stereo)
         rtemplate.append(rsma)
     
     canonical_template = canonicalize_template(ltemplate, rtemplate)
@@ -166,7 +166,7 @@ def connect_to_rc(mol: Chem.Mol, rc: set[int], incl_aidxs: set[int]) -> set[int]
 
     return set(shortest_paths) - incl_aidxs - rc
 
-def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -> str:
+def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int], include_stereo: bool) -> str:
     '''
     Returns SMARTS pattern for a molecule given the indices of atoms to include with identity
     and the indices of atoms to include as anonymous / wildcard.
@@ -187,6 +187,9 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -
     : str
         SMARTS pattern for the molecule
     '''
+    if include_stereo:
+        incl_aidxs = _add_stereo_idxs(mol, incl_aidxs)
+        
     unanon_mol = deepcopy(mol)
     amn_to_aidx = {}
     for atom in mol.GetAtoms():
@@ -222,6 +225,68 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int]) -
 
     return sma
 
+def _add_stereo_idxs(mol: Chem.Mol, template_idxs: set[int]) -> set[int]:
+    '''
+    Ensure that all chiral centers and double bonds with stereo, if implicated
+    in the template, are full included in the templates, i.e., all 1st neightbors
+    are included.
+    '''
+
+    chiral_ctr_idxs = set([elt[0] for elt in Chem.FindMolChiralCenters(mol)])
+    ctrs_covered = set()
+    missing_ctrs = template_idxs & chiral_ctr_idxs
+
+    chiral_double_bonds = set()
+    for bond in mol.GetBonds():
+        if bond.GetBondType() == Chem.BondType.DOUBLE and bond.GetStereo() != Chem.BondStereo.STEREONONE:
+            chiral_double_bonds.add(bond.GetIdx())
+
+    double_bonds_covered = set()
+    missing_bonds = set()
+    for bond_idx in chiral_double_bonds:
+        bond = mol.GetBondWithIdx(bond_idx)
+        if bond.GetBeginAtomIdx() in template_idxs and bond.GetEndAtomIdx() in template_idxs:
+            missing_bonds.add(bond_idx)
+
+    while missing_ctrs or missing_bonds:
+        if missing_ctrs:
+            ctr_idx = missing_ctrs.pop()
+            template_idxs.add(ctr_idx)
+
+            # Need all neighbors of chiral center for proper stereo definition
+            for neighbor in mol.GetAtomWithIdx(ctr_idx).GetNeighbors():
+                template_idxs.add(neighbor.GetIdx())
+
+
+            ctrs_covered.add(ctr_idx)
+
+        if missing_bonds:
+            bond_idx = missing_bonds.pop()
+            bond = mol.GetBondWithIdx(bond_idx)
+            begin_atom = mol.GetAtomWithIdx(bond.GetBeginAtomIdx())
+            end_atom = mol.GetAtomWithIdx(bond.GetEndAtomIdx())
+
+            # Need all neighbors of atoms in chiral double bond for proper stereo definition
+            for neighbor in begin_atom.GetNeighbors():
+                template_idxs.add(neighbor.GetIdx())
+            for neighbor in end_atom.GetNeighbors():
+                template_idxs.add(neighbor.GetIdx())
+
+            double_bonds_covered.add(bond_idx)
+
+        # Update missing sets after (potentially) both tetrahedral ctrs and double bonds handled
+        missing_ctrs = (template_idxs & chiral_ctr_idxs) - ctrs_covered
+
+        missing_bonds = set()
+        for bond_idx in chiral_double_bonds:
+            bond = mol.GetBondWithIdx(bond_idx)
+            if bond.GetBeginAtomIdx() in template_idxs and bond.GetEndAtomIdx() in template_idxs:
+                double_bonds_covered.add(bond_idx)
+
+        missing_bonds -= double_bonds_covered
+
+    return template_idxs
+
 def get_atom_smarts(
     atom: Chem.Atom,
     degree: bool = True,
@@ -231,7 +296,8 @@ def get_atom_smarts(
     formal_charge: bool = True,
     in_ring: bool = True,
     heteroneighbors: bool = True,
-    atom_map_num: bool = True
+    atom_map_num: bool = True,
+    chirality: bool = False,
     ) -> str:
     '''
     Returns SMARTS pattern representing the atom including the
@@ -280,6 +346,13 @@ def get_atom_smarts(
 
     if hydgrogens:
         qualifiers.append(f"H{atom.GetTotalNumHs()}")
+
+    if chirality:
+        chiral_tag = atom.GetChiralTag()
+        if chiral_tag == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW:
+            qualifiers.append("@@")
+        elif chiral_tag == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW:
+            qualifiers.append("@")
 
     if formal_charge:
         formal_charge_value = atom.GetFormalCharge()

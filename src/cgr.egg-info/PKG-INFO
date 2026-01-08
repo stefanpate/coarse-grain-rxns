@@ -27,6 +27,7 @@ Requires-Dist: pyarrow>=19.0.1
 Requires-Dist: pydantic>=2.10.6
 Requires-Dist: rdchiral>=1.1.0
 Requires-Dist: rdkit>=2024.9.6
+Requires-Dist: rxnmapper>=0.4.2
 Requires-Dist: scipy>=1.15.2
 Requires-Dist: torcheval>=0.0.7
 Requires-Dist: tqdm>=4.67.1
