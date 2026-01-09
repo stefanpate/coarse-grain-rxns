@@ -41,11 +41,10 @@
 		"expected": ["CCCC[C@H](C)Br.I"],
 		"description": "Testing chiral transformations with chiral molecules: Reaction expects tetrahedral center: ...that will be preserved: SN2 with retention of a tetrahedral center"
 	},
-
 	{
 		"smarts": "n/a",
-		"smiles": "OC(=O)[C@H](C)O",
-		"expected": ["OC(=O)[C@@H](C)O"],
+		"smiles": "C[C@H](O)C(=O)O",
+		"expected": ["C[C@@H](O)C(=O)O"],
 		"description": "Stereoinversion only"
 	},
 	{

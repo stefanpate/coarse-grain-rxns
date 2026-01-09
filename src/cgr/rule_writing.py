@@ -24,9 +24,12 @@ def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]
         Reaction template (SMARTS)    
     '''
     lhs, rhs = [[Chem.MolFromSmiles(s) for s in side.split('.')] for side in rxn.split('>>')]
-    rhs = [[rmol, set(), set()] for rmol in rhs] # Initialize rhs
+    super_r_incl_aidxs = [set() for _ in rhs]
+    super_r_connecting_aidxs = [set() for _ in rhs]
 
-    ltemplate = []
+    # Assemble anonymous connecting atoms and ensure lhs and rhs cover same amns
+    super_l_incl_aidxs = []
+    super_l_connecting_aidxs = []
     for lmol, l_incl_aidxs, rc in zip(lhs, atoms_to_include, reaction_center):
         rc = set(rc)
         l_incl_aidxs = set(l_incl_aidxs) - rc # Ensure rc atoms not double counted in incl_aidxs
@@ -50,19 +53,27 @@ def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]
         l_incl_aidxs = l_incl_aidxs | rc # Now unify rc atoms and incl atoms
         incl_amns = [lmol.GetAtomWithIdx(idx).GetAtomMapNum() for idx in l_incl_aidxs]
 
-        # Collect rhs aidxs corresponding to lhs aidxs
-        for i, elt in enumerate(rhs):
-            rmol = elt[0]
-            elt[1] = elt[1].union(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in incl_amns]))
-            elt[2] = elt[2].union(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in connecting_amns]))
+        super_l_incl_aidxs.append(l_incl_aidxs)
+        super_l_connecting_aidxs.append(l_connecting_aidxs)
 
-        # Construct lhs template
+        # Collect rhs aidxs corresponding to lhs aidxs
+        for rmol, r_incl_aidxs, r_connecting_aidxs in zip(rhs, super_r_incl_aidxs, super_r_connecting_aidxs):
+            r_incl_aidxs.update(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in incl_amns]))
+            r_connecting_aidxs.update(set([atom.GetIdx() for atom in rmol.GetAtoms() if atom.GetAtomMapNum() in connecting_amns]))
+
+    # Ensure stereo centers and double bonds with stereo are fully included
+    if include_stereo:
+        super_l_incl_aidxs, super_r_incl_aidxs = _add_stereo_match_amns(lhs, rhs, super_l_incl_aidxs, super_r_incl_aidxs)
+
+    # Construct lhs template
+    ltemplate = []
+    for lmol, l_incl_aidxs, l_connecting_aidxs in zip(lhs, super_l_incl_aidxs, super_l_connecting_aidxs):
         lsma = get_mol_template(lmol, l_incl_aidxs, l_connecting_aidxs, include_stereo=include_stereo)
         ltemplate.append(lsma)
 
     # Construct rhs template
     rtemplate = []
-    for rmol, r_incl_aidxs, r_connecting_aidxs in rhs:
+    for rmol, r_incl_aidxs, r_connecting_aidxs in zip(rhs, super_r_incl_aidxs, super_r_connecting_aidxs):
         rsma = get_mol_template(rmol, r_incl_aidxs, r_connecting_aidxs, include_stereo=include_stereo)
         rtemplate.append(rsma)
     
@@ -187,8 +198,6 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int], i
     : str
         SMARTS pattern for the molecule
     '''
-    if include_stereo:
-        incl_aidxs = _add_stereo_idxs(mol, incl_aidxs)
         
     unanon_mol = deepcopy(mol)
     amn_to_aidx = {}
@@ -207,7 +216,7 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int], i
     
     sma = Chem.MolFragmentToSmarts(mol, atomsToUse=incl_aidxs | cxn_aidxs)
     sma = re.sub(r'\[#0H?\d?\+?', '[*', sma) # Wildcard atoms
-    sma = re.split(r'(\[#\d{1,3}H?\d?\+?:\d{1,3}\])', sma) # Split on atom patterns
+    sma = re.split(r'(\[#\d{1,3}@{0,2}H?\d?\+?:\d{1,3}\])', sma) # Split on atom patterns
     
     tmp = []
     for i, elt in enumerate(sma):
@@ -216,7 +225,7 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int], i
         
         if i % 2 == 1: # Atomic patts
             amn = int(elt.strip('[]').split(':')[-1]) # Hard brackets will return from atomic patt replacements
-            repl = get_atom_smarts(unanon_mol.GetAtomWithIdx(amn_to_aidx[amn]))
+            repl = get_atom_smarts(unanon_mol.GetAtomWithIdx(amn_to_aidx[amn]), chirality=include_stereo)
             tmp.append(repl) # Replace with the SMARTS for the atom
         else: # Bond patts
             tmp.append(elt) # Hard brackets will return from atomic patt replacements
@@ -224,6 +233,75 @@ def get_mol_template(mol: Chem.Mol, incl_aidxs: set[int], cxn_aidxs: set[int], i
     sma = "".join(tmp) # Join back together
 
     return sma
+
+def _add_stereo_match_amns(lhs_mols: list[Chem.Mol], rhs_mol: list[Chem.Mol], super_l_aidxs: list[set[int]], super_r_aidxs: list[set[int]]) -> set[int]:
+
+    amn_to_l_midx_aidx = {}
+    for midx, lmol in enumerate(lhs_mols):
+        for atom in lmol.GetAtoms():
+            amn_to_l_midx_aidx[atom.GetAtomMapNum()] = (midx, atom.GetIdx())
+
+    amn_to_r_midx_aidx = {}
+    for midx, rmol in enumerate(rhs_mol):
+        for atom in rmol.GetAtoms():
+            amn_to_r_midx_aidx[atom.GetAtomMapNum()] = (midx, atom.GetIdx())
+
+    tmp = []
+    for lmol, l_aidxs in zip(lhs_mols, super_l_aidxs):
+        tmp.append(_add_stereo_idxs(lmol, l_aidxs))
+    super_l_aidxs = tmp
+
+    tmp = []
+    for rmol, r_aidxs in zip(rhs_mol, super_r_aidxs):
+        tmp.append(_add_stereo_idxs(rmol, r_aidxs))
+    super_r_aidxs = tmp
+
+    l_amns_covered = set()
+    r_amns_covered = set()
+    for lmol, l_aidxs in zip(lhs_mols, super_l_aidxs):
+        l_amns_covered = l_amns_covered.union(set([lmol.GetAtomWithIdx(idx).GetAtomMapNum() for idx in l_aidxs]))
+    for rmol, r_aidxs in zip(rhs_mol, super_r_aidxs):
+        r_amns_covered = r_amns_covered.union(set([rmol.GetAtomWithIdx(idx).GetAtomMapNum() for idx in r_aidxs]))
+
+    while l_amns_covered ^ r_amns_covered:
+        missing_l_amns = r_amns_covered - l_amns_covered
+        if missing_l_amns:
+            # Add missing amns to lhs
+            for amn in missing_l_amns:
+                midx, aidx = amn_to_l_midx_aidx[amn]
+                super_l_aidxs[midx].add(aidx)
+
+            # Check stereo after adding missing amns
+            tmp = []
+            for lmol, l_aidxs_covered in zip(lhs_mols, super_l_aidxs):
+                tmp.append(_add_stereo_idxs(lmol, l_aidxs_covered))
+            super_l_aidxs = tmp
+
+            l_amns_covered = set()
+            for lmol, l_aidxs_covered in zip(lhs_mols, super_l_aidxs):
+                for aidxs in l_aidxs_covered:
+                    l_amns_covered.add(lmol.GetAtomWithIdx(aidxs).GetAtomMapNum())
+          
+        missing_r_amns = l_amns_covered - r_amns_covered
+        if missing_r_amns:
+
+            # Add missing amns to rhs
+            for amn in missing_r_amns:
+                midx, aidx = amn_to_r_midx_aidx[amn]
+                super_r_aidxs[midx].add(aidx)
+            
+            # Check stereo after adding missing amns
+            tmp = []
+            for rmol, r_aidxs_covered in zip(rhs_mol, super_r_aidxs):
+                tmp.append(_add_stereo_idxs(rmol, r_aidxs_covered))
+            super_r_aidxs = tmp
+
+            r_amns_covered = set()
+            for rmol, r_aidxs_covered in zip(rhs_mol, super_r_aidxs):
+                for aidxs in r_aidxs_covered:
+                    r_amns_covered.add(rmol.GetAtomWithIdx(aidxs).GetAtomMapNum())
+
+    return super_l_aidxs, super_r_aidxs
 
 def _add_stereo_idxs(mol: Chem.Mol, template_idxs: set[int]) -> set[int]:
     '''
