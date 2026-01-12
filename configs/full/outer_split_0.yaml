@@ -1,7 +1,7 @@
 data:
   inner_splitter: 1234
   outer_split_idx: 0
-  outer_splitter: sklearn.model_selection.GroupKFold
+  outer_splitter: 5
   split_seed: 1234
   split_strategy: random_rule_split
 model:
