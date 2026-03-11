@@ -3,6 +3,8 @@ defaults:
   - _self_
 
 src_file: distilled_mech_reactions.parquet
+cutoff_date: null
+pub_dates_file: rxn_pub_dates.parquet
 
 hydra:
   run:

@@ -4,6 +4,9 @@ defaults:
 
 src_file: mapped_known_reactions_x_rc_plus_0_rules.parquet
 R: 1
+cutoff_date: null
+pub_dates_file: rxn_pub_dates.parquet
+rc_plus_0_rules_file: rc_plus_0_rules.csv
 
 hydra:
   run:

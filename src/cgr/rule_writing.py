@@ -3,6 +3,7 @@ from typing import Iterable
 import networkx as nx
 import re
 from copy import deepcopy
+import pandas as pd
 
 def extract_reaction_template(rxn: str, atoms_to_include: Iterable[Iterable[int]], reaction_center: Iterable[Iterable[int]], include_stereo: bool = False) -> str:
     '''
@@ -460,6 +461,38 @@ def get_atom_smarts(
         atomic_patt += f":{atom.GetAtomMapNum()}"
 
     return f"[{atomic_patt}]"
+
+def filter_by_pub_date(pub_dates_df: pd.DataFrame, rxn_df: pd.DataFrame, cutoff_date: int) -> pd.DataFrame:
+    '''
+    Filters a reaction dataframe to only include reactions published before a cutoff year.
+
+    Args
+    ----
+    pub_dates_df : pd.DataFrame
+        DataFrame from rxn_pub_dates.parquet with columns 'id' and 'publication_dates' (list[int]).
+    rxn_df : pd.DataFrame
+        DataFrame with at least a 'rxn_id' column.
+    cutoff_date : int
+        Cutoff year. Only reactions whose earliest publication date is strictly
+        less than this value are kept.
+
+    Returns
+    -------
+    pd.DataFrame
+        Filtered copy of rxn_df containing only reactions with a known publication
+        date strictly before cutoff_date. Reactions with no publication date are excluded.
+    '''
+    earliest = (
+        pub_dates_df[['id', 'publication_dates']]
+        .explode('publication_dates')
+        .dropna(subset=['publication_dates'])
+        .groupby('id')['publication_dates']
+        .min()
+        .rename('earliest_pub_date')
+    )
+    merged = rxn_df.merge(earliest, left_on='rxn_id', right_index=True, how='inner')
+    filtered = merged.loc[merged['earliest_pub_date'] < cutoff_date].drop(columns='earliest_pub_date')
+    return filtered
 
 if __name__ == '__main__':
     from pathlib import Path

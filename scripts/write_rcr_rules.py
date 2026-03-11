@@ -1,6 +1,6 @@
 import hydra
 from omegaconf import DictConfig
-from cgr.rule_writing import extract_reaction_template
+from cgr.rule_writing import extract_reaction_template, filter_by_pub_date
 from cgr.rxn_analysis import get_rc_r_hop_aidxs
 from pathlib import Path
 import pandas as pd
@@ -14,12 +14,23 @@ log = logging.getLogger(__name__)
 
 @hydra.main(version_base=None, config_path='../configs', config_name='write_rcr_rules')
 def main(cfg: DictConfig):
-    if cfg.R == 0:
-        return
-
     min_mapped = pd.read_parquet(
         Path(cfg.filepaths.raw_data) / cfg.src_file
     )
+
+    if cfg.cutoff_date is not None:
+        pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_dates_file)
+        min_mapped = filter_by_pub_date(pub_dates, min_mapped, cfg.cutoff_date)
+
+    suffix = f"_before_{cfg.cutoff_date}" if cfg.cutoff_date is not None else ""
+
+    if cfg.R == 0:
+        rc_plus_0 = pd.read_csv(Path(cfg.filepaths.rules) / cfg.rc_plus_0_rules_file)
+        rc_plus_0 = rc_plus_0[rc_plus_0['id'].isin(min_mapped['rule_id'])]
+        rc_plus_0 = rc_plus_0.reset_index(drop=True)
+        rc_plus_0['id'] = rc_plus_0.index
+        rc_plus_0.to_csv(f"rc_plus_0_rules{suffix}.csv", sep=',', index=False)
+        return
 
     templates = {}
     for _, row in min_mapped.iterrows():
@@ -32,11 +43,11 @@ def main(cfg: DictConfig):
         except Exception as e:
             log.info(f"Error extracting template for {row["rxn_id"]}: {e}")
             continue
-        
+
         templates[template] = row["rule_id"]
 
     df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-    df.to_csv(f"rc_plus_{cfg.R}_rules.csv", sep=',', index=False)
+    df.to_csv(f"rc_plus_{cfg.R}_rules{suffix}.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()

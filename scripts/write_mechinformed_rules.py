@@ -1,6 +1,6 @@
 import hydra
 from omegaconf import DictConfig
-from cgr.rule_writing import extract_reaction_template
+from cgr.rule_writing import extract_reaction_template, filter_by_pub_date
 from pathlib import Path
 import pandas as pd
 from ergochemics.mapping import rc_to_nest
@@ -16,6 +16,10 @@ def main(cfg: DictConfig):
         Path(cfg.filepaths.raw_data) / cfg.src_file
     )
 
+    if cfg.cutoff_date is not None:
+        pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_dates_file)
+        distilled_mech = filter_by_pub_date(pub_dates, distilled_mech, cfg.cutoff_date)
+
     templates = defaultdict(list)
     for _, row in distilled_mech.iterrows():
         rc = rc_to_nest(row['reaction_center'])
@@ -30,7 +34,8 @@ def main(cfg: DictConfig):
         tmp.append((i, template, list(entries), list(mechs)))
 
     df = pd.DataFrame(tmp, columns=["id", "smarts", "entry_id", "mechanism_id"])
-    df.to_csv("mechinformed_rules.csv", sep=',', index=False)
+    suffix = f"_before_{cfg.cutoff_date}" if cfg.cutoff_date is not None else ""
+    df.to_csv(f"mechinformed_rules{suffix}.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
