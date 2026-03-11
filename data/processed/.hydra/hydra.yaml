@@ -114,12 +114,12 @@ hydra:
     task:
     - cutoff_date=2015
   job:
-    name: write_mechinformed_rules
+    name: filter_imt_by_date
     chdir: true
     override_dirname: cutoff_date=2015
     id: ???
     num: ???
-    config_name: write_mechinformed_rules
+    config_name: filter_imt_by_date
     env_set: {}
     env_copy: []
     config:

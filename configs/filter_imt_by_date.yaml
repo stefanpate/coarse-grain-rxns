@@ -2,6 +2,9 @@ defaults:
   - filepaths: filepaths
   - _self_
 
+src_file: mapped_known_reactions_x_rc_plus_0_rules.parquet
+rc_plus_0_rules_file: rc_plus_0_rules.csv
+imt_rules_file: imt_rules.csv
 cutoff_date: null
 pub_dates_file: rxn_pub_dates.parquet
 

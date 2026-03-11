@@ -6,6 +6,7 @@ import numpy as np
 from ergochemics.mapping import rc_to_nest
 import logging
 from cgr.ml import sep_aidx_to_bin_label, scrub_anonymous_template_atoms
+from cgr.rule_writing import filter_by_pub_date
 from tqdm import tqdm
 import rdkit
 from rdkit import Chem
@@ -51,6 +52,11 @@ def main(cfg: DictConfig):
     min_mapped = pd.read_parquet(
         Path(cfg.filepaths.raw_data) / cfg.filepaths.rc_plus_0_mapped_rxns
     )
+
+    if cfg.cutoff_date is not None:
+        pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_dates_file)
+        min_mapped = filter_by_pub_date(pub_dates, min_mapped, cfg.cutoff_date)
+
     df = pd.read_parquet(
         Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
@@ -84,8 +90,9 @@ def main(cfg: DictConfig):
         for i, tpl in enumerate(rdchiral_templates.keys())
     ]
     template_df = pd.DataFrame(template_data)
+    suffix = f"_before_{cfg.cutoff_date}" if cfg.cutoff_date is not None else ""
     template_df.to_csv(
-        "rdchiral_rules.csv",
+        f"rdchiral_rules{suffix}.csv",
         index=False
     )
 
