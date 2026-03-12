@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/530134678033166621/7b5a917f178b48f79784b0ec4b78a514/artifacts
+end_time: 1773330281081
+entry_point_name: ''
+experiment_id: '530134678033166621'
+lifecycle_stage: active
+run_id: 7b5a917f178b48f79784b0ec4b78a514
+run_name: upbeat-hen-620
+run_uuid: 7b5a917f178b48f79784b0ec4b78a514
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773330091417
+status: 3
+tags: []
+user_id: stef

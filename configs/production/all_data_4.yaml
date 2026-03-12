@@ -1,0 +1,21 @@
+data:
+  outer_split_idx: 4
+  training_set: all_data
+model:
+  ckpt: 823268239766567171/361eea2700cb429a9a4a2dc6f192d098/artifacts/epoch=4-step=540/epoch=4-step=540.ckpt
+  featurizer_mode: PROD_DIFF
+  mp_d_h: 293
+  mp_depth: 4
+  pred_head_d_hs:
+  - 138
+  - 167
+  - 196
+  pred_head_name: ffn
+training:
+  batch_size: 113
+  final_lr: 0.001
+  init_lr: 0.0001
+  max_epochs: 5
+  max_lr: 0.0001
+  pw_scl: 0.2727668128480795
+  warmup_epochs: 2

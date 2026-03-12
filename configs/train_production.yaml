@@ -8,6 +8,8 @@ defaults:
 training: ${full.training}
 data: ${full.data}
 model: ${full.model}
+cutoff_date: null
+pub_dates_file: rxn_pub_dates.parquet
 
 hydra:
   run:

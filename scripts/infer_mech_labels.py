@@ -76,7 +76,7 @@ def main(cfg: DictConfig):
     )
 
     # Save
-    pred_df.to_parquet(Path(cfg.filepaths.processed_data) / "mech_probas" / f"{cfg.data.outer_split_idx}.parquet", index=False)
+    pred_df.to_parquet(Path(cfg.filepaths.processed_data) / "mech_probas" / f"{cfg.data.training_set}_{cfg.data.outer_split_idx}.parquet", index=False)
 
 if __name__ == "__main__":
     main()

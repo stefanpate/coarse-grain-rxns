@@ -6,11 +6,10 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 from pathlib import Path
 import pandas as pd
-import numpy as np
-from rdkit import Chem
 from torch.utils.data import DataLoader
 import logging
 from ergochemics.mapping import rc_to_nest
+from cgr.rule_writing import filter_by_pub_date
 from cgr.ml import (
     GNN,
     FFNPredictor,
@@ -30,6 +29,10 @@ def main(cfg: DictConfig):
     df = pd.read_parquet(
         Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
+
+    if cfg.cutoff_date is not None:
+        pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_dates_file)
+        df = filter_by_pub_date(pub_dates, df, cfg.cutoff_date)
 
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
@@ -62,7 +65,7 @@ def main(cfg: DictConfig):
 
     # Logging
     logger = MLFlowLogger(
-        experiment_name="production",
+        experiment_name="production" if cfg.cutoff_date is None else f"before_{cfg.cutoff_date}",
         tracking_uri="file:" + cfg.filepaths.mlruns,
         log_model=True,
     )
