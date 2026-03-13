@@ -1,6 +1,6 @@
 defaults:
   - filepaths: filepaths
-  - production: before_2020_0
+  - production: before_2015_0
   - override hydra/job_logging: custom
   - _self_
 
@@ -17,4 +17,4 @@ hydra:
     dir: ${filepaths.artifacts}/pred_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
   sweeper:
     params:
-      production: before_2020_0,before_2020_1,before_2020_2,before_2020_3,before_2020_4
+      production: before_2015_0,before_2015_1,before_2015_2,before_2015_3,before_2015_4
