@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/530134678033166621/a450a309f34a45999eb4d0498ef80d17/artifacts
+end_time: 1773357521147
+entry_point_name: ''
+experiment_id: '530134678033166621'
+lifecycle_stage: active
+run_id: a450a309f34a45999eb4d0498ef80d17
+run_name: bittersweet-colt-864
+run_uuid: a450a309f34a45999eb4d0498ef80d17
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773357359767
+status: 3
+tags: []
+user_id: stef

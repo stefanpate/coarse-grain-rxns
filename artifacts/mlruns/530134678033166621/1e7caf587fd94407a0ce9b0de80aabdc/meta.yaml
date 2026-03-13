@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/530134678033166621/1e7caf587fd94407a0ce9b0de80aabdc/artifacts
+end_time: 1773357709123
+entry_point_name: ''
+experiment_id: '530134678033166621'
+lifecycle_stage: active
+run_id: 1e7caf587fd94407a0ce9b0de80aabdc
+run_name: crawling-vole-372
+run_uuid: 1e7caf587fd94407a0ce9b0de80aabdc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773357557720
+status: 3
+tags: []
+user_id: stef

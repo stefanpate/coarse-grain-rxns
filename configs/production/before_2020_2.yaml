@@ -1,0 +1,20 @@
+data:
+  outer_split_idx: 2
+  training_set: before_2020
+model:
+  ckpt: 650430769901274523/451d139cf8274e7097d3dd1a77f2a6f8/artifacts/epoch=5-step=504/epoch=5-step=504.ckpt
+  featurizer_mode: PROD_DIFF
+  mp_d_h: 235
+  mp_depth: 4
+  pred_head_d_hs:
+  - 187
+  - 155
+  pred_head_name: ffn
+training:
+  batch_size: 102
+  final_lr: 0.001
+  init_lr: 0.0001
+  max_epochs: 6
+  max_lr: 0.0001
+  pw_scl: 0.13062327097080317
+  warmup_epochs: 2

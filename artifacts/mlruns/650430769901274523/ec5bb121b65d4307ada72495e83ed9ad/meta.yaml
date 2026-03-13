@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/650430769901274523/ec5bb121b65d4307ada72495e83ed9ad/artifacts
+end_time: 1773355349824
+entry_point_name: ''
+experiment_id: '650430769901274523'
+lifecycle_stage: active
+run_id: ec5bb121b65d4307ada72495e83ed9ad
+run_name: rebellious-colt-530
+run_uuid: ec5bb121b65d4307ada72495e83ed9ad
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773355169948
+status: 3
+tags: []
+user_id: stef

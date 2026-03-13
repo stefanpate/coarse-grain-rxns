@@ -462,7 +462,7 @@ def get_atom_smarts(
 
     return f"[{atomic_patt}]"
 
-def filter_by_pub_date(pub_dates_df: pd.DataFrame, rxn_df: pd.DataFrame, cutoff_date: int) -> pd.DataFrame:
+def filter_by_pub_date(pub_dates_df: pd.DataFrame, rxn_df: pd.DataFrame, cutoff_date: int, mode: str = "before") -> pd.DataFrame:
     '''
     Filters a reaction dataframe to only include reactions published before a cutoff year.
 
@@ -475,6 +475,8 @@ def filter_by_pub_date(pub_dates_df: pd.DataFrame, rxn_df: pd.DataFrame, cutoff_
     cutoff_date : int
         Cutoff year. Only reactions whose earliest publication date is strictly
         less than this value are kept.
+    mode : str
+        Whether to filter reactions published "before" or "after" the cutoff date. Default is "before".
 
     Returns
     -------
@@ -491,7 +493,12 @@ def filter_by_pub_date(pub_dates_df: pd.DataFrame, rxn_df: pd.DataFrame, cutoff_
         .rename('earliest_pub_date')
     )
     merged = rxn_df.merge(earliest, left_on='rxn_id', right_index=True, how='inner')
-    filtered = merged.loc[merged['earliest_pub_date'] < cutoff_date].drop(columns='earliest_pub_date')
+    if mode == "before":
+        filtered = merged.loc[merged['earliest_pub_date'] < cutoff_date].drop(columns='earliest_pub_date')
+    elif mode == "after":
+        filtered = merged.loc[merged['earliest_pub_date'] >= cutoff_date].drop(columns='earliest_pub_date')
+    else:
+        raise ValueError(f"Invalid mode: {mode}. Use 'before' or 'after'.")
     return filtered
 
 if __name__ == '__main__':

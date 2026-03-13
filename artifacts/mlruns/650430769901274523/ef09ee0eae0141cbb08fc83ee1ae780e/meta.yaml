@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/650430769901274523/ef09ee0eae0141cbb08fc83ee1ae780e/artifacts
+end_time: 1773355126728
+entry_point_name: ''
+experiment_id: '650430769901274523'
+lifecycle_stage: active
+run_id: ef09ee0eae0141cbb08fc83ee1ae780e
+run_name: unleashed-sloth-887
+run_uuid: ef09ee0eae0141cbb08fc83ee1ae780e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773354925027
+status: 3
+tags: []
+user_id: stef

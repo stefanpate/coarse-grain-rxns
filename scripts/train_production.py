@@ -16,7 +16,8 @@ from cgr.ml import (
     LinearPredictor,
     collate_batch,
     sep_aidx_to_bin_label,
-    calc_bce_pos_weight
+    calc_bce_pos_weight,
+    scrub_anonymous_template_atoms
 )
 
 current_dir = Path(__file__).parent.parent.resolve()
@@ -32,11 +33,12 @@ def main(cfg: DictConfig):
 
     if cfg.cutoff_date is not None:
         pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_dates_file)
-        df = filter_by_pub_date(pub_dates, df, cfg.cutoff_date)
+        df = filter_by_pub_date(pub_dates, df, cfg.cutoff_date, mode="before")
 
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
+    df['template_aidxs'] = df.apply(lambda x: scrub_anonymous_template_atoms(x.template_aidxs, x.rule), axis=1) # Scrub anonymous atoms from aidxs
     df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.template_aidxs), axis=1) # Convert aidxs to binary labels for block mol
     ys = [elt[0] for elt in df["binary_label"]]
     X, y = zip(*[(data.ReactionDatapoint.from_smi(smi), y) for smi, y in zip(smis, ys)])
