@@ -10,9 +10,9 @@ rc_plus_0_rules_file: rc_plus_0_rules.csv
 
 hydra:
   run:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.rules_dir}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.rules_dir}
     subdir: .

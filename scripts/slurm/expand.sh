@@ -8,7 +8,7 @@
 #SBATCH --job-name="expand"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
-#SBATCH --array=0-3
+#SBATCH --array=0-12
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=stefan.pate@northwestern.edu
@@ -16,24 +16,25 @@
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/expand.py
 rules_sweep=(
-    # "rdchiral_rules_w_coreactants"
-    # "imt_rules_w_coreactants"
-    # "mechinformed_rules_w_coreactants"
-    "mechinferred_dt_019_rules_w_coreactants" 
-    "mechinferred_dt_039_rules_w_coreactants"
-    "mechinferred_dt_112_rules_w_coreactants"
-    "mechinferred_dt_224_rules_w_coreactants"
-    # "mechinferred_dt_956_rules_w_coreactants"
-    # "rc_plus_0_rules_w_coreactants" 
-    # "rc_plus_1_rules_w_coreactants"
-    # "rc_plus_2_rules_w_coreactants"
-    # "rc_plus_3_rules_w_coreactants"
-    # "rc_plus_4_rules_w_coreactants"
+    rc_plus_0_rules_before_2015_w_coreactants
+    rc_plus_1_rules_before_2015_w_coreactants
+    rc_plus_2_rules_before_2015_w_coreactants
+    rc_plus_3_rules_before_2015_w_coreactants
+    rc_plus_4_rules_before_2015_w_coreactants
+    mechinferred_dt_005_rules_before_2015_w_coreactants
+    mechinferred_dt_009_rules_before_2015_w_coreactants
+    mechinferred_dt_021_rules_before_2015_w_coreactants
+    mechinferred_dt_069_rules_before_2015_w_coreactants
+    mechinferred_dt_932_rules_before_2015_w_coreactants
+    mechinformed_rules_before_2015_w_coreactants
+    imt_rules_before_2015_w_coreactants
 )
+starters=after_2015_cpds
+generations=1
 processes=50 # MAKE SURE THIS MATCHES -n above
 
 # Commands
 ulimit -c 0
 module purge
 source /home/spn1560/coarse-grain-rxns/.venv/bin/activate
-python $script processes=$processes rules=${rules_sweep[$SLURM_ARRAY_TASK_ID]}
+python $script starters=$starters generations=$generations processes=$processes rules=${rules_sweep[$SLURM_ARRAY_TASK_ID]}

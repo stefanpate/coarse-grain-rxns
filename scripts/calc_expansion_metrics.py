@@ -132,9 +132,9 @@ def rxn_proc_initializer(cfg: DictConfig, _starters: dict[str, str]):
 
     starters = _starters
 
-    print("Loading mapped rxns ", Path(cfg.filepaths.raw_data) / cfg.mapped_rxns)
+    print("Loading mapped rxns ", Path(cfg.filepaths.mappings) / cfg.mapped_rxns)
     mapped_rxns = pd.read_parquet(
-        Path(cfg.filepaths.raw_data) / cfg.mapped_rxns
+        Path(cfg.filepaths.mappings) / cfg.mapped_rxns
     )
 
     print("Instantiating fingerprinter and dxgb model")

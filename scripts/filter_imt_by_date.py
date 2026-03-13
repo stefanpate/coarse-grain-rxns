@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 @hydra.main(version_base=None, config_path='../configs', config_name='filter_imt_by_date')
 def main(cfg: DictConfig):
     min_mapped = pd.read_parquet(
-        Path(cfg.filepaths.raw_data) / cfg.src_file
+        Path(cfg.filepaths.mappings) / cfg.src_file
     )
 
     if cfg.cutoff_date is not None:
@@ -19,14 +19,14 @@ def main(cfg: DictConfig):
         min_mapped = filter_by_pub_date(pub_dates, min_mapped, cfg.cutoff_date)
 
     # Map filtered rule_ids to rc_plus_0 ni_ids
-    rc_plus_0 = pd.read_csv(Path(cfg.filepaths.rules) / cfg.rc_plus_0_rules_file)
+    rc_plus_0 = pd.read_csv(Path(cfg.filepaths.input_rules) / cfg.rc_plus_0_rules_file)
     rc_plus_0 = rc_plus_0[rc_plus_0['id'].isin(min_mapped['rule_id'])]
     allowed_ni_ids = set()
     for ni_ids_str in rc_plus_0['ni_ids']:
         allowed_ni_ids.update(ast.literal_eval(ni_ids_str))
 
     # Filter imt_rules: keep if any ni_id's base (strip last _suffix) is in allowed set
-    imt = pd.read_csv(Path(cfg.filepaths.rules) / cfg.imt_rules_file)
+    imt = pd.read_csv(Path(cfg.filepaths.input_rules) / cfg.imt_rules_file)
     mask = imt['ni_ids'].apply(lambda x: any(
         '_'.join(ni_id.split('_')[:-1]) in allowed_ni_ids
         for ni_id in ast.literal_eval(x)

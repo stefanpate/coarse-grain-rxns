@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 def main(cfg: DictConfig):
     pk = Pickaxe(
         coreactant_list=Path(cfg.filepaths.coreactants) /  f"{cfg.coreactants}.tsv",
-        rule_list=Path(cfg.filepaths.processed_data) / f"{cfg.rules}.tsv",
+        rule_list=Path(cfg.filepaths.rules) / f"{cfg.rules}.tsv",
         errors=True,
         quiet=True,
         filter_after_final_gen=False,

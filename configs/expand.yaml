@@ -6,9 +6,9 @@ defaults:
 
 starters: 250728_benchmark_starters
 generations: 2
-rules: ???
+rules: mechinformed_rules_w_coreactants
 coreactants: metacyc_coreactants
-processes: ???
+processes: 50
 a_plus_b: True
 
 hydra:

@@ -8,6 +8,6 @@ pub_dates_file: rxn_pub_dates.parquet
 
 hydra:
   run:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.rules_dir}
   job:
     chdir: True

@@ -142,7 +142,7 @@ def get_coreactant_roles(reaction: str, unpaired_smi_to_role: dict[str, str], pa
 @hydra.main(version_base=None, config_path='../configs', config_name='add_coreactant_roles')
 def main(cfg: DictConfig):
     # Load data
-    mapped_rxns = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.mapped_rxns_fn)
+    mapped_rxns = pd.read_parquet(Path(cfg.filepaths.mappings) / cfg.mapped_rxns_fn)
 
     # Load coreactant lookups
     unpaired_smi_to_role = {}

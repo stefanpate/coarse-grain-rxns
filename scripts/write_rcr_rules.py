@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 @hydra.main(version_base=None, config_path='../configs', config_name='write_rcr_rules')
 def main(cfg: DictConfig):
     min_mapped = pd.read_parquet(
-        Path(cfg.filepaths.raw_data) / cfg.src_file
+        Path(cfg.filepaths.mappings) / cfg.src_file
     )
 
     if cfg.cutoff_date is not None:
@@ -25,7 +25,7 @@ def main(cfg: DictConfig):
     suffix = f"_before_{cfg.cutoff_date}" if cfg.cutoff_date is not None else ""
 
     if cfg.R == 0:
-        rc_plus_0 = pd.read_csv(Path(cfg.filepaths.rules) / cfg.rc_plus_0_rules_file)
+        rc_plus_0 = pd.read_csv(Path(cfg.filepaths.input_rules) / cfg.rc_plus_0_rules_file)
         rc_plus_0 = rc_plus_0[rc_plus_0['id'].isin(min_mapped['rule_id'])]
         rc_plus_0 = rc_plus_0.reset_index(drop=True)
         rc_plus_0['id'] = rc_plus_0.index

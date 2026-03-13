@@ -4,14 +4,15 @@ defaults:
 
 min_mapped: mapped_known_reactions_x_rc_plus_0_rules.parquet
 mech_probas_dir: ${filepaths.processed_data}/mech_probas
-# decision_thresholds: [0.2249877005815506, 0.1124938502907753, 0.03923610620200634, 0.02923610620200634]
-decision_thresholds: [0.019]
+decision_thresholds: [0.932, 0.069, 0.021, 0.009, 0.005]
+pub_date_file: rxn_pub_dates.parquet
+cutoff_date: null
 
 hydra:
   run:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.rules_dir}
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.processed_data}
+    dir: ${filepaths.rules_dir}
     subdir: .

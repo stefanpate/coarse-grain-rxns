@@ -7,24 +7,30 @@ import pandas as pd
 from ergochemics.mapping import rc_to_nest
 import logging
 from tqdm import tqdm
+from cgr.rule_writing import filter_by_pub_date
 
 log = logging.getLogger(__name__)
 
 @hydra.main(version_base=None, config_path='../configs', config_name='write_mechinferred_rules')
 def main(cfg: DictConfig):
 
-    log.info("Loading data...")
     # Load min mapped pathway reactions
+    log.info("Loading data...")
     min_mapped = pd.read_parquet(
-        Path(cfg.filepaths.raw_data) / cfg.min_mapped
+        Path(cfg.filepaths.mappings) / cfg.min_mapped
     )
+
+    if cfg.cutoff_date is not None:
+        pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_date_file)
+        min_mapped = filter_by_pub_date(pub_dates, min_mapped, cfg.cutoff_date, mode="before")
 
     min_mapped["rxn_id"] = min_mapped["rxn_id"]
     min_mapped["template_aidxs"] = min_mapped["template_aidxs"].apply(rc_to_nest)
 
     # Load predicted mech probas
+    pref = f"before_{cfg.cutoff_date}" if cfg.cutoff_date else "all_data"
     preds = []
-    for fn in (Path(cfg.mech_probas_dir)).glob("*.parquet"):
+    for fn in (Path(cfg.mech_probas_dir)).glob(f"{pref}*.parquet"):
         log.info(f"Loading: {fn}")
         preds.append(pd.read_parquet(fn))
 
@@ -53,7 +59,7 @@ def main(cfg: DictConfig):
             templates[template] = row["rule_id"]
 
         df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules.csv", sep=',', index=False)
+        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules_{pref}.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
