@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/741007712916749944/640ff2d3ec874cfb993566549fff99f9/artifacts
+end_time: 1773417638206
+entry_point_name: ''
+experiment_id: '741007712916749944'
+lifecycle_stage: active
+run_id: 640ff2d3ec874cfb993566549fff99f9
+run_name: honorable-snake-654
+run_uuid: 640ff2d3ec874cfb993566549fff99f9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773417426897
+status: 3
+tags: []
+user_id: stef

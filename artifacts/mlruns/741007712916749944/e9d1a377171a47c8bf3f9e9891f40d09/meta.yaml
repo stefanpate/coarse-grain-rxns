@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/741007712916749944/e9d1a377171a47c8bf3f9e9891f40d09/artifacts
+end_time: 1773417383940
+entry_point_name: ''
+experiment_id: '741007712916749944'
+lifecycle_stage: active
+run_id: e9d1a377171a47c8bf3f9e9891f40d09
+run_name: bustling-sheep-977
+run_uuid: e9d1a377171a47c8bf3f9e9891f40d09
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773417202584
+status: 3
+tags: []
+user_id: stef

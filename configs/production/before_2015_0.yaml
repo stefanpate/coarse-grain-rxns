@@ -2,7 +2,7 @@ data:
   outer_split_idx: 0
   training_set: before_2015
 model:
-  ckpt: 530134678033166621/d937304a5a5c4bf0bf87b2c4b230e943/artifacts/epoch=5-step=450/epoch=5-step=450.ckpt
+  ckpt: 741007712916749944/70db488705d64d73932a3add6c6e4a61/checkpoints/epoch=5-step=450.ckpt
   featurizer_mode: PROD_DIFF
   mp_d_h: 274
   mp_depth: 4
