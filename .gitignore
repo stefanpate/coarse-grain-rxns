@@ -1,5 +1,6 @@
 # Manual / large files
 configs/filepaths/
+data/processed/expansion_metrics/
 artifacts/250227_skeleton_proposal.txt
 scripts/nohup*
 **/hpo_conf
