@@ -1,0 +1,15 @@
+defaults:
+  - filepaths: filepaths
+  - override hydra/job_logging: custom
+  - _self_
+
+expansion: ???
+
+hydra:
+  run:
+    dir: ${filepaths.processed_data}/std_pickaxe_rxns
+  job:
+    chdir: True
+  sweep:
+    dir: ${filepaths.processed_data}/std_pickaxe_rxns
+    subdir: .
