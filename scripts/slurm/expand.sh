@@ -28,6 +28,7 @@ rules_sweep=(
     mechinferred_dt_932_rules_before_2015_w_coreactants
     mechinformed_rules_before_2015_w_coreactants
     imt_rules_before_2015_w_coreactants
+    rdchiral_rules_before_2015_w_coreactants
 )
 starters=after_2015_cpds
 generations=1
