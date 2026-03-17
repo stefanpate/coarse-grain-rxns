@@ -16,7 +16,7 @@ hydra:
         mapped_known_reactions_x_mechinferred_dt_005_rules_before_2015.parquet, mapped_known_reactions_x_mechinferred_dt_009_rules_before_2015.parquet,
         mapped_known_reactions_x_mechinferred_dt_021_rules_before_2015.parquet, mapped_known_reactions_x_mechinferred_dt_069_rules_before_2015.parquet,
         mapped_known_reactions_x_mechinferred_dt_932_rules_before_2015.parquet, mapped_known_reactions_x_mechinformed_rules_before_2015.parquet,
-        mapped_known_reactions_x_imt_rules_before_2015.parquet
+        mapped_known_reactions_x_imt_rules_before_2015.parquet, mapped_known_reactions_x_rdchiral_rules_before_2015.parquet
   help:
     app_name: ${hydra.job.name}
     header: '${hydra.help.app_name} is powered by Hydra.
@@ -136,12 +136,12 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/stef/cgr
+    cwd: /gpfs/home/spn1560/coarse-grain-rxns
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /home/stef/cgr/configs
+    - path: /gpfs/home/spn1560/coarse-grain-rxns/configs
       schema: file
       provider: main
     - path: ''
@@ -161,8 +161,8 @@ hydra:
       hydra/output: default
   verbose: false
 filepaths:
-  root: /home/stef/cgr
-  projects: /home/stef/quest_data/cgr
+  root: /home/spn1560/coarse-grain-rxns
+  projects: /projects/b1039/spn1560/coarse-grain-rxns
   data: ${.root}/data
   artifacts: ${.root}/artifacts
   configs: ${.root}/configs

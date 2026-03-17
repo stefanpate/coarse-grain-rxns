@@ -13,6 +13,7 @@ logs/
 data/processed/*reaction_metrics.parquet
 .vscode/
 **calibrated_model.pkl
+**/std_pickaxe_rxns
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

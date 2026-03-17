@@ -37,7 +37,8 @@ def main(cfg: DictConfig):
 
     rows = []
     failed_ct = 0
-    for v in pk.reactions.values():
+    logger.info(f"Standardizing reactions from {cfg.expansion} with {len(pk.reactions)} reactions.")
+    for i, v in enumerate(pk.reactions.values()):
         am_rxn = v["am_rxn"]
         try:
             std = std_rxn(am_rxn)
@@ -47,6 +48,9 @@ def main(cfg: DictConfig):
             continue
         rxn_id = hash_reaction(std)
         rows.append({"id": rxn_id, "am_rxn": am_rxn, "std_rxn": std})
+
+        if i % 1000 == 0:
+            logger.info(f"Standardized {i} reactions so far with {failed_ct} failures.")
 
     logger.info(f"Standardized {len(rows)} reactions with {failed_ct} failures.")
     stem = Path(cfg.expansion).stem

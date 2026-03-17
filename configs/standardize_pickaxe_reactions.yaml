@@ -7,9 +7,9 @@ expansion: ???
 
 hydra:
   run:
-    dir: ${filepaths.processed_data}/std_pickaxe_rxns
+    dir: ${filepaths.interim_data}/std_pickaxe_rxns
   job:
     chdir: True
   sweep:
-    dir: ${filepaths.processed_data}/std_pickaxe_rxns
+    dir: ${filepaths.interim_data}/std_pickaxe_rxns
     subdir: .
