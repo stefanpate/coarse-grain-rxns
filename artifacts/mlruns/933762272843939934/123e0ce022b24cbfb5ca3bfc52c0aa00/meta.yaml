@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/933762272843939934/123e0ce022b24cbfb5ca3bfc52c0aa00/artifacts
+end_time: 1773954373609
+entry_point_name: ''
+experiment_id: '933762272843939934'
+lifecycle_stage: active
+run_id: 123e0ce022b24cbfb5ca3bfc52c0aa00
+run_name: gifted-stag-923
+run_uuid: 123e0ce022b24cbfb5ca3bfc52c0aa00
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773954186275
+status: 3
+tags: []
+user_id: stef

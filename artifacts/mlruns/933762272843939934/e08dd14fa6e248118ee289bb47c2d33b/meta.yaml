@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/933762272843939934/e08dd14fa6e248118ee289bb47c2d33b/artifacts
+end_time: 1773954382335
+entry_point_name: ''
+experiment_id: '933762272843939934'
+lifecycle_stage: active
+run_id: e08dd14fa6e248118ee289bb47c2d33b
+run_name: welcoming-goose-256
+run_uuid: e08dd14fa6e248118ee289bb47c2d33b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773954199935
+status: 3
+tags: []
+user_id: stef

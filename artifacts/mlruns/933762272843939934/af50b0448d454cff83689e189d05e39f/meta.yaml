@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/933762272843939934/af50b0448d454cff83689e189d05e39f/artifacts
+end_time: 1773954192987
+entry_point_name: ''
+experiment_id: '933762272843939934'
+lifecycle_stage: active
+run_id: af50b0448d454cff83689e189d05e39f
+run_name: valuable-ant-887
+run_uuid: af50b0448d454cff83689e189d05e39f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773954122841
+status: 3
+tags: []
+user_id: stef

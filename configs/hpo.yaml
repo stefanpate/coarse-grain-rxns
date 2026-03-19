@@ -6,9 +6,9 @@ defaults:
   # - override hydra/launcher: quest_cpu
   - _self_
 
-n_trials: 1000
+n_trials: 100
 seed: 1234
-timeout: 36000
+timeout: 3600
 study_version: 0
 direct_mcsa_only: false # If true, restricts dataset to reactions that appear in MCSA
 objective: val_auprc

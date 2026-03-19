@@ -11,11 +11,11 @@ defaults:
 use_study: True # Do use hpo result
 study_version: 0
 objective: val_auprc
-study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
+direct_mcsa_only: False # If true, restricts dataset to reactions that appear in MCSA
+study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_direct_mcsa_only_${.direct_mcsa_only}_v${.study_version}"
 
 do_calibrate: False
 calibration_fraction: 0.15
-direct_mcsa_only: False # If true, restricts dataset to reactions that appear in MCSA
 experiment_name: "outer_splits_v3" # Determines location of output - model, preds, artifacts
 
 hydra:
