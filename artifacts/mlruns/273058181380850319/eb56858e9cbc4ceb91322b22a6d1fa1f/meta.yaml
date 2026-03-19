@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/273058181380850319/eb56858e9cbc4ceb91322b22a6d1fa1f/artifacts
+end_time: 1773945508851
+entry_point_name: ''
+experiment_id: '273058181380850319'
+lifecycle_stage: active
+run_id: eb56858e9cbc4ceb91322b22a6d1fa1f
+run_name: bright-pug-490
+run_uuid: eb56858e9cbc4ceb91322b22a6d1fa1f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773945502153
+status: 3
+tags: []
+user_id: stef

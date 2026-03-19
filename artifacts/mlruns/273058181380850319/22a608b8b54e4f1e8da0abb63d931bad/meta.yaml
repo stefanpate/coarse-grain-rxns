@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/273058181380850319/22a608b8b54e4f1e8da0abb63d931bad/artifacts
+end_time: 1773945500385
+entry_point_name: ''
+experiment_id: '273058181380850319'
+lifecycle_stage: active
+run_id: 22a608b8b54e4f1e8da0abb63d931bad
+run_name: hilarious-bat-254
+run_uuid: 22a608b8b54e4f1e8da0abb63d931bad
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773945494591
+status: 3
+tags: []
+user_id: stef

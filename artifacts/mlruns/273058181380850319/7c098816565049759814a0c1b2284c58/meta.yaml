@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/273058181380850319/7c098816565049759814a0c1b2284c58/artifacts
+end_time: 1773945517367
+entry_point_name: ''
+experiment_id: '273058181380850319'
+lifecycle_stage: active
+run_id: 7c098816565049759814a0c1b2284c58
+run_name: dapper-squirrel-641
+run_uuid: 7c098816565049759814a0c1b2284c58
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773945510595
+status: 3
+tags: []
+user_id: stef

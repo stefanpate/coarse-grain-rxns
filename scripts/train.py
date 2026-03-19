@@ -70,6 +70,13 @@ def main(cfg: DictConfig):
         Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
 
+    # Filter to direct MCSA reactions only if specified
+    if cfg.direct_mcsa_only:
+        mm = pd.read_parquet(
+            Path(cfg.filepaths.raw_data) / "distilled_mech_reactions.parquet"
+        )
+        df = df[df['rxn_id'].isin(mm['rxn_id'])].reset_index(drop=True)
+
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()

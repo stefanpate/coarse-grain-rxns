@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/273058181380850319/fad43b7347ca4b8f94731b2b477d1e4c/artifacts
+end_time: 1773944649958
+entry_point_name: ''
+experiment_id: '273058181380850319'
+lifecycle_stage: active
+run_id: fad43b7347ca4b8f94731b2b477d1e4c
+run_name: dapper-mouse-928
+run_uuid: fad43b7347ca4b8f94731b2b477d1e4c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773944642229
+status: 3
+tags: []
+user_id: stef

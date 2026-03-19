@@ -15,6 +15,7 @@ study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}
 
 do_calibrate: False
 calibration_fraction: 0.15
+direct_mcsa_only: False # If true, restricts dataset to reactions that appear in MCSA
 experiment_name: "outer_splits_v3" # Determines location of output - model, preds, artifacts
 
 hydra:
