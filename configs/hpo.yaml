@@ -3,16 +3,17 @@ defaults:
   - training: base
   - data: random_rule_split
   - override hydra/job_logging: custom
-  - override hydra/launcher: quest_cpu
+  # - override hydra/launcher: quest_cpu
   - _self_
 
 n_trials: 1000
 seed: 1234
 timeout: 36000
 study_version: 0
+direct_mcsa_only: false # If true, restricts dataset to reactions that appear in MCSA
 objective: val_auprc
 direction: maximize # maximize | minimize
-study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_v${.study_version}"
+study_name: "outer_split_${data.outer_split_idx}_strategy_${data.split_strategy}_obj_${.objective}_direct_mcsa_only_${.direct_mcsa_only}_v${.study_version}"
 
 hp_bounds:
   model:

@@ -121,6 +121,15 @@ def main(cfg: DictConfig):
     df = pd.read_parquet(
         Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
+
+    # Filter to direct MCSA reactions if specified
+    if cfg.direct_mcsa_only:
+        log.info("Filtering dataset to direct MCSA reactions only")
+        mm = pd.read_parquet(
+            Path(cfg.filepaths.raw_data) / "distilled_mech_reactions.parquet"
+        )
+        direct_rxn_ids = set(mm['rxn_id'])
+        df = df[df['rxn_id'].isin(direct_rxn_ids)].reset_index(drop=True)
     
     # Prep data
     df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
