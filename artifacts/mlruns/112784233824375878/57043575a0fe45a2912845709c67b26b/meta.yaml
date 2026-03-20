@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/112784233824375878/57043575a0fe45a2912845709c67b26b/artifacts
+end_time: 1773955723198
+entry_point_name: ''
+experiment_id: '112784233824375878'
+lifecycle_stage: active
+run_id: 57043575a0fe45a2912845709c67b26b
+run_name: upset-rook-632
+run_uuid: 57043575a0fe45a2912845709c67b26b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773955512749
+status: 3
+tags: []
+user_id: stef

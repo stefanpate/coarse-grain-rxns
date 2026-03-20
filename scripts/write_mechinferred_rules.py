@@ -28,7 +28,9 @@ def main(cfg: DictConfig):
     min_mapped["template_aidxs"] = min_mapped["template_aidxs"].apply(rc_to_nest)
 
     # Load predicted mech probas
-    pref = f"before_{cfg.cutoff_date}" if cfg.cutoff_date else "all_data"
+    pref = "direct_mcsa_only" if cfg.direct_mcsa_only else "all_data"
+    if cfg.cutoff_date is not None:
+        pref = f"before_{cfg.cutoff_date}_" + pref
     preds = []
     for fn in (Path(cfg.mech_probas_dir)).glob(f"{pref}*.parquet"):
         log.info(f"Loading: {fn}")

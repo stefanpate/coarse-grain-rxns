@@ -1,0 +1,20 @@
+data:
+  outer_split_idx: 0
+  training_set: before_2015_direct_mcsa_only
+model:
+  ckpt: 112784233824375878/83d2db392ef94362a2076584f88f928c/checkpoints/epoch=35-step=180.ckpt
+  featurizer_mode: PROD_DIFF
+  mp_d_h: 283
+  mp_depth: 3
+  pred_head_d_hs:
+  - 112
+  - 200
+  pred_head_name: ffn
+training:
+  batch_size: 114
+  final_lr: 0.001
+  init_lr: 0.0001
+  max_epochs: 36
+  max_lr: 0.0001
+  pw_scl: 0.7354339392438477
+  warmup_epochs: 2

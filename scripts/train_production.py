@@ -73,6 +73,13 @@ def main(cfg: DictConfig):
         Path(cfg.filepaths.mechinformed_mapped_rxns)
     )
 
+    # Filter to direct MCSA only if specified
+    if cfg.direct_mcsa_only:
+        mm = pd.read_parquet(
+            Path(cfg.filepaths.raw_data) / "distilled_mech_reactions.parquet"
+        )
+        df = df[df['rxn_id'].isin(mm['rxn_id'])]
+
     # Featurize
     featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_=cfg.model.featurizer_mode, atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
 
@@ -107,8 +114,11 @@ def main(cfg: DictConfig):
     )
 
     # Logging
+    exp_name = "production" if cfg.cutoff_date is None else f"before_{cfg.cutoff_date}"
+    if cfg.direct_mcsa_only:
+        exp_name += "_direct_mcsa_only"
     logger = MLFlowLogger(
-        experiment_name="production" if cfg.cutoff_date is None else f"before_{cfg.cutoff_date}",
+        experiment_name=exp_name,
         tracking_uri="file:" + cfg.filepaths.mlruns,
         log_model=True,
     )
@@ -124,9 +134,15 @@ def main(cfg: DictConfig):
         # Write production config for downstream inference
         best_ckpt = trainer.checkpoint_callback.best_model_path
         rel_ckpt = str(Path(best_ckpt).relative_to(cfg.filepaths.mlruns))
-        if cfg.cutoff_date is None:
+        if cfg.cutoff_date is None and cfg.direct_mcsa_only:
+            training_set = "direct_mcsa_only"
+            config_filename = f"direct_mcsa_only_{cfg.data.outer_split_idx}.yaml"
+        elif cfg.cutoff_date is None and not cfg.direct_mcsa_only:
             training_set = "all_data"
             config_filename = f"all_data_{cfg.data.outer_split_idx}.yaml"
+        elif cfg.cutoff_date is not None and cfg.direct_mcsa_only:
+            training_set = f"before_{cfg.cutoff_date}_direct_mcsa_only"
+            config_filename = f"before_{cfg.cutoff_date}_direct_mcsa_only_{cfg.data.outer_split_idx}.yaml"
         else:
             training_set = f"before_{cfg.cutoff_date}"
             config_filename = f"before_{cfg.cutoff_date}_{cfg.data.outer_split_idx}.yaml"

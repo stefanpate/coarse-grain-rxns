@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/112784233824375878/b7fdcbd8ba8d4c7aa4a84d58515e7197/artifacts
+end_time: 1773955718408
+entry_point_name: ''
+experiment_id: '112784233824375878'
+lifecycle_stage: active
+run_id: b7fdcbd8ba8d4c7aa4a84d58515e7197
+run_name: powerful-donkey-559
+run_uuid: b7fdcbd8ba8d4c7aa4a84d58515e7197
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773955530091
+status: 3
+tags: []
+user_id: stef

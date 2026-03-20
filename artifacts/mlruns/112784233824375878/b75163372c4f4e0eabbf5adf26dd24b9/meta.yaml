@@ -1,0 +1,15 @@
+artifact_uri: file:///home/stef/cgr/artifacts/mlruns/112784233824375878/b75163372c4f4e0eabbf5adf26dd24b9/artifacts
+end_time: 1773955660555
+entry_point_name: ''
+experiment_id: '112784233824375878'
+lifecycle_stage: active
+run_id: b75163372c4f4e0eabbf5adf26dd24b9
+run_name: treasured-moose-422
+run_uuid: b75163372c4f4e0eabbf5adf26dd24b9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773955500427
+status: 3
+tags: []
+user_id: stef
