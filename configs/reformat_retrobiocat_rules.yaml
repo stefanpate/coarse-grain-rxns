@@ -1,0 +1,12 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+src_file: retrobiocat_rules.yaml
+dst_file: retrobiocat_rules.csv
+
+hydra:
+  run:
+    dir: ${filepaths.rules}
+  job:
+    chdir: True
