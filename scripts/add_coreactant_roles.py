@@ -4,6 +4,7 @@ from itertools import product, combinations
 from collections import defaultdict
 import pandas as pd
 from pathlib import Path
+from rdkit.Chem import AllChem
 from tqdm import tqdm
 
 def do_clash(this: tuple[tuple[str, str], tuple[str, str]], other: tuple[tuple[str, str], tuple[str, str]]) -> bool:
@@ -141,6 +142,23 @@ def get_coreactant_roles(reaction: str, unpaired_smi_to_role: dict[str, str], pa
 
 @hydra.main(version_base=None, config_path='../configs', config_name='add_coreactant_roles')
 def main(cfg: DictConfig):
+    rule_set = Path(cfg.mapped_rxns_fn).stem.split('_x_')[-1]
+
+    # Retrobiocat rules don't carry coreactant info — every reactant/product gets "Any"
+    if rule_set == 'retrobiocat_rules':
+        rules = pd.read_csv(Path(cfg.filepaths.rules) / cfg.mapped_rxns_fn)
+        data = {'Name': [], 'Reactants': [], 'SMARTS': [], 'Products': []}
+        for _, row in rules.iterrows():
+            rxn = AllChem.ReactionFromSmarts(row['smarts'])
+            n_rct = rxn.GetNumReactantTemplates()
+            n_pdt = rxn.GetNumProductTemplates()
+            data['Name'].append(f"{row['id']}_0")
+            data['Reactants'].append(";".join(["Any"] * n_rct))
+            data['SMARTS'].append(row['smarts'])
+            data['Products'].append(";".join(["Any"] * n_pdt))
+        pd.DataFrame(data).to_csv(f"{rule_set}_w_coreactants.tsv", sep='\t', index=False)
+        return
+
     # Load data
     mapped_rxns = pd.read_parquet(Path(cfg.filepaths.mappings) / cfg.mapped_rxns_fn)
 
