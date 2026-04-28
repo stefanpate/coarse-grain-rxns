@@ -15,6 +15,7 @@ data/processed/*reaction_metrics.parquet
 **calibrated_model.pkl
 **/std_pickaxe_rxns
 nohup*.out
+.claude
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

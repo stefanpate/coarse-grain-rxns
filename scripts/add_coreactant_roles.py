@@ -146,7 +146,7 @@ def main(cfg: DictConfig):
 
     # Retrobiocat rules don't carry coreactant info — every reactant/product gets "Any"
     if rule_set == 'retrobiocat_rules':
-        rules = pd.read_csv(Path(cfg.filepaths.rules) / cfg.mapped_rxns_fn)
+        rules = pd.read_csv(Path(cfg.filepaths.rules) / "retrobiocat_rules.csv")
         data = {'Name': [], 'Reactants': [], 'SMARTS': [], 'Products': []}
         for _, row in rules.iterrows():
             rxn = AllChem.ReactionFromSmarts(row['smarts'])
