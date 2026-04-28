@@ -1,0 +1,23 @@
+id,smiles
+propanal,CCC=O
+(2R)-2-O-[6-O-octanoyl-alpha-D-glucopyranosyl-(1->6)-alpha-D-glucopyranosyl-(1->2)]-glycerate,CCCCCCCC(=O)OCC1OC(OCC2OC(OC(CO)C(=O)O)C(O)C(O)C2O)C(O)C(O)C1O
+stemphyloxin II,CCC(CO)C1C2(C)C(=O)C(=CO)C(O)(C3CC(C)(O)CC(C)C32)C1(C)O
+delphinidin,O=c1cc(O)cc2oc(-c3cc(O)c(O)c(O)c3)c(O)cc1-2
+2-O-(alpha-D-glucopyranosyl)glycerol,OCC(CO)OC1OC(CO)C(O)C(O)C1O
+(R)-10-hydroxyoctadecanoate,CCCCCCCCC(O)CCCCCCCCC(=O)O
+L-arginine,N=C(N)NCCCC(N)C(=O)O
+3-methylphenol,Cc1cccc(O)c1
+all-trans-zeaxanthin,CC(C=CC=C(C)C=CC1=C(C)CC(O)CC1(C)C)=CC=CC=C(C)C=CC=C(C)C=CC1=C(C)CC(O)CC1(C)C
+3-(7-chloroindol-3-yl)-2-iminopropanoate,N=C(Cc1c[nH]c2c(Cl)cccc12)C(=O)O
+(S)-(-)-citronellate,CC(C)=CCCC(C)CC(=O)O
+"N-(4Z,7Z,10Z,13Z,16Z,19Z-docosahexaenoyl)-L-phenylalanine",CCC=CCC=CCC=CCC=CCC=CCC=CCCC(=O)NC(Cc1ccccc1)C(=O)O
+noscapine,COc1ccc2c(c1OC)C(=O)OC2C1c2c(cc3c(c2OC)OCO3)CCN1C
+hydroxyacetone,CC(=O)CO
+ascochlorin,CC(C=CC1(C)C(C)CCC(=O)C1C)=CCc1c(O)c(Cl)c(C)c(C=O)c1O
+hydrolyzed zearalenone,CC(O)CCCC(=O)CCCC=Cc1cc(O)cc(O)c1C(=O)O
+N(4)-acetyl-2'-deoxycytidine,CC(=O)Nc1ccn(C2CC(O)C(CO)O2)c(=O)n1
+S-disulfanyl-L-cysteine,NC(CSSS)C(=O)O
+"(R)-3-chloro-1,2-propanediol",OCC(O)CCl
+"5,7-dihydroxy-4-methylphthalide",Cc1c(O)cc(O)c2c1COC2=O
+penifulvin A,CC1(C)CC2(C)CC(=O)OC3OC(=O)C4CCC1C342
+ajmaline,CCC1C2CC3C4N(C)c5ccccc5C45CC(C2C5O)N3C1O

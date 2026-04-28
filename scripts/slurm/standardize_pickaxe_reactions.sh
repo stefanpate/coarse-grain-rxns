@@ -8,14 +8,14 @@
 #SBATCH --job-name="std_pk_rxns"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%x_%A_%a.out
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%x_%A_%a.err
-#SBATCH --array=0-12
+#SBATCH --array=0-2
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=stefan.pate@northwestern.edu
 
 script=/home/spn1560/coarse-grain-rxns/scripts/standardize_pickaxe_reactions.py
 expansions=(
-    1_steps_after_2015_cpds_rules_mechinferred_dt_035_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
-    1_steps_after_2015_cpds_rules_mechinferred_dt_059_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_035_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_059_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
     1_steps_after_2015_cpds_rules_mechinferred_dt_106_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
     1_steps_after_2015_cpds_rules_mechinferred_dt_244_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
     1_steps_after_2015_cpds_rules_mechinferred_dt_961_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk

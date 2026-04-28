@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH -A p30041
-#SBATCH -p normal
+#SBATCH -A b1039
+#SBATCH -p b1039
 #SBATCH -N 1
 #SBATCH -n 50
 #SBATCH --mem=80GB
-#SBATCH -t 18:00:00
+#SBATCH -t 48:00:00
 #SBATCH --job-name="expand"
 #SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%x_%A_%a.out
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%x_%A_%a.err
