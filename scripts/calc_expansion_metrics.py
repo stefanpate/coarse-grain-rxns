@@ -74,10 +74,7 @@ def process_reaction(v: dict) -> list:
     if not is_valid_rxn(rxn=v, starters=starters):
         return []
 
-    # Important to use am smarts for mol and fp creation since this is where you
-    # get the correct reaction center from and am_smarts and Operator_aligned_smarts
-    # are not guaranteed to be the same out of Pickaxe
-    query_smarts = v["Operator_aligned_smarts"]
+    
     query_am_smarts = v["am_rxn"]
     query_lhs_mol = Chem.MolFromSmiles(query_am_smarts.split('>>')[0])
 
@@ -86,17 +83,22 @@ def process_reaction(v: dict) -> list:
         # log.warning(f"Invalid query LHS molecule for reaction {v['_id']}: {query_am_smarts}")
         return []
 
-    try:
-        query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
-    except Exception as e:
-        # TODO: figure out logging with multiprocessing
-        # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
-        return []
+    if not skip_analogues:
+        try:
+            query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
+        except Exception as e:
+            # TODO: figure out logging with multiprocessing
+            # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
+            return []
 
     rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
     analogues = mapped_rxns.loc[mapped_rxns.rule_id.isin(rules)]
 
-    if analogues.empty:
+    if skip_analogues:
+        max_sim = float('nan')
+        nearest_kr = float('nan')
+        nearest_krid = float('nan')
+    elif analogues.empty:
         max_sim = 0.0
         nearest_kr = ''
         nearest_krid = ''
@@ -113,11 +115,11 @@ def process_reaction(v: dict) -> list:
         nearest_kr = analogues.iloc[max_idx].smarts
         nearest_krid = analogues.iloc[max_idx].rxn_id
 
-    is_feasible = dxgb.predict_label(query_smarts)
+    is_feasible = dxgb.predict_label(query_am_smarts)
 
     return [
         v['_id'],
-        query_smarts,
+        query_am_smarts,
         query_am_smarts,
         is_feasible,
         max_sim,
@@ -128,9 +130,10 @@ def process_reaction(v: dict) -> list:
 
 def rxn_proc_initializer(cfg: DictConfig, _starters: dict[str, str]):
     print("Initializing reaction processing")
-    global dxgb, mfper, _fingerprint, mapped_rxns, starters
+    global dxgb, mfper, _fingerprint, mapped_rxns, starters, skip_analogues
 
     starters = _starters
+    skip_analogues = "retrobiocat" in cfg.expansion
 
     print("Loading mapped rxns ", Path(cfg.filepaths.mappings) / cfg.mapped_rxns)
     mapped_rxns = pd.read_parquet(
@@ -142,10 +145,13 @@ def rxn_proc_initializer(cfg: DictConfig, _starters: dict[str, str]):
     mfper = instantiate(cfg.mfper)
     _fingerprint = partial(mfper.fingerprint, rc_dist_ub=cfg.rc_dist_ub)
 
-    print("Calculating reaction centers and morgan fps for all mapped reactions")
-    mapped_rxns["reaction_center"] = mapped_rxns["am_smarts"].apply(get_lhs_block_rc)
-    mapped_rxns["mol"] = mapped_rxns["smarts"].apply(lambda x : Chem.MolFromSmiles(x.split('>>')[0]))
-    mapped_rxns["mfp"] = mapped_rxns.apply(lambda x : _fingerprint(x.mol, x.reaction_center), axis=1)
+    if skip_analogues:
+        print("Skipping reaction center / mfp precomputation (retrobiocat expansion)")
+    else:
+        print("Calculating reaction centers and morgan fps for all mapped reactions")
+        mapped_rxns["reaction_center"] = mapped_rxns["am_smarts"].apply(get_lhs_block_rc)
+        mapped_rxns["mol"] = mapped_rxns["smarts"].apply(lambda x : Chem.MolFromSmiles(x.split('>>')[0]))
+        mapped_rxns["mfp"] = mapped_rxns.apply(lambda x : _fingerprint(mol=x.mol, reaction_center=x.reaction_center), axis=1)
 
 def get_lhs_block_rc(am_smarts: str) -> list[int]:
     rc = get_reaction_center(am_smarts)
@@ -181,14 +187,25 @@ def main(cfg: DictConfig):
     df.to_parquet(f"{cfg.expansion}_compound_metrics.parquet")
 
     # Process reactions
-    with ProcessPoolExecutor(max_workers=cfg.processes, initializer=rxn_proc_initializer, initargs=(cfg, _starters)) as executor:
-        results = list(
-            tqdm(
-                executor.map(process_reaction, expansion.reactions.values(), chunksize=100),
+    if cfg.processes <= 1:
+        rxn_proc_initializer(cfg, _starters)
+        results = [
+            process_reaction(v)
+            for v in tqdm(
+                expansion.reactions.values(),
                 total=len(expansion.reactions),
-                desc="Procesing reactions"
+                desc="Procesing reactions",
             )
-        )
+        ]
+    else:
+        with ProcessPoolExecutor(max_workers=cfg.processes, initializer=rxn_proc_initializer, initargs=(cfg, _starters)) as executor:
+            results = list(
+                tqdm(
+                    executor.map(process_reaction, expansion.reactions.values(), chunksize=100),
+                    total=len(expansion.reactions),
+                    desc="Procesing reactions"
+                )
+            )
 
     # Save reaction metrics
     print("Saving reaction metrics")
