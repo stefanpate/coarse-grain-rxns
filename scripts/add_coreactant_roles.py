@@ -142,11 +142,11 @@ def get_coreactant_roles(reaction: str, unpaired_smi_to_role: dict[str, str], pa
 
 @hydra.main(version_base=None, config_path='../configs', config_name='add_coreactant_roles')
 def main(cfg: DictConfig):
-    rule_set = Path(cfg.mapped_rxns_fn).stem.split('_x_')[-1]
+    unbalanced_rule_sets = ["retrobiocat", "evodex", "ehreact"]
 
     # Retrobiocat rules don't carry coreactant info — every reactant/product gets "Any"
-    if rule_set == 'retrobiocat_rules':
-        rules = pd.read_csv(Path(cfg.filepaths.rules) / "retrobiocat_rules.csv")
+    if any(s in cfg.rule_set for s in unbalanced_rule_sets):
+        rules = pd.read_csv(Path(cfg.filepaths.rules) / f"{cfg.rule_set}.csv")
         data = {'Name': [], 'Reactants': [], 'SMARTS': [], 'Products': []}
         for _, row in rules.iterrows():
             rxn = AllChem.ReactionFromSmarts(row['smarts'])
@@ -156,11 +156,11 @@ def main(cfg: DictConfig):
             data['Reactants'].append(";".join(["Any"] * n_rct))
             data['SMARTS'].append(row['smarts'])
             data['Products'].append(";".join(["Any"] * n_pdt))
-        pd.DataFrame(data).to_csv(f"{rule_set}_w_coreactants.tsv", sep='\t', index=False)
+        pd.DataFrame(data).to_csv(f"{cfg.rule_set}_w_coreactants.tsv", sep='\t', index=False)
         return
 
     # Load data
-    mapped_rxns = pd.read_parquet(Path(cfg.filepaths.mappings) / cfg.mapped_rxns_fn)
+    mapped_rxns = pd.read_parquet(Path(cfg.filepaths.mappings) / f"mapped_known_reactions_x_{cfg.rule_set}.parquet")
 
     # Load coreactant lookups
     unpaired_smi_to_role = {}
@@ -200,7 +200,7 @@ def main(cfg: DictConfig):
             data['Products'].append(role_template[1])
 
     rules_w_coreactants = pd.DataFrame(data)
-    rules_w_coreactants.to_csv(f"{Path(cfg.mapped_rxns_fn).stem.split('_x_')[-1]}_w_coreactants.tsv", sep='\t', index=False)
+    rules_w_coreactants.to_csv(f"{cfg.rule_set}_w_coreactants.tsv", sep='\t', index=False)
 
 if __name__ == '__main__':
     main()   
