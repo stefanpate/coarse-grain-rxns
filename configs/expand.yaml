@@ -9,13 +9,14 @@ generations: 2
 rules: mechinformed_rules_w_coreactants
 coreactants: metacyc_coreactants
 processes: 50
-a_plus_b: True
+a_plus_b: true
+explicit_h: false
 
 hydra:
   run:
     dir: ${filepaths.expansions}
   job:
-    chdir: True
+    chdir: true
   sweep:
     dir: ${filepaths.expansions}
     subdir: .
