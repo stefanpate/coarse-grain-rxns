@@ -115,11 +115,11 @@ hydra:
     hydra:
     - hydra.mode=MULTIRUN
     task:
-    - rule_set=evodex_Cm_rules_before_2015,evodex_Dm_rules_before_2015,evodex_Em_rules_before_2015
+    - rule_set=evodex_Cm_rules_original,evodex_Dm_rules_original,evodex_Em_rules_original
   job:
     name: add_coreactant_roles
     chdir: true
-    override_dirname: rule_set=evodex_Cm_rules_before_2015,evodex_Dm_rules_before_2015,evodex_Em_rules_before_2015
+    override_dirname: rule_set=evodex_Cm_rules_original,evodex_Dm_rules_original,evodex_Em_rules_original
     id: ???
     num: ???
     config_name: add_coreactant_roles
