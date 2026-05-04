@@ -16,9 +16,9 @@
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/expand.py
 rules_sweep=(
-    evodex_Cm_rules_w_coreactants
-    evodex_Dm_rules_w_coreactants
-    evodex_Em_rules_w_coreactants
+    evodex_Cm_rules_original_w_coreactants
+    evodex_Dm_rules_original_w_coreactants
+    evodex_Em_rules_original_w_coreactants
     # evodex_Cm_rules_before_2015_w_coreactants
     # evodex_Dm_rules_before_2015_w_coreactants
     # evodex_Em_rules_before_2015_w_coreactants
@@ -43,7 +43,8 @@ rules_sweep=(
     # retrobiocat_rules_w_coreactants
 )
 starters=250728_benchmark_starters
-generations=1
+generations=2
+explicit_h=true
 processes=50 # MAKE SURE THIS MATCHES -n above
 
 # Commands

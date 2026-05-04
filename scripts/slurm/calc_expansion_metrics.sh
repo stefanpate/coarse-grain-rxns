@@ -10,46 +10,22 @@
 #SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%x_%A_%a.err
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
-#SBATCH --array=0-14
+#SBATCH --array=0-2
 #SBATCH --mail-user=stefan.pate@northwestern.edu
 
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/calc_expansion_metrics.py
 processes=50 # Make sure this matches -n above
 exp_sweep=(
-    1_steps_250728_benchmark_starters_rules_imt_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_mechinferred_dt_019_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_mechinferred_dt_039_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_mechinferred_dt_112_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_mechinferred_dt_224_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_mechinferred_dt_956_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_mechinformed_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_rc_plus_1_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_rc_plus_2_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_rc_plus_3_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_rc_plus_4_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_rdchiral_rules_w_coreactants_aplusb_True.pk
-    1_steps_250728_benchmark_starters_rules_retrobiocat_rules_w_coreactants_aplusb_True.pk
-    2_steps_250728_benchmark_starters_rules_retrobiocat_rules_w_coreactants_aplusb_True.pk
+    2_steps_250728_benchmark_starters_rules_evodex_Cm_rules_original_w_coreactants_aplusb_True.pk
+    2_steps_250728_benchmark_starters_rules_evodex_Dm_rules_original_w_coreactants_aplusb_True.pk
+    2_steps_250728_benchmark_starters_rules_evodex_Em_rules_original_w_coreactants_aplusb_True.pk
 )
 
 mappings_sweep=(
-    mapped_known_reactions_x_imt_rules.parquet
-    mapped_known_reactions_x_mechinferred_dt_019_rules.parquet 
-    mapped_known_reactions_x_mechinferred_dt_039_rules.parquet
-    mapped_known_reactions_x_mechinferred_dt_112_rules.parquet
-    mapped_known_reactions_x_mechinferred_dt_224_rules.parquet
-    mapped_known_reactions_x_mechinferred_dt_956_rules.parquet
-    mapped_known_reactions_x_mechinformed_rules.parquet
-    mapped_known_reactions_x_rc_plus_0_rules.parquet
-    mapped_known_reactions_x_rc_plus_1_rules.parquet
-    mapped_known_reactions_x_rc_plus_2_rules.parquet
-    mapped_known_reactions_x_rc_plus_3_rules.parquet
-    mapped_known_reactions_x_rc_plus_4_rules.parquet
-    mapped_known_reactions_x_rdchiral_rules.parquet
-    mapped_known_reactions_x_retrobiocat_rules.parquet
-    mapped_known_reactions_x_retrobiocat_rules.parquet
+    null
+    null
+    null
 )
 
 # Commands
