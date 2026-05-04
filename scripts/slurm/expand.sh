@@ -43,8 +43,7 @@ rules_sweep=(
     # retrobiocat_rules_w_coreactants
 )
 starters=250728_benchmark_starters
-generations=2
-explicit_h=true
+generations=1
 processes=50 # MAKE SURE THIS MATCHES -n above
 
 # Commands
