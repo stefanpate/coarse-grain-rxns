@@ -6,84 +6,26 @@
 #SBATCH --mem=0
 #SBATCH -t 14:00:00
 #SBATCH --job-name="calc_exp_metrics"
-#SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%A
-#SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%A
+#SBATCH --output=/home/spn1560/coarse-grain-rxns/logs/out/%x_%A_%a.out
+#SBATCH --error=/home/spn1560/coarse-grain-rxns/logs/error/%x_%A_%a.err
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
-#SBATCH --array=0-4
+#SBATCH --array=0-2
 #SBATCH --mail-user=stefan.pate@northwestern.edu
 
 # Args
 script=/home/spn1560/coarse-grain-rxns/scripts/calc_expansion_metrics.py
 processes=50 # Make sure this matches -n above
 exp_sweep=(
-    # mapped_known_reactions_x_rdchiral_rules.parquet
-    # "2_steps_250728_benchmark_starters_rules_imt_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_mechinformed_rules_w_coreactants_aplusb_True.pk"
-    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_019_rules_w_coreactants_aplusb_True.pk"
-    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_039_rules_w_coreactants_aplusb_True.pk"
-    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_112_rules_w_coreactants_aplusb_True.pk"
-    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_224_rules_w_coreactants_aplusb_True.pk"
-    "2_steps_250728_benchmark_starters_rules_mechinferred_dt_956_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_rc_plus_1_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_rc_plus_2_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_rc_plus_3_rules_w_coreactants_aplusb_True.pk"
-    # "2_steps_250728_benchmark_starters_rules_rc_plus_4_rules_w_coreactants_aplusb_True.pk"
-    # "batch_0_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_1_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_2_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_3_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_4_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_5_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_6_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_7_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_8_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_9_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_10_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_11_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_12_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_13_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_14_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_15_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_16_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_17_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_18_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
-    # "batch_19_of_20_2_steps_250728_benchmark_starters_rules_rc_plus_0_rules_w_coreactants_aplusb_True.pk"
+    2_steps_250728_benchmark_starters_rules_evodex_Cm_rules_original_w_coreactants_aplusb_True.pk
+    2_steps_250728_benchmark_starters_rules_evodex_Dm_rules_original_w_coreactants_aplusb_True.pk
+    2_steps_250728_benchmark_starters_rules_evodex_Em_rules_original_w_coreactants_aplusb_True.pk
 )
 
 mappings_sweep=(
-    # mapped_known_reactions_x_rdchiral_rules.parquet
-    # "mapped_known_reactions_x_imt_rules.parquet"
-    # "mapped_known_reactions_x_mechinformed_rules.parquet"
-    "mapped_known_reactions_x_mechinferred_dt_019_rules.parquet" 
-    "mapped_known_reactions_x_mechinferred_dt_039_rules.parquet"
-    "mapped_known_reactions_x_mechinferred_dt_112_rules.parquet"
-    "mapped_known_reactions_x_mechinferred_dt_224_rules.parquet"
-    "mapped_known_reactions_x_mechinferred_dt_956_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_1_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_2_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_3_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_4_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
-    # "mapped_known_reactions_x_rc_plus_0_rules.parquet"
+    null
+    null
+    null
 )
 
 # Commands

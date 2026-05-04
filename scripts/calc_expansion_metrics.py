@@ -91,8 +91,8 @@ def process_reaction(v: dict) -> list:
             # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
             return []
 
-    rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
-    analogues = mapped_rxns.loc[mapped_rxns.rule_id.isin(rules)]
+        rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
+        analogues = mapped_rxns.loc[mapped_rxns.rule_id.isin(rules)]
 
     if skip_analogues:
         max_sim = float('nan')
@@ -133,12 +133,14 @@ def rxn_proc_initializer(cfg: DictConfig, _starters: dict[str, str]):
     global dxgb, mfper, _fingerprint, mapped_rxns, starters, skip_analogues
 
     starters = _starters
-    skip_analogues = "retrobiocat" in cfg.expansion
+    unbalanced_rule_sets = ["retrobiocat", "evodex", "ehreact"]
+    skip_analogues = any(elt in cfg.expansion for elt in unbalanced_rule_sets)
 
-    print("Loading mapped rxns ", Path(cfg.filepaths.mappings) / cfg.mapped_rxns)
-    mapped_rxns = pd.read_parquet(
-        Path(cfg.filepaths.mappings) / cfg.mapped_rxns
-    )
+    if not skip_analogues:
+        print("Loading mapped rxns ", Path(cfg.filepaths.mappings) / cfg.mapped_rxns)
+        mapped_rxns = pd.read_parquet(
+            Path(cfg.filepaths.mappings) / cfg.mapped_rxns
+        )
 
     print("Instantiating fingerprinter and dxgb model")
     dxgb = instantiate(cfg.dxgb)
