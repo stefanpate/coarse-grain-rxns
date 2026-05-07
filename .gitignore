@@ -16,6 +16,7 @@ data/processed/*reaction_metrics.parquet
 **/std_pickaxe_rxns
 nohup*.out
 .claude
+notebooks/anys.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

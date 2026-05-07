@@ -46,8 +46,10 @@ def main(cfg: DictConfig):
             logger.warning(f"Failed to standardize reaction {v["_id"]} with am_rxn: {am_rxn}")
             failed_ct += 1
             continue
+        unique_ops = set([int(elt.split("_")[0]) for elt in v["Operators"]])
         rxn_id = hash_reaction(std)
-        rows.append({"id": rxn_id, "am_rxn": am_rxn, "std_rxn": std})
+        for op in unique_ops:
+            rows.append({"id": rxn_id, "am_rxn": am_rxn, "std_rxn": std, "rule_id": op})
 
         if i % 1000 == 0:
             logger.info(f"Standardized {i} reactions so far with {failed_ct} failures.")

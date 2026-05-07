@@ -4,6 +4,7 @@ defaults:
   - _self_
 
 expansion: ???
+min_mapped_rxns: 10
 
 hydra:
   run:
