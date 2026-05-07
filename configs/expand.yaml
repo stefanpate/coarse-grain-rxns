@@ -4,13 +4,15 @@ defaults:
   # - override hydra/launcher: quest_cpu
   - _self_
 
-starters: 250728_benchmark_starters
-generations: 2
-rules: mechinformed_rules_w_coreactants
+starters: after_2015_cpds
+generations: 1
+rules: evodex_Em_debug
 coreactants: metacyc_coreactants
-processes: 50
+processes: 1
 a_plus_b: true
 explicit_h: false
+enforce_atom_balance: true
+block_inorganic: true
 
 hydra:
   run:

@@ -15,7 +15,9 @@ def main(cfg: DictConfig):
         errors=True,
         quiet=True,
         filter_after_final_gen=False,
-        explicit_h=cfg.explicit_h
+        explicit_h=cfg.explicit_h,
+        enforce_atom_balance=cfg.enforce_atom_balance,
+        block_inorganic=cfg.block_inorganic
     )
 
     pk.load_compound_set(compound_file=Path(cfg.filepaths.starters) / f"{cfg.starters}.csv")

@@ -189,3 +189,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignore everything in data/interim/std_pickaxe_rxns_new
+data/interim/std_pickaxe_rxns_new
+
