@@ -1429,7 +1429,7 @@ wheels = [
 [[package]]
 name = "minedatabase"
 version = "0.1.0"
-source = { git = "https://github.com/stefanpate/pickaxe.git?branch=py_upgrade#3dc6a8d81d959d56d47f2255805f6fce3727a7d0" }
+source = { git = "https://github.com/stefanpate/pickaxe.git?branch=py_upgrade#9b77fec46532e88047acac47a69c979258eb1937" }
 dependencies = [
     { name = "ergochemics" },
     { name = "lxml" },
