@@ -87,8 +87,7 @@ def process_reaction(v: dict) -> list:
         try:
             query_lhs_block_rc = get_lhs_block_rc(query_am_smarts)
         except Exception as e:
-            # TODO: figure out logging with multiprocessing
-            # log.error(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
+            log.warning(f"Error getting reaction center for {v['_id']}: {query_am_smarts}. Error: {e}")
             return []
 
         rules = set([int(elt.split('_')[0]) for elt in v["Operators"]])
@@ -115,7 +114,11 @@ def process_reaction(v: dict) -> list:
         nearest_kr = analogues.iloc[max_idx].smarts
         nearest_krid = analogues.iloc[max_idx].rxn_id
 
-    is_feasible = dxgb.predict_label(query_am_smarts)
+    try:
+        is_feasible = dxgb.predict_label(query_am_smarts)
+    except Exception as e:
+        log.warning(f"Error predicting label for {v['_id']}: {query_am_smarts}. Error: {e}")
+        is_feasible = 0
 
     return [
         v['_id'],

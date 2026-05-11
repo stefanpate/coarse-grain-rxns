@@ -142,7 +142,7 @@ def get_coreactant_roles(reaction: str, unpaired_smi_to_role: dict[str, str], pa
 
 @hydra.main(version_base=None, config_path='../configs', config_name='add_coreactant_roles')
 def main(cfg: DictConfig):
-    unbalanced_rule_sets = ["retrobiocat", "evodex", "ehreact"]
+    unbalanced_rule_sets = ["retrobiocat", "evodex"]
 
     # Retrobiocat rules don't carry coreactant info — every reactant/product gets "Any"
     if any(s in cfg.rule_set for s in unbalanced_rule_sets):
