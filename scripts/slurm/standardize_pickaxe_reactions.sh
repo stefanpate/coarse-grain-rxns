@@ -14,14 +14,25 @@
 
 script=/home/spn1560/coarse-grain-rxns/scripts/standardize_pickaxe_reactions.py
 expansions=(
-    1_steps_after_2015_cpds_rules_retrobiocat_rules_w_coreactants_aplusb_True.pk
-    # 1_steps_after_2015_cpds_rules_mechinferred_dt_035_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
-    # 1_steps_after_2015_cpds_rules_mechinferred_dt_059_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
-    # 1_steps_after_2015_cpds_rules_mechinferred_dt_106_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
-    # 1_steps_after_2015_cpds_rules_mechinferred_dt_244_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
-    # 1_steps_after_2015_cpds_rules_mechinferred_dt_961_rules_before_2015_direct_mcsa_only_w_coreactants_aplusb_True.pk
+    1_steps_after_2015_cpds_rules_ehreact_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_rdchiral_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_rc_plus_1_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_rc_plus_2_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_rc_plus_3_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_rc_plus_4_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinformed_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_imt_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_w_metacyc_coreactants_rules_retrobiocat_rules_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_w_metacyc_coreactants_rules_evodex_Cm_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_w_metacyc_coreactants_rules_evodex_Dm_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_w_metacyc_coreactants_rules_evodex_Em_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_w_metacyc_coreactants_rules_evodex_Bm_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_005_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_009_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_021_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_069_rules_before_2015_w_coreactants_aplusb_True.pk
+    # 1_steps_after_2015_cpds_rules_mechinferred_dt_932_rules_before_2015_w_coreactants_aplusb_True.pk
 )
 ulimit -c 0
 module purge
-source /home/spn1560/coarse-grain-rxns/.venv/bin/activate
-python $script expansion=${expansions[$SLURM_ARRAY_TASK_ID]}
+uv run python $script expansion=${expansions[$SLURM_ARRAY_TASK_ID]}
