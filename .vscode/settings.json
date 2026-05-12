@@ -1,6 +1,0 @@
-{
-    "python.REPL.enableREPLSmartSend": false,
-    "terminal.integrated.env.linux": {
-        "UV_PROJECT_ENVIRONMENT": "/projects/p30041/spn1560/venvs/.cgr-venv"
-    }
-}
