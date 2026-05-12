@@ -2,9 +2,9 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-min_mapped: mapped_known_reactions_x_rc_plus_0_rules.parquet
+predict_set: mapped_known_reactions_x_rc_plus_0_rules
 mech_probas_dir: ${filepaths.processed_data}/mech_probas
-decision_thresholds: [0.961, 0.244, 0.106, 0.059, 0.035]
+decision_thresholds: [0.956, 0.244, 0.112, 0.039, 0.019]
 pub_date_file: rxn_pub_dates.parquet
 cutoff_date: null
 direct_mcsa_only: false

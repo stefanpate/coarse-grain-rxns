@@ -8,13 +8,11 @@ import numpy as np
 from rdkit import Chem
 from torch.utils.data import DataLoader
 import logging
-from ergochemics.mapping import rc_to_nest
 from cgr.ml import (
     GNN,
     FFNPredictor,
     LinearPredictor,
     collate_batch,
-    sep_aidx_to_bin_label,
 )
 
 current_dir = Path(__file__).parent.parent.resolve()
@@ -24,21 +22,33 @@ log = logging.getLogger(__name__)
 def main(cfg: DictConfig):
     # Load data
     log.info("Loading & preparing data")
-    df = pd.read_parquet(
-        Path(cfg.filepaths.rc_plus_0_mapped_rxns)
-    )
+    mapped_rxns_path = Path(cfg.filepaths.mappings) / f"{cfg.mapped_rxns}.parquet"
+    df = pd.read_parquet(mapped_rxns_path)
 
     # Prep data
-    df["template_aidxs"] = df["template_aidxs"].apply(rc_to_nest)
     smis = df["am_smarts"].tolist()
-    df["binary_label"] = df.apply(lambda x: sep_aidx_to_bin_label(x.am_smarts, x.template_aidxs), axis=1) # Convert aidxs to binary labels for block mol
-    ys = [elt[0] for elt in df["binary_label"]]
-    X, y = zip(*[(data.ReactionDatapoint.from_smi(smi), y) for smi, y in zip(smis, ys)])
+    X = [data.ReactionDatapoint.from_smi(smi) for smi in smis]
     rxn_ids = df["rxn_id"].tolist()
 
     # Featurize
     featurizer = featurizers.CondensedGraphOfReactionFeaturizer(mode_=cfg.model.featurizer_mode, atom_featurizer=featurizers.MultiHotAtomFeaturizer.v2())
-    dataset = list(zip(data.ReactionDataset(X, featurizer=featurizer), y))
+    featurized = list(data.ReactionDataset(X, featurizer=featurizer))
+
+    # Drop reactions that chemprop can't collate (1-D bond feature array — e.g. no-bond CGRs)
+    keep = [p.mg.E.ndim == 2 for p in featurized]
+    n_dropped = sum(1 for k in keep if not k)
+    if n_dropped:
+        log.warning(f"Dropping {n_dropped} reactions with malformed bond features (no-bond CGR)")
+    featurized = [p for p, k in zip(featurized, keep) if k]
+    rxn_ids = [rid for rid, k in zip(rxn_ids, keep) if k]
+
+    # Placeholder y vectors (all zeros) sized to each reaction's actual CGR atom count.
+    # `trainer.predict` does NOT consume these — they exist only to satisfy
+    # collate_batch's (datapoint, label) tuple shape and to give us per-reaction
+    # atom counts that line up with the model's prediction tensors downstream.
+    y = [np.zeros((p.mg.V.shape[0], 1)) for p in featurized]
+
+    dataset = list(zip(featurized, y))
     dataloader = DataLoader(dataset, batch_size=256, shuffle=False, collate_fn=collate_batch)
     
     # Construct model
@@ -76,7 +86,9 @@ def main(cfg: DictConfig):
     )
 
     # Save
-    pred_df.to_parquet(Path(cfg.filepaths.processed_data) / "mech_probas" / f"{cfg.data.training_set}_{cfg.data.outer_split_idx}.parquet", index=False)
+    prediction_data = mapped_rxns_path.stem
+    out_name = f"train_{cfg.data.training_set}_predict_{prediction_data}_split_{cfg.data.outer_split_idx}.parquet"
+    pred_df.to_parquet(Path(cfg.filepaths.processed_data) / "mech_probas" / out_name, index=False)
 
 if __name__ == "__main__":
     main()

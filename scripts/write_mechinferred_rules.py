@@ -16,25 +16,31 @@ def main(cfg: DictConfig):
 
     # Load min mapped pathway reactions
     log.info("Loading data...")
-    min_mapped = pd.read_parquet(
-        Path(cfg.filepaths.mappings) / cfg.min_mapped
+    aam_rxns = pd.read_parquet(
+        Path(cfg.filepaths.mappings) / f"{cfg.predict_set}.parquet"
     )
 
     if cfg.cutoff_date is not None:
         pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_date_file)
-        min_mapped = filter_by_pub_date(pub_dates, min_mapped, cfg.cutoff_date, mode="before")
+        aam_rxns = filter_by_pub_date(pub_dates, aam_rxns, cfg.cutoff_date, mode="before")
 
-    min_mapped["rxn_id"] = min_mapped["rxn_id"]
-    min_mapped["template_aidxs"] = min_mapped["template_aidxs"].apply(rc_to_nest)
+    aam_rxns["rxn_id"] = aam_rxns["rxn_id"]
+    aam_rxns["template_aidxs"] = aam_rxns["template_aidxs"].apply(rc_to_nest)
 
     # Load predicted mech probas
-    pref = "direct_mcsa_only" if cfg.direct_mcsa_only else "all_data"
-    if cfg.cutoff_date is not None:
-        pref = f"before_{cfg.cutoff_date}_" + pref
+    if cfg.direct_mcsa_only:
+        training_set = f"before_{cfg.cutoff_date}_direct_mcsa_only"
+    elif cfg.cutoff_date is not None:
+        training_set = f"before_{cfg.cutoff_date}"
+    else:
+        training_set = "all_data"
+    glob_pattern = f"train_{training_set}_predict_{cfg.predict_set}_split_*.parquet"
     preds = []
-    for fn in (Path(cfg.mech_probas_dir)).glob(f"{pref}*.parquet"):
+    for fn in (Path(cfg.mech_probas_dir)).glob(glob_pattern):
         log.info(f"Loading: {fn}")
         preds.append(pd.read_parquet(fn))
+    if not preds:
+        raise FileNotFoundError(f"No mech_probas files matched {Path(cfg.mech_probas_dir) / glob_pattern}")
 
     pred_df = pd.concat(preds)
     pred_df = pred_df.groupby(["rxn_id", "aidx"]).agg({"probas": "mean"}).reset_index()
@@ -46,7 +52,7 @@ def main(cfg: DictConfig):
         log.info(f"Decision threshold: {dt}")
         templates = {}
         pred_df["y_pred"] = (pred_df["probas"] > dt).astype(int)
-        for _, row in tqdm(min_mapped.iterrows(), total=min_mapped.shape[0], desc="Extracting templates"):
+        for _, row in tqdm(aam_rxns.iterrows(), total=aam_rxns.shape[0], desc="Extracting templates"):
             rc = row['template_aidxs']
             am_smarts = row['am_smarts']
             rxn_id = row['rxn_id']
@@ -61,7 +67,7 @@ def main(cfg: DictConfig):
             templates[template] = row["rule_id"]
 
         df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules_{pref}.csv", sep=',', index=False)
+        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules_{training_set}.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()

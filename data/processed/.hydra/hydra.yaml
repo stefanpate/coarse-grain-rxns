@@ -2,8 +2,8 @@ hydra:
   run:
     dir: ${filepaths.processed_data}
   sweep:
-    dir: ${filepaths.processed_data}
-    subdir: .
+    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}
   launcher:
     _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
   sweeper:
@@ -111,15 +111,14 @@ hydra:
   overrides:
     hydra:
     - hydra.mode=RUN
-    task:
-    - cutoff_date=2015
+    task: []
   job:
-    name: write_mechinferred_rules
-    chdir: true
-    override_dirname: cutoff_date=2015
+    name: map_with_rxnmapper
+    chdir: false
+    override_dirname: ''
     id: ???
     num: ???
-    config_name: write_mechinferred_rules
+    config_name: map_with_rxnmapper
     env_set: {}
     env_copy: []
     config:

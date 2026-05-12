@@ -1,12 +1,14 @@
 defaults:
   - filepaths: filepaths
-  - production: before_2015_0
+  - production: all_data_0
   - override hydra/job_logging: custom
   - _self_
 
 training: ${production.training}
 data: ${production.data}
 model: ${production.model}
+
+mapped_rxns: mapped_known_reactions_x_rc_plus_0_rules
 
 hydra:
   run:
@@ -17,4 +19,4 @@ hydra:
     dir: ${filepaths.artifacts}/pred_conf/${now:%Y-%m-%d}/${now:%H-%M-%S}
   sweeper:
     params:
-      production: before_2015_0,before_2015_1,before_2015_2,before_2015_3,before_2015_4
+      production: all_data_0,all_data_1,all_data_2,all_data_3,all_data_4

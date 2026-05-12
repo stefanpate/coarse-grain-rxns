@@ -1,0 +1,13 @@
+defaults:
+  - filepaths: filepaths
+  - _self_
+
+input_file: known_reactions_stereo.parquet
+batch_size: 32
+limit: null
+
+hydra:
+  run:
+    dir: ${filepaths.processed_data}
+  job:
+    chdir: False
