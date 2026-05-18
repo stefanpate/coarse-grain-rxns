@@ -25,11 +25,6 @@ def main(cfg: DictConfig):
     mapped_rxns_path = Path(cfg.filepaths.mappings) / f"{cfg.mapped_rxns}.parquet"
     df = pd.read_parquet(mapped_rxns_path)
 
-    # TODO: remove. just for debuggin
-    from ergochemics.standardize import standardize_reaction
-    df['am_smarts'] = df['am_smarts'].apply(standardize_reaction)
-    # END TODO
-
     # Prep data
     smis = df["am_smarts"].tolist()
     X = [data.ReactionDatapoint.from_smi(smi) for smi in smis]

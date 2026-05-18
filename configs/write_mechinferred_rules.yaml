@@ -4,8 +4,7 @@ defaults:
 
 include_stereo: false
 mech_probas_dir: ${filepaths.processed_data}/mech_probas
-# decision_thresholds: [0.956, 0.244, 0.112, 0.039, 0.019] # TODO: revert to this default
-decision_thresholds: [0.956]
+decision_thresholds: [0.956, 0.244, 0.112, 0.039, 0.019]
 pub_date_file: rxn_pub_dates.parquet
 cutoff_date: null
 direct_mcsa_only: false

@@ -15,10 +15,7 @@ log = logging.getLogger(__name__)
 def main(cfg: DictConfig):
 
     if cfg.include_stereo:
-        # TODO: revert for debugging only
-        predict_set = "mapped_known_reactions_x_rc_plus_0_rules"
-        # predict_set = "mapped_known_reactions_stereo_x_rxnmapper"
-        # END TODO
+        predict_set = "mapped_known_reactions_stereo_x_rxnmapper"
     else:
         predict_set = "mapped_known_reactions_x_rc_plus_0_rules"
 
@@ -67,10 +64,7 @@ def main(cfg: DictConfig):
 
             if cfg.include_stereo:
                 try:
-                    # TODO: revert for debugging only. 
-                    # rc = get_reaction_center(am_smarts, include_stereo=True)
-                    rc = get_reaction_center(am_smarts, include_stereo=False)
-                    # END TODO
+                    rc = get_reaction_center(am_smarts, include_stereo=True)
                 except Exception as e:
                     log.info(f"Error getting reaction center for {rxn_id}: {e}")
                     continue
@@ -84,20 +78,14 @@ def main(cfg: DictConfig):
                     rxn=am_smarts,
                     atoms_to_include=atoms_to_include,
                     reaction_center=rc[0],
-                    # TODO: revert. For debugging only
-                    # include_stereo=cfg.include_stereo,
-                    include_stereo=False,
-                    # END TODO
+                    include_stereo=cfg.include_stereo,
                 )
             except Exception as e:
                 log.info(f"Error extracting template for {rxn_id}: {e}")
                 continue
 
             if cfg.include_stereo:
-                # TODO: revert. for debugging only
-                templates[template] = row["rule_id"]
-                # templates[template] = row["confidence"]
-                # END TODO
+                templates[template] = row["confidence"]
             else:
                 templates[template] = row["rule_id"]
 
