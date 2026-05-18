@@ -4,7 +4,7 @@ from cgr.rule_writing import extract_reaction_template
 from cgr.ml import bin_label_to_sep_aidx
 from pathlib import Path
 import pandas as pd
-from ergochemics.mapping import rc_to_nest
+from ergochemics.mapping import rc_to_nest, get_reaction_center
 import logging
 from tqdm import tqdm
 from cgr.rule_writing import filter_by_pub_date
@@ -14,18 +14,26 @@ log = logging.getLogger(__name__)
 @hydra.main(version_base=None, config_path='../configs', config_name='write_mechinferred_rules')
 def main(cfg: DictConfig):
 
+    if cfg.include_stereo:
+        # TODO: revert for debugging only
+        predict_set = "mapped_known_reactions_x_rc_plus_0_rules"
+        # predict_set = "mapped_known_reactions_stereo_x_rxnmapper"
+        # END TODO
+    else:
+        predict_set = "mapped_known_reactions_x_rc_plus_0_rules"
+
     # Load min mapped pathway reactions
     log.info("Loading data...")
     aam_rxns = pd.read_parquet(
-        Path(cfg.filepaths.mappings) / f"{cfg.predict_set}.parquet"
+        Path(cfg.filepaths.mappings) / f"{predict_set}.parquet"
     )
 
     if cfg.cutoff_date is not None:
         pub_dates = pd.read_parquet(Path(cfg.filepaths.raw_data) / cfg.pub_date_file)
         aam_rxns = filter_by_pub_date(pub_dates, aam_rxns, cfg.cutoff_date, mode="before")
 
-    aam_rxns["rxn_id"] = aam_rxns["rxn_id"]
-    aam_rxns["template_aidxs"] = aam_rxns["template_aidxs"].apply(rc_to_nest)
+    if not cfg.include_stereo:
+        aam_rxns["template_aidxs"] = aam_rxns["template_aidxs"].apply(rc_to_nest)
 
     # Load predicted mech probas
     if cfg.direct_mcsa_only:
@@ -34,7 +42,7 @@ def main(cfg: DictConfig):
         training_set = f"before_{cfg.cutoff_date}"
     else:
         training_set = "all_data"
-    glob_pattern = f"train_{training_set}_predict_{cfg.predict_set}_split_*.parquet"
+    glob_pattern = f"train_{training_set}_predict_{predict_set}_split_*.parquet"
     preds = []
     for fn in (Path(cfg.mech_probas_dir)).glob(glob_pattern):
         log.info(f"Loading: {fn}")
@@ -44,7 +52,8 @@ def main(cfg: DictConfig):
 
     pred_df = pd.concat(preds)
     pred_df = pred_df.groupby(["rxn_id", "aidx"]).agg({"probas": "mean"}).reset_index()
-    pred_df.head()
+
+    suffix = "_stereo" if cfg.include_stereo else ""
 
     # Write rules
     log.info("Writing rules...")
@@ -53,21 +62,57 @@ def main(cfg: DictConfig):
         templates = {}
         pred_df["y_pred"] = (pred_df["probas"] > dt).astype(int)
         for _, row in tqdm(aam_rxns.iterrows(), total=aam_rxns.shape[0], desc="Extracting templates"):
-            rc = row['template_aidxs']
             am_smarts = row['am_smarts']
             rxn_id = row['rxn_id']
+
+            if cfg.include_stereo:
+                try:
+                    # TODO: revert for debugging only. 
+                    # rc = get_reaction_center(am_smarts, include_stereo=True)
+                    rc = get_reaction_center(am_smarts, include_stereo=False)
+                    # END TODO
+                except Exception as e:
+                    log.info(f"Error getting reaction center for {rxn_id}: {e}")
+                    continue
+            else:
+                rc = row['template_aidxs']
+
             y_pred = pred_df.loc[pred_df["rxn_id"] == rxn_id, "y_pred"].to_numpy()
             atoms_to_include, _ = bin_label_to_sep_aidx(bin_label=y_pred, am_smarts=am_smarts)
             try:
-                template = extract_reaction_template(rxn=am_smarts, atoms_to_include=atoms_to_include, reaction_center=rc[0])
+                template = extract_reaction_template(
+                    rxn=am_smarts,
+                    atoms_to_include=atoms_to_include,
+                    reaction_center=rc[0],
+                    # TODO: revert. For debugging only
+                    # include_stereo=cfg.include_stereo,
+                    include_stereo=False,
+                    # END TODO
+                )
             except Exception as e:
-                log.info(f"Error extracting template for {row["rxn_id"]}: {e}")
+                log.info(f"Error extracting template for {rxn_id}: {e}")
                 continue
-            
-            templates[template] = row["rule_id"]
 
-        df = pd.DataFrame([(i, k, v) for i, (k, v) in enumerate(templates.items())], columns=["id", "smarts", "rc_plus_0_id"])
-        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules_{training_set}.csv", sep=',', index=False)
+            if cfg.include_stereo:
+                # TODO: revert. for debugging only
+                templates[template] = row["rule_id"]
+                # templates[template] = row["confidence"]
+                # END TODO
+            else:
+                templates[template] = row["rule_id"]
+
+        if cfg.include_stereo:
+            df = pd.DataFrame(
+                [(i, k, v) for i, (k, v) in enumerate(templates.items())],
+                columns=["id", "smarts", "confidence"],
+            )
+        else:
+            df = pd.DataFrame(
+                [(i, k, v) for i, (k, v) in enumerate(templates.items())],
+                columns=["id", "smarts", "rc_plus_0_id"],
+            )
+        _training_set = "_" + training_set if training_set != "all_data" else ""
+        df.to_csv(f"mechinferred_dt_{int(dt * 1e3):03d}_rules{_training_set}{suffix}.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
