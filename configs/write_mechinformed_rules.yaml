@@ -2,12 +2,12 @@ defaults:
   - filepaths: filepaths
   - _self_
 
-src_file: distilled_mech_reactions.parquet
 cutoff_date: null
 pub_dates_file: rxn_pub_dates.parquet
+include_stereo: false
 
 hydra:
   run:
-    dir: ${filepaths.rules_dir}
+    dir: ${filepaths.rules}
   job:
     chdir: True

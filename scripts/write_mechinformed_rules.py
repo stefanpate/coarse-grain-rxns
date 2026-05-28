@@ -12,8 +12,9 @@ log = logging.getLogger(__name__)
 @hydra.main(version_base=None, config_path='../configs', config_name='write_mechinformed_rules')
 def main(cfg: DictConfig):
 
+    stereo_suffix = "_stereo" if cfg.include_stereo else ""
     distilled_mech = pd.read_parquet(
-        Path(cfg.filepaths.raw_data) / cfg.src_file
+        Path(cfg.filepaths.raw_data) / f"distilled_mech_reactions{stereo_suffix}.parquet"
     )
 
     if cfg.cutoff_date is not None:
@@ -25,7 +26,7 @@ def main(cfg: DictConfig):
         rc = rc_to_nest(row['reaction_center'])
         mech_atoms = rc_to_nest(row['mech_atoms'])
         am_smarts = row['am_smarts']
-        template = extract_reaction_template(rxn=am_smarts, atoms_to_include=mech_atoms[0], reaction_center=rc[0])
+        template = extract_reaction_template(rxn=am_smarts, atoms_to_include=mech_atoms[0], reaction_center=rc[0], include_stereo=cfg.include_stereo)
         templates[template].append((row["entry_id"], row['mechanism_id']))
 
     tmp = []
@@ -35,7 +36,7 @@ def main(cfg: DictConfig):
 
     df = pd.DataFrame(tmp, columns=["id", "smarts", "entry_id", "mechanism_id"])
     suffix = f"_before_{cfg.cutoff_date}" if cfg.cutoff_date is not None else ""
-    df.to_csv(f"mechinformed_rules{suffix}.csv", sep=',', index=False)
+    df.to_csv(f"mechinformed_rules{stereo_suffix}{suffix}.csv", sep=',', index=False)
 
 if __name__ == '__main__':
     main()
